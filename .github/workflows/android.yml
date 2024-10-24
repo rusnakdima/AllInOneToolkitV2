@@ -11,10 +11,10 @@ jobs:
       contents: write
     strategy:
       fail-fast: false
-    matrix:
-      include:
-        - platform: 'ubuntu-22.04'
-          args: ''
+      matrix:
+        include:
+          - platform: 'ubuntu-22.04'
+            args: ''
 
     runs-on: ${{ matrix.platform }}
 
