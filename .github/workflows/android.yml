@@ -34,25 +34,33 @@ jobs:
         if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf lib32z1 lib32stdc++6 unzip wget
 
       - name: Install Android SDK
         run: |
-          sudo apt-get update
-          sudo apt-get install -y lib32z1 lib32stdc++6
-          sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-33"
+          mkdir -p "$HOME/Android/Sdk"
+          wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+          unzip commandlinetools-linux-11076708_latest.zip -d $HOME/Android/Sdk/cmdline-tools
+          mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/latest
+          export ANDROID_SDK_ROOT=$HOME/Android/Sdk
+          export ANDROID_HOME=$ANDROID_SDK_ROOT
 
-      - name: Install Android NDK
+      - name: Install Android SDK
         run: |
-          sdkmanager --install "ndk;27.0.11902837"
-          echo "export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.0.11902837" >> $GITHUB_ENV
-          echo "export PATH=$ANDROID_HOME/ndk/27.0.11902837:$PATH" >> $GITHUB_ENV
+          sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses
+          sdkmanager --sdk_root=$ANDROID_SDK_ROOT "platform-tools" "build-tools;33.0.0" "platforms;android-33" "ndk;27.0.11902837"
+          export NDK_HOME=$ANDROID_HOME/ndk/27.0.11902837
 
       - name: Set up environment variables
         run: |
-          echo "export ANDROID_HOME=$HOME/Android/Sdk" >> $GITHUB_ENV
+          echo "export ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "export NDK_HOME=$NDK_HOME" >> $GITHUB_ENV
+          echo "export ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
           echo "export PATH=$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
+          echo "export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
+          echo "export PATH=$ANDROID_SDK_ROOT/platform-tools:$PATH" >> $GITHUB_ENV
+          echo "export PATH=$ANDROID_SDK_ROOT/tools:$PATH" >> $GITHUB_ENV
+          echo "export PATH=$ANDROID_SDK_ROOT/emulators:$PATH" >> $GITHUB_ENV
 
       - name: Install pnpm
         run: |
