@@ -1,0 +1,45 @@
+<div class="flex flex-col gap-y-5 m-3">
+  @if (!isShow) {
+    <div class="flex flex-col items-center">
+      <div class="flex flex-col items-center rounded-xl styleBorderSolid border-2 p-5">
+        <span class="text-2xl">Press any key to get the</span>
+        <span class="text-2xl">JavaScript event keycode info</span>
+      </div>
+    </div>
+  } @else {
+    <div class="flex flex-col gap-y-5 items-center">
+      <span class="text-2xl">JavaScript Key Code</span>
+      <span class="text-6xl font-bold">{{keyCode}}</span>
+      <span class="text-xl mt-3">Key Code Information</span>
+
+      <div class="flex flex-row gap-x-5">
+        <div class="styleBorderSolid border rounded-xl !border-blue-700 w-[200px] h-[200px]">
+          <div class="flex flex-col h-[40px] items-center p-2 text-white bg-blue-700 dark:bg-blue-700 rounded-t-xl">
+            <span class="text-xl font-semibold">event.key</span>
+          </div>
+          <div class="flex flex-col h-[160px] justify-center items-center">
+            <span class="text-3xl font-bold">{{(key == " ") ? '(blank space)' : key}}</span>
+          </div>
+        </div>
+
+        <div class="styleBorderSolid border rounded-xl !border-blue-700 w-[200px] h-[200px]">
+          <div class="flex flex-col h-[40px] items-center p-2 text-white bg-blue-700 dark:bg-blue-700 rounded-t-xl">
+            <span class="text-xl font-semibold">event.code</span>
+          </div>
+          <div class="flex flex-col h-[160px] justify-center items-center">
+            <span class="text-3xl font-bold">{{code}}</span>
+          </div>
+        </div>
+
+        <div class="styleBorderSolid border rounded-xl !border-blue-700 w-[200px] h-[200px]">
+          <div class="flex flex-col h-[40px] items-center p-2 text-white bg-blue-700 dark:bg-blue-700 rounded-t-xl">
+            <span class="text-xl font-semibold">event.which</span>
+          </div>
+          <div class="flex flex-col h-[160px] justify-center items-center">
+            <span class="text-3xl font-bold">{{keyCode}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

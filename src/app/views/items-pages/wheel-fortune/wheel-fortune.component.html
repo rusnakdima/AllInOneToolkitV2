@@ -1,0 +1,62 @@
+<div class="flex flex-col gap-y-5 m-3">
+  <div class="flex flex-row justify-between gap-x-3 overflow-x-auto w-full">
+    <div class="flex flex-col gap-y-3 items-center w-[90%] md:w-[70%]">
+      @if (winningEntry != '') {
+        @if (typeWinner == 'first') {
+          <span class="font-bold text-2xl">Winning: {{winningEntry}}</span>
+        } @else if (typeWinner == 'last' && listEntries.length == 1) {
+          <span class="font-bold text-2xl">Winning: {{winningEntry}}</span>
+        } @else {
+          <span class="font-bold text-2xl"> </span>
+        }
+      } @else {
+        <span class="font-bold text-2xl"> </span>
+      }
+
+      <div class="flex flex-col justify-center items-center w-full md:w-[80%]">
+        <div class="relative flex flex-col justify-center items-end" (click)="startSpin()">
+          <div class="absolute -mr-10 z-10 border-solid border-t-[30px] border-b-[30px] border-r-[60px] border-t-transparent border-b-transparent border-r-gray-400"></div>
+
+          <div class="relative flex flex-col justify-center items-center h-full">
+            <canvas id="wheel" width="500" height="500" style="width: 100%; height: 100%;"></canvas>
+            <div class="absolute z-10 rounded-full bg-white w-[15%] h-[15%]"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="absolute md:relative flex flex-col gap-y-3 right-0 z-[555] styleBorderSolid border-y-2 border-l-2 lg:border-y-0 theme" [ngClass]="[isShowPanel ? 'w-[250px]' : 'min-w-min h-[80vh]']">
+      <div class="flex flex-row">
+        @if (isShowPanel) {
+          <div class="flex flex-col p-2">
+            <label class="styleLabel text-xl">Type</label>
+            <div class="flex flex-col gap-x-3">
+              <div class="flex flex-row gap-x-2 items-center">
+                <input class="styleRadio" value="first" [disabled]="isSpinning" [checked]="typeWinner == 'first'" type="radio" name="type" id="first_winner" (change)="typeWinner = 'first'">
+                <label class="styleLabel" for="first_winner">First winner</label>
+              </div>
+
+              <div class="flex flex-row gap-x-2 items-center">
+                <input class="styleRadio" value="last" [disabled]="isSpinning" [checked]="typeWinner == 'last'" type="radio" name="type" id="last_winner" (change)="typeWinner = 'last'">
+                <label class="styleLabel" for="last_winner">Last winner</label>
+              </div>
+            </div>
+
+            <hr class="styleBorderSolidLite border">
+
+            <label class="styleLabel text-xl">Entries</label>
+            <textarea class="styleTextarea h-[50vh]" [value]="getListEntries()" (keyup)="changeFieldEntries($event)" [disabled]="isSpinning"></textarea>
+          </div>
+        }
+
+        <div class="flex md:hidden flex-col py-2 styleBorderSolid" [ngClass]="isShowPanel ? 'border-l' : ''">
+          @if (isShowPanel) {
+            <ion-icon class="cursor-pointer" name="chevron-forward" (click)="isShowPanel = false" />
+          } @else {
+            <ion-icon class="cursor-pointer" name="chevron-back" (click)="isShowPanel = true" />
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

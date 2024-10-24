@@ -1,0 +1,50 @@
+<div class="flex flex-col gap-y-5 m-3">
+  <span class="styleLabel">Choose a color type</span>
+
+  <div class="flex flex-row gap-x-5">
+    <div class="flex flex-row gap-x-2 justify-center content-center">
+      <label class="styleLabel !mt-0">
+        <input class="styleRadio mr-2" type="radio" name="typecol" (change)="setType('rgb')" />
+        <span>RGB</span>
+      </label>
+    </div>
+
+    <div class="flex flex-row gap-x-2 justify-center content-center">
+      <label class="styleLabel !mt-0">
+        <input class="styleRadio mr-2" type="radio" name="typecol" (change)="setType('hex')" />
+        <span>HEX</span>
+      </label>
+    </div>
+
+    <div class="flex flex-row gap-x-2 justify-center content-center">
+      <label class="styleLabel !mt-0">
+        <input class="styleRadio mr-2" type="radio" name="typecol" (change)="setType('hsv')" />
+        <span>HSV</span>
+      </label>
+    </div>
+  </div>
+
+  <mat-form-field>
+    <mat-label>Enter the color according to the selected type</mat-label>
+    <input matInput type="text" (keyup)="convertColor($event)" />
+  </mat-form-field>
+
+  <div class="flex flex-col gap-y-3 mt-5">
+    <input type="color" [value]="resHEX" (change)="changeColorOut($event)" class="w-40 h-40" />
+
+    <div class="flex flex-col gap-y-3 justify-center">
+      <div class="flex flex-row gap-x-3 items-center">
+        <span>RGB</span>
+        <textarea rows="1" [value]="resRGB" class="styleField !w-min"></textarea>
+      </div>
+      <div class="flex flex-row gap-x-3 items-center">
+        <span>HEX</span>
+        <textarea rows="1" [value]="resHEX" class="styleField !w-min"></textarea>
+      </div>
+      <div class="flex flex-row gap-x-3 items-center">
+        <span>HSV</span>
+        <textarea rows="1" [value]="resHSV" class="styleField !w-min"></textarea>
+      </div>
+    </div>
+  </div>
+</div>

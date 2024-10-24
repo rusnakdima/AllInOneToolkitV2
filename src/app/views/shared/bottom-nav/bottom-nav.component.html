@@ -1,0 +1,37 @@
+<div class="styleBottomNav">
+  <div class="flex flex-col items-center justify-center">
+    <ion-icon
+      class="cursor-pointer"
+      [routerLink]="['/home']"
+      name="home"
+      [ngClass]="[ url == 'home' ? '!text-blue-500 dark:!text-green-500' : '' ]"
+    />
+  </div>
+
+  <div class="flex flex-col items-center justify-center">
+    <ion-icon
+      class="cursor-pointer"
+      [routerLink]="['/search']"
+      name="search"
+      [ngClass]="[ url == 'search' ? '!text-blue-500 dark:!text-green-500' : '' ]"
+    />
+  </div>
+
+  <div class="flex flex-col items-center justify-center">
+    <ion-icon
+      class="cursor-pointer"
+      [routerLink]="['/catalogs']"
+      name="shapes"
+      [ngClass]="[ url == 'catalogs' ? '!text-blue-500 dark:!text-green-500' : '' ]"
+    />
+  </div>
+
+  <div class="flex flex-col items-center justify-center">
+    <ion-icon
+      class="cursor-pointer"
+      [routerLink]="['/about']"
+      name="information"
+      [ngClass]="[ url == 'about' ? '!text-blue-500 dark:!text-green-500' : '' ]"
+    />
+  </div>
+</div>

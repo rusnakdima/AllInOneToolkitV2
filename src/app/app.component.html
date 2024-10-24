@@ -1,0 +1,11 @@
+<div class="sticky">
+  <app-nav [isShowNavEvent]="isShowNav"></app-nav>
+
+  <app-header (isShowNavEvent)="showNav($event)"></app-header>
+
+  <div class="pb-[70px] min-[480px]:pb-0">
+    <router-outlet></router-outlet>
+  </div>
+
+  <app-bottom-nav></app-bottom-nav>
+</div>

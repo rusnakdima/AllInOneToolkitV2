@@ -1,0 +1,29 @@
+<div class="styleHeader">
+  <div class="flex flex-row items-center gap-x-3">
+    <ion-icon
+      class="!hidden min-[480px]:!block !text-3xl cursor-pointer"
+      name="menu-sharp"
+      (click)="showNav()"
+    />
+    <img src="/assets/images/icon.png" class="rounded-xl w-10 h-10" />
+
+    <!-- @if (isShowBackBut) {
+      <ion-icon class="!text-3xl cursor-pointer" name="arrow-back-outline" (click)="goBack()" />
+    } -->
+
+    <div class="flex flex-col">
+      @if (prevTitle != '') {
+        <span class="styleLinkRedir text-sm" (click)="goBack()">{{ prevTitle }}</span>
+      }
+      <span class="text-xl">{{ title }}</span>
+    </div>
+  </div>
+
+  <div class="flex flex-row gap-x-2 justify-center items-center">
+    @if (themeVal == '') {
+      <ion-icon class="!text-3xl cursor-pointer" name="sunny-outline" (click)="setTheme('dark')" />
+    } @else if (themeVal == 'dark') {
+      <ion-icon class="!text-3xl cursor-pointer" name="moon-outline" (click)="setTheme('')" />
+    }
+  </div>
+</div>

@@ -1,0 +1,22 @@
+<div class="flex flex-col gap-y-5 m-3">
+  <div class="flex flex-col gap-y-1">
+    <label class="styleLabel">Write or paste the JS code with the functions of the array</label>
+    <textarea class="styleTextarea" cols="30" rows="10" (keyup)="executeCode($event)" [value]="['const array = [];']"></textarea>
+  </div>
+
+  <div class="flex flex-col styleBorderSolidLite border p-5">
+    @if (dataArray.length == 0) {
+      <span>The array is empty</span>
+    }
+    @if (dataArray.length > 0) {
+      <span class="text-xl">Results</span>
+      <div class="flex flex-row flex-wrap gap-3">
+        @for (elem of dataArray; track elem) {
+          <div class="flex flex-col justify-center items-center px-5 py-3 styleBorderSolidLite border">
+            <span class="text-3xl">{{elem}}</span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

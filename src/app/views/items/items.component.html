@@ -1,0 +1,45 @@
+<div class="flex flex-col gap-y-5 m-3">
+  <div class="flex flex-row justify-between px-2 pb-2 !rounded-none styleBorderSolidLite border-b">
+    <div class="styleFloatBut">
+      <button class="flex flex-col items-center justify-center" (click)="refresh()" id="refreshBut">
+        <ion-icon name="refresh" />
+      </button>
+    </div>
+
+    <div class="flex flex-row gap-x-2">
+      <app-search
+        [tempArray]="tempListLinks"
+        (array)="searchFunc($event)"
+      ></app-search>
+      <button class="styleFloatBut" (click)="changeTypeView()">
+        @if (typeViewList == 'grid') {
+          <ion-icon name="grid" />
+        } @else if (typeViewList == 'list') {
+          <ion-icon name="list" />
+        }
+      </button>
+    </div>
+  </div>
+
+  @if (typeViewList == 'grid') {
+    <div class="flex flex-row flex-wrap gap-3 h-[200px]">
+      @for (link of listLinks; track link) {
+        <app-card-item
+          [link]="link"
+        ></app-card-item>
+      }
+    </div>
+  } @else if (typeViewList == 'list') {
+    <div class="flex flex-col gap-y-3">
+      @for (link of listLinks; track link) {
+        <app-tile-item
+          [link]="link"
+        ></app-tile-item>
+      }
+    </div>
+  } @else {
+    <div class="flex flex-col items-center justify-center">
+      <span>Unknown data display format!</span>
+    </div>
+  }
+</div>

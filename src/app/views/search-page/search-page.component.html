@@ -1,0 +1,33 @@
+<div class="flex flex-col gap-y-3 m-3">
+  <div class="flex flex-row justify-between p-2 !rounded-none styleBorderSolidLite border-b">
+    <app-show-item
+      (perItemChanged)="onChangePerItem($event)"
+    ></app-show-item>
+
+    <app-search
+      [tempArray]="tempListLinks"
+      (array)="searchFunc($event)"
+    ></app-search>
+  </div>
+
+  <div class="flex flex-col gap-y-3">
+    @for (link of listLinks | paginate : {
+      itemsPerPage: perItem,
+      currentPage: page,
+      totalItems: 0
+    }; track link) {
+      <app-tile-item
+        [link]="link"
+      ></app-tile-item>
+    }
+  </div>
+
+  @if (listLinks.length > 0) {
+    <app-pagination
+      [array]="listLinks"
+      [page]="page"
+      [perItem]="perItem"
+      (onChange)="onChangeCountPage($event)">
+    </app-pagination>
+  }
+</div>

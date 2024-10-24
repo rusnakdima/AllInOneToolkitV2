@@ -1,0 +1,26 @@
+<div class="flex flex-col gap-y-5 m-3">
+  <details class="styleDetails">
+    <summary>
+      <span class="text-xl font-bold">Select the SVG file</span>
+    </summary>
+
+    <div class="flex flex-col gap-y-3 mt-2">
+      <app-file-input
+        [typeFile]="typeFile"
+        (dataFile)="setDataFile($event)"
+      ></app-file-input>
+      <button class="styleButInfo w-max" (click)="parseFile()">Get a data</button>
+    </div>
+  </details>
+
+  <div class="flex flex-col lg:flex-row w-full gap-2">
+    <div class="flex flex-col w-full lg:w-1/2">
+      <span class="text-xl">Write</span>
+      <textarea class="styleTextarea !h-full" [value]="dataField" (keyup)="parseField($event)"></textarea>
+    </div>
+    <div class="flex flex-col w-full lg:w-1/2">
+      <span class="text-xl">Preview</span>
+      <div class="styleBorderSolidLite border-2 rounded-lg min-h-60 h-full p-2" [innerHTML]="svgPrevData"></div>
+    </div>
+  </div>
+</div>

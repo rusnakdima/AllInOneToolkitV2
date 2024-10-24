@@ -1,0 +1,46 @@
+<div class="flex flex-col gap-y-5 m-3">
+  <label class="styleLabel">Choose a style type</label>
+  <div class="flex flex-row gap-x-5">
+    <div class="flex flex-row gap-x-2 justify-center content-center">
+      <label class="styleLabel !mt-0">
+        <input class="styleRadio mr-2" type="radio" name="typeStyle" (change)="setTypeStyle('css')" />
+        <span>CSS</span>
+      </label>
+    </div>
+
+    <div class="flex flex-row gap-x-2 justify-center content-center">
+      <label class="styleLabel !mt-0">
+        <input class="styleRadio mr-2" type="radio" name="typeStyle" (change)="setTypeStyle('bootstrap')" />
+        <span>Bootstrap 5</span>
+      </label>
+    </div>
+
+    <div class="flex flex-row gap-x-2 justify-center content-center">
+      <label class="styleLabel !mt-0">
+        <input class="styleRadio mr-2" type="radio" name="typeStyle" (change)="setTypeStyle('tailwind')" />
+        <span>Tailwind CSS</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-y-3">
+    <mat-form-field>
+      <mat-label>Enter the style according to the selected type (you can enter several classes or properties separated by a space)</mat-label>
+      <textarea matInput (change)="setData($event)" rows="2"></textarea>
+    </mat-form-field>
+
+    <button class="styleButInfo w-max" (click)="convertData()">Convert data</button>
+  </div>
+
+  @if (blockTable) {
+    <div class="overflow-x-auto">
+      <app-table
+        [dataTable]="dataTable"
+      ></app-table>
+    </div>
+  }
+</div>
+
+<app-window-notify
+  [dataNotify]="dataNotify"
+></app-window-notify>

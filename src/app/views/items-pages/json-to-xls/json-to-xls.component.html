@@ -1,0 +1,43 @@
+<div class="flex flex-col gap-y-5 m-3">
+  <details class="styleDetails">
+    <summary>
+      <span class="text-xl font-bold">Select the JSON file with the data</span>
+    </summary>
+
+    <div class="flex flex-col gap-y-3 mt-2">
+      <app-file-input
+        [typeFile]="typeFile"
+        (dataFile)="setDataFile($event)"
+        (reciveFileName)="setFileName($event)"
+      ></app-file-input>
+      <button class="styleButInfo w-max" (click)="convertData()">Convert a data</button>
+    </div>
+  </details>
+
+  <details class="styleDetails">
+    <summary>
+      <span class="text-xl font-bold">Insert JSON data</span>
+    </summary>
+
+    <div class="flex flex-col gap-y-3 mt-2">
+      <textarea class="styleTextarea" (change)="setData($event)" rows="7"></textarea>
+      <button class="styleButInfo w-max" (click)="convertData()">Convert a data</button>
+    </div>
+  </details>
+
+  @if (dataXls.length > 0) {
+    <div class="flex flex-row gap-x-3">
+      <button class="styleButSuccess" (click)="saveData()">Save a data</button>
+    </div>
+  }
+
+  @if (pathNewFile != '') {
+    <div class="flex flex-row gap-x-3">
+      <button class="styleButWarn" (click)="openFile()">Open the last saved file</button>
+    </div>
+  }
+</div>
+
+<app-window-notify
+  [dataNotify]="dataNotify"
+></app-window-notify>

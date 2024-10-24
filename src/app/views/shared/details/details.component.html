@@ -1,0 +1,27 @@
+<details>
+  <summary (click)="toggleDetails()" class="flex flex-row items-center list-none">
+    <div class="styleTD flex flex-row items-center w-full">
+      <div class="w-1/3">
+        <span class="font-normal flex flex-row items-center" [style]="{'padding-left': dataDetails.head.padLeft+'px'}">
+          <ion-icon [name]="dataDetails.head.open ? 'remove-circle-outline' : 'add-circle-outline'" />
+          {{dataDetails.head.key}}
+        </span>
+      </div>
+      <div class="w-1/3"><span class="font-normal">{{dataDetails.head.type}}</span></div>
+      <div class="w-1/3"><span class="font-normal text-gray-600 dark:text-gray-300">{{dataDetails.head.value}} Items</span></div>
+    </div>
+  </summary>
+  @for (item of dataDetails.list; track item) {
+    <div>
+      @if (item.head) {
+        <app-details [dataDetails]="item"  />
+      } @else {
+        <div class="styleTD flex flex-row w-full">
+          <div class="w-1/3"><span class="font-normal" [style]="{'padding-left': item.padLeft+'px'}">{{item.key}}</span></div>
+          <div class="w-1/3"><span class="font-normal">{{item.type}}</span></div>
+          <div class="w-1/3"><span class="font-normal">{{item.value}}</span></div>
+        </div>
+      }
+    </div>
+  }
+</details>

@@ -1,0 +1,39 @@
+<div class="flex flex-col gap-y-5 m-3">
+  <details class="styleDetails">
+    <summary>
+      <span class="text-xl font-bold">Select a text file</span>
+    </summary>
+
+    <div class="flex flex-col gap-y-3 mt-2">
+      <app-file-input
+        [typeFile]="typeFile"
+        (dataFile)="setDataFile($event)"
+      ></app-file-input>
+      <button class="styleButInfo w-max" (click)="calculate()">Calculate</button>
+    </div>
+  </details>
+
+  <details class="styleDetails">
+    <summary>
+      <span class="text-xl font-bold">Paste the text</span>
+    </summary>
+
+    <div class="flex flex-col gap-y-3 mt-2">
+      <textarea class="styleTextarea" (change)="setData($event)" rows="7"></textarea>
+      <button class="styleButInfo w-max" (click)="calculate()">Calculate</button>
+    </div>
+  </details>
+
+  <div class="flex flex-col gap-y-2 styleBorderSolidLite border p-3">
+    <span class="font-semibold text-xl">Results</span>
+    @if (outputText != '') {
+      <span>{{outputText}}</span>
+    } @else {
+      <span>There are no results! Enter the text first!</span>
+    }
+  </div>
+</div>
+
+<app-window-notify
+  [dataNotify]="dataNotify"
+></app-window-notify>

@@ -1,0 +1,51 @@
+<div class="flex flex-col gap-y-5 m-3">
+  <label class="styleLabel">Enter the link</label>
+  <input type="text" class="styleField" (change)="setData($event)">
+  <button class="styleButInfo w-max" (click)="checkOnVirus()">Check</button>
+
+  @if (reqText != '') {
+    <span class="text-xl">{{reqText}}</span>
+  }
+
+  @if (isChecked) {
+    <div class="flex flex-col gap-y-3 styleBorderSolidLite border p-3 mt-3">
+      <div class="flex flex-col mx-auto w-[200px] h-[200px] mb-5">
+        <div class="flex flex-col gap-y-1 rounded-full justify-center items-center border-solid border-4 w-full h-full" [ngClass]="['border-'+circleBlockColor]">
+          <span class="text-5xl" [ngClass]="['text-'+circleBlockColor]">{{milicious}}</span>
+          <span class="text-black dark:text-white text-3xl">/{{allAntivirus}}</span>
+        </div>
+      </div>
+
+      <div class="flex flex-col text-xl font-bold items-center">
+        <span>List of antiviruses with scan results</span>
+      </div>
+
+      <div class="flex flex-row flex-wrap justify-center gap-3">
+        @for (antiv of listAntiviruses; track antiv) {
+          <div class="flex flex-col justify-center items-center rounded-lg p-2 bg-gray-300 dark:bg-gray-800 !w-[150px] !h-[150px]">
+            @if (antiv['status'] == "clean") {
+              <ion-icon name="checkmark-circle-outline" class="!text-green-600 !fill-green-600 !w-[90px] !h-[90px]" />
+            } @else if (antiv['status'] == "suspicious") {
+              <ion-icon name="information-circle-outline" class="!text-orange-500 !fill-orange-500 !w-[90px] !h-[90px]" />
+            } @else if (antiv['status'] == "malicious") {
+              <ion-icon name="alert-circle-outline" class="!text-red-600 !fill-red-600 !w-[90px] !h-[90px]" />
+            } @else {
+              <ion-icon name="help-circle-outline" class="!text-gray-500 !fill-gray-500 !w-[90px] !h-[90px]" />
+            }
+            <span class="text-center">{{antiv['name']}}</span>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
+
+<span className="border-green-600 text-green-600"></span>
+<span className="border-yellow-300 text-yellow-300"></span>
+<span className="border-orange-500 text-orange-500"></span>
+<span className="border-red-600 text-red-600"></span>
+<span className="text-gray-500"></span>
+
+<app-window-notify
+  [dataNotify]="dataNotify"
+></app-window-notify>

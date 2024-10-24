@@ -1,0 +1,18 @@
+<div class="relative flex flex-col p-3 styleElem">
+  @if (isArray()) {
+    <div class="flex flex-col gap-y-1">
+      @for (elem of value; track elem) {
+        <span>{{ elem }}</span>
+      }
+    </div>
+  } @else {
+    <span>{{ value }}</span>
+  }
+  <div class="absolute flex flex-col right-2 top-2">
+    <ion-icon class="cursor-pointer" name="copy" (click)="copyData()" />
+  </div>
+</div>
+
+<app-window-notify
+  [dataNotify]="dataNotify"
+></app-window-notify>

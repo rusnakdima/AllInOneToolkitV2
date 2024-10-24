@@ -1,0 +1,52 @@
+<div class="flex flex-col gap-y-5 m-3">
+  <label class="styleLabel">Select the Unicode character encoding type</label>
+  <div class="flex flex-row gap-x-5">
+    <div  class="flex flex-row gap-x-2 justify-center content-center">
+      <label class="styleLabel !mt-0">
+        <input class="styleRadio mr-2" type="radio" name="typeCoding" [checked]="typeCoding == 'symbol'" (change)="setTypeCoding('symbol')">
+        <span>Symbol</span>
+      </label>
+    </div>
+    <div  class="flex flex-row gap-x-2 justify-center content-center">
+      <label class="styleLabel !mt-0">
+        <input class="styleRadio mr-2" type="radio" name="typeCoding" [checked]="typeCoding == 'dec'" (change)="setTypeCoding('dec')">
+        <span>Decimal</span>
+      </label>
+    </div>
+    <div  class="flex flex-row gap-x-2 justify-center content-center">
+      <label class="styleLabel !mt-0">
+        <input class="styleRadio mr-2" type="radio" name="typeCoding" [checked]="typeCoding == 'hex'" (change)="setTypeCoding('hex')">
+        <span>Hexadecimal</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-y-3">
+    <mat-form-field>
+      <mat-label>Enter the {{ (typeCoding == "symbol") ? "symbol" : (typeCoding == "dec") ? "decimal" : "hexadecimal" }}</mat-label>
+      <textarea matInput (change)="setData($event)" rows="2"></textarea>
+    </mat-form-field>
+
+    <button class="styleButInfo w-max" (click)="convertData()">Convert data</button>
+  </div>
+
+  @if (listResult.length > 0) {
+    <div class="flex flex-row flex-wrap items-center justify-center gap-5">
+      @for (item of listResult; track item) {
+        <div class="flex flex-col items-center">
+          <div class="flex flex-col items-center p-5 !px-10 styleBorderSolidLite border-2">
+            <span class="text-6xl">{{ item.symbol }}</span>
+            <br />
+
+            <span class="text-xl">{{ item.dec }}</span>
+            <span class="text-xl">{{ item.hex }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<app-window-notify
+  [dataNotify]="dataNotify"
+></app-window-notify>

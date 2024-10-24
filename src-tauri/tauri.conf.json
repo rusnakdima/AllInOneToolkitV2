@@ -1,0 +1,43 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "allinonetoolkitv2",
+  "version": "0.1.0",
+  "identifier": "com.tcs.allinonetoolkitv2",
+  "build": {
+    "beforeDevCommand": "pnpm start",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../dist/allinonetoolkitv2/browser"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "All In One Toolkit v2.0",
+        "fullscreen": false,
+        "resizable": true,
+        "width": 800,
+        "height": 600,
+        "minHeight": 150,
+        "minWidth": 150
+      }
+    ],
+    "security": {
+      "csp": null
+    },
+    "withGlobalTauri": true
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/icon.png",
+      "icons/icon.ico",
+      "icons/128x128.png"
+    ],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "embedBootstrapper"
+      }
+    }
+  }
+}

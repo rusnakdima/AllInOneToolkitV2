@@ -1,0 +1,80 @@
+<div class="flex flex-col gap-y-5 m-3">
+  <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center gap-y-2 p-3 styleBorderSolidLite border">
+      <span class="font-medium text-5xl">{{ timestamp }}</span>
+      <span class="uppercase">seconds since 1 jan 1970 (utc)</span>
+      <span class="text-3xl">{{ currentTime }}</span>
+    </div>
+  </div>
+
+  <span class="text-xl">Convert Timestamp to Human Format</span>
+
+  <mat-form-field>
+    <mat-label>Enter a Timestamp</mat-label>
+    <input matInput type="number" [value]="inputTS" (keyup)="setTS($event)"/>
+  </mat-form-field>
+
+  <button class="styleButInfo w-min" (click)="this.isShowInfoTS = true">Convert</button>
+
+  @if (isShowInfoTS) {
+    <div class="grid grid-cols-2 styleTD !p-0">
+      <span class="styleTD">GMT</span>
+      <span class="styleTD">{{ formatUTC('ts') }}</span>
+
+      <span class="styleTD">Your Time Zone</span>
+      <span class="styleTD">{{ formatLocal('ts') }}</span>
+
+      <span class="styleTD">Relative</span>
+      <span class="styleTD">{{ getTimeAgo('ts') }}</span>
+    </div>
+  }
+
+  <span class="text-xl">Convert Date & Time</span>
+
+  <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
+    <mat-form-field>
+      <mat-label>Year</mat-label>
+      <input matInput type="number" [value]="inputYear" (keyup)="setComponentDateTime($event, 'year')" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Month</mat-label>
+      <input matInput type="number" [value]="inputMonth" (keyup)="setComponentDateTime($event,'month')" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Date</mat-label>
+      <input matInput type="number" [value]="inputDate" (keyup)="setComponentDateTime($event, 'date')" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Hours</mat-label>
+      <input matInput type="number" [value]="inputHours" (keyup)="setComponentDateTime($event, 'hours')" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Minutes</mat-label>
+      <input matInput type="number" [value]="inputMinutes" (keyup)="setComponentDateTime($event, 'minutes')" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Seconds</mat-label>
+      <input matInput type="number" [value]="inputSeconds" (keyup)="setComponentDateTime($event, 'seconds')" />
+    </mat-form-field>
+  </div>
+
+  <button class="styleButInfo w-min" (click)="this.isShowInfoDnT = true">Convert</button>
+
+  @if (isShowInfoDnT) {
+    <div class="grid grid-cols-2 styleTD !p-0">
+      <span class="styleTD">GMT</span>
+      <span class="styleTD">{{ formatUTC('dt') }}</span>
+
+      <span class="styleTD">Your Time Zone</span>
+      <span class="styleTD">{{ formatLocal('dt') }}</span>
+
+      <span class="styleTD">Relative</span>
+      <span class="styleTD">{{ getTimeAgo('dt') }}</span>
+    </div>
+  }
+</div>
