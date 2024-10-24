@@ -1,4 +1,6 @@
+# All In One Toolkit V2
 
+This is a project on [Tauri](https://tauri.app/). This project will implement various functions such as converters, editors, and various other small functions.
 
 ## Screenshots
 
