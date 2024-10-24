@@ -23,6 +23,10 @@ jobs:
             args: ''
           - platform: 'windows-2019'
             args: ''
+          - platform: 'ios'
+            args: ''
+          - platform: 'android'
+            args: ''
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -38,7 +42,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: 'pnpm'
+          cache: 'npm'
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -51,10 +55,10 @@ jobs:
           workspaces: './src-tauri -> target'
 
       - name: Install frontend dependencies
-        run: pnpm install
+        run: npm install
 
       - name: Build app
-        run: pnpm tauri build
+        run: npm tauri build
 
       - uses: tauri-apps/tauri-action@v0
         env:
