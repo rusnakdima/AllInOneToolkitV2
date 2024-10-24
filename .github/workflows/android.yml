@@ -1,4 +1,4 @@
-name: Android CI
+name: Builder for Android
 
 on:
   push:
@@ -6,21 +6,56 @@ on:
       - "v*"
 
 jobs:
-  build:
+  publish-tauri:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: gradle
+      - uses: actions/checkout@v4
+      - name: set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./src-tauri/gen/android/gradlew
 
-    - name: Build with Gradle
-      run: ./gradlew build
+      - name: Install pnpm
+        run: |
+          npm i -g pnpm
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'pnpm'
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ubuntu-22.04
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Build app
+        run: pnpm tauri android build
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__
+          releaseName: 'All In One Toolkit'
+          releaseBody: '🚀 Beta release v__VERSION__'
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
