@@ -36,6 +36,24 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
+      - name: Install Android SDK
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lib32z1 lib32stdc++6
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "platforms;android-33"
+
+      - name: Install Android NDK
+        run: |
+          sdkmanager "ndk;27.0.11902837"
+          echo "export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.0.11902837" >> $GITHUB_ENV
+          echo "export PATH=$ANDROID_HOME/ndk/27.0.11902837:$PATH" >> $GITHUB_ENV
+
+      - name: Set up environment variables
+        run: |
+          echo "export ANDROID_HOME=$HOME/Android/Sdk" >> $GITHUB_ENV
+          echo "export PATH=$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
+
       - name: Install pnpm
         run: |
           npm i -g pnpm
