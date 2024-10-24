@@ -23,10 +23,6 @@ jobs:
             args: ''
           - platform: 'windows-2019'
             args: ''
-          - platform: 'ios'
-            args: ''
-          - platform: 'android'
-            args: ''
 
     runs-on: ${{ matrix.platform }}
     steps:
