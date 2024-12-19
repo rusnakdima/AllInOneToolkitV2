@@ -5,11 +5,10 @@
       name="menu-sharp"
       (click)="showNav()"
     />
-    <img src="/assets/images/icon.png" class="rounded-xl w-10 h-10" />
 
-    <!-- @if (isShowBackBut) {
-      <ion-icon class="!text-3xl cursor-pointer" name="arrow-back-outline" (click)="goBack()" />
-    } -->
+    @if (iconUrl != "") {
+      <img [src]="[iconUrl]" class="rounded-xl w-10 h-10" />
+    }
 
     <div class="flex flex-col">
       @if (prevTitle != '') {

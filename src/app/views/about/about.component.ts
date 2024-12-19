@@ -1,4 +1,4 @@
-/* system libraries */
+/* sys lib */
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { HttpClientModule } from "@angular/common/http";
@@ -6,6 +6,9 @@ import { Subject } from "rxjs";
 
 /* env */
 import { environment } from "@env/environment";
+
+/* models */
+import { Response } from "@models/response";
 
 /* services */
 import { AboutService } from "@services/about.service";
@@ -47,7 +50,11 @@ export class AboutComponent {
     const v1Components = lastVer.split(".").map(Number);
     const v2Components = this.version.split(".").map(Number);
 
-    for ( let i = 0; i < Math.max(v1Components.length, v2Components.length); i++ ) {
+    for (
+      let i = 0;
+      i < Math.max(v1Components.length, v2Components.length);
+      i++
+    ) {
       const v1Value = v1Components[i] || 0;
       const v2Value = v2Components[i] || 0;
 
@@ -68,13 +75,16 @@ export class AboutComponent {
   getDate() {
     this.aboutService
       .getBinaryNameFile()
-      .then((data: any) => {
-        if (data) {
-          if (data != "Unknown") {
-            this.nameFile = data;
+      .then((data: Response) => {
+        if (data.status == "success") {
+          if (data.data != "Unknown") {
+            this.nameFile = data.data;
           }
         } else {
-          throw Error(data);
+          this.dataNotify.next({
+            status: data.status,
+            text: data.message,
+          });
         }
       })
       .catch((err: any) => {
@@ -86,7 +96,7 @@ export class AboutComponent {
       next: (res: any) => {
         if (res && res.published_at) {
           localStorage["dateVersion"] = String(
-            this.formatDate(res.published_at)
+            this.formatDate(res.published_at),
           );
           this.dateVersion = String(this.formatDate(res.published_at));
         } else {
@@ -106,7 +116,7 @@ export class AboutComponent {
 
   checkUpdate() {
     localStorage["dateCheck"] = String(
-      this.formatDate(new Date().toUTCString())
+      this.formatDate(new Date().toUTCString()),
     );
     this.aboutService.checkUpdate().subscribe({
       next: (res: any) => {
@@ -150,15 +160,15 @@ export class AboutComponent {
         });
       this.aboutService
         .downloadUpdate(this.lastVersion, this.nameFile)
-        .then((data: any) => {
-          if (data) {
+        .then((data: Response) => {
+          if (data.status == "success") {
             this.dataNotify.next({
               status: "success",
               text: "The new version of the program has been successfully downloaded!",
             });
-            this.pathUpdate = data;
+            this.pathUpdate = data.data;
           } else {
-            throw Error(data);
+            this.dataNotify.next({ status: data.status, text: data.message });
           }
         })
         .catch((err: any) => {
@@ -176,9 +186,17 @@ export class AboutComponent {
   }
 
   openFile() {
-    this.aboutService.openFile(this.pathUpdate).catch((err: any) => {
-      console.error(err);
-      this.dataNotify.next({ status: "error", text: err });
-    });
+    this.aboutService
+      .openFile(this.pathUpdate)
+      .then((data: Response) => {
+        this.dataNotify.next({
+          status: data.status,
+          text: data.message,
+        });
+      })
+      .catch((err: any) => {
+        console.error(err);
+        this.dataNotify.next({ status: "error", text: err });
+      });
   }
 }

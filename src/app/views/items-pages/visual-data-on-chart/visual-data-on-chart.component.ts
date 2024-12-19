@@ -1,4 +1,4 @@
-/* system libraries */
+/* sys lib */
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { Subject } from "rxjs";
@@ -165,7 +165,6 @@ export class VisualDataOnChartComponent {
     this.outChart = true;
     setTimeout(() => {
       const ctx = document.getElementById("myChart") as HTMLCanvasElement;
-      console.log(ctx);
       if (ctx) {
         if (this.myChart) {
           this.myChart.destroy();

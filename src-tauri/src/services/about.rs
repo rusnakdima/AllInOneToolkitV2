@@ -6,57 +6,51 @@ use tauri::Manager;
 use tauri_plugin_http::reqwest;
 
 /* models */
-use crate::models::response::Response;
+use crate::models::response::{
+  DataValue,
+  Response
+};
 
 pub async fn download_file(app_handle: tauri::AppHandle, url: String, file_name: String) -> Response {
   let response = reqwest::get(url).await;
 
-  match response {
-    Ok(response) => {
-      let download_folder = app_handle.path().download_dir();
-
-      match download_folder {
-        Ok(path) => {
-          let file_path = path.join(&file_name);
-          let file = File::create(&file_path);
-
-          match file {
-            Ok(mut file) => {
-              let bytes = response.bytes().await.unwrap();
-              let _ = file.write_all(&bytes);
-
-              return Response {
-                status: "success".to_string(),
-                message: "".to_string(),
-                data: format!("{}", file_path.display()),
-              };
-            }
-            Err(e) => {
-              return Response {
-                status: "error".to_string(),
-                message: format!("Error: {}", e),
-                data: "".to_string(),
-              };
-            }
-          }
-        }
-        Err(e) => {
-          return Response {
-            status: "error".to_string(),
-            message: format!("Error: {}", e),
-            data: "".to_string(),
-          };
-        }
-      }
-    }
-    Err(e) => {
-      return Response {
-        status: "error".to_string(),
-        message: format!("Error: {}", e),
-        data: "".to_string(),
-      }
-    }
+  if response.is_err() {
+    return Response {
+      status: "error".to_string(),
+      message: format!("Error: {:?}", response.unwrap_err()),
+      data: DataValue::String("".to_string()),
+    };
   }
+
+  let download_folder = app_handle.path().download_dir();
+
+  if download_folder.is_err() {
+    return Response {
+      status: "error".to_string(),
+      message: format!("Error! Failed to get download folder: {}", download_folder.unwrap_err()),
+      data: DataValue::String("".to_string()),
+    };
+  }
+
+  let file_path = download_folder.unwrap().join(&file_name);
+  let file = File::create(&file_path);
+
+  if file.is_err() {
+    return Response {
+      status: "error".to_string(),
+      message: format!("Error! Failed to create file: {}", file.unwrap_err()),
+      data: DataValue::String("".to_string()),
+    };
+  }
+
+  let bytes = response.unwrap().bytes().await.unwrap();
+  let _ = file.unwrap().write_all(&bytes);
+
+  return Response {
+    status: "success".to_string(),
+    message: "".to_string(),
+    data: DataValue::String(file_path.display().to_string()),
+  };
 }
 
 pub async fn get_binary_name_file() -> Response {
@@ -73,13 +67,13 @@ pub async fn get_binary_name_file() -> Response {
     return Response {
       status: "error".to_string(),
       message: "Unknown target platform".to_string(),
-      data: "".to_string(),
+      data: DataValue::String("".to_string()),
     };
   }
 
   return Response {
-      status: "success".to_string(),
-      message: "".to_string(),
-    data: _name_app,
+    status: "success".to_string(),
+    message: "".to_string(),
+    data: DataValue::String(_name_app),
   };
 }

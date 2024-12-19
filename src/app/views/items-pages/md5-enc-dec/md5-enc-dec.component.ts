@@ -1,4 +1,4 @@
-/* system libraries */
+/* sys lib */
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { Md5 } from "ts-md5";

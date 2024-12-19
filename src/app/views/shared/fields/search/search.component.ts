@@ -1,4 +1,4 @@
-/* system libraries */
+/* sys lib */
 import { CommonModule } from '@angular/common';
 import {
   CUSTOM_ELEMENTS_SCHEMA,

@@ -1,4 +1,4 @@
-/* system libraries */
+/* sys lib */
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { Subject } from "rxjs";
@@ -106,7 +106,7 @@ export class XmlToXlsComponent {
           console.error(err);
           this.dataNotify.next({
             status: "error",
-            text: `An error occurred while saving the data to a file: ${err.message}`,
+            text: `An error occurred while saving the data to a file: ${err}`,
           });
         });
     } else if (this.dataXls.length == 0) {
@@ -136,7 +136,7 @@ export class XmlToXlsComponent {
         })
         .catch((err: any) => {
           console.error(err);
-          this.dataNotify.next({ status: "error", text: err.message });
+          this.dataNotify.next({ status: "error", text: err });
         });
     } else {
       this.dataNotify.next({

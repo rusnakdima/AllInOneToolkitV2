@@ -1,6 +1,12 @@
+/* helpers */
+use crate::helpers::common::convert_data_to_object;
+
 /* models */
 use crate::models::{
-  response::Response,
+  response::{
+    DataValue,
+    Response
+  },
   unicode_data::UnicodeData
 };
 
@@ -22,7 +28,7 @@ pub fn get_info_symbol(type_coding: String, content: String) -> Response {
       return Response {
         status: "success".to_string(),
         message: "".to_string(),
-        data: serde_json::to_string(&unicode_data).unwrap(),
+        data: convert_data_to_object::<UnicodeData>(&unicode_data),
       };
     }
     "dec" => {
@@ -39,7 +45,7 @@ pub fn get_info_symbol(type_coding: String, content: String) -> Response {
       return Response {
         status: "success".to_string(),
         message: "".to_string(),
-        data: serde_json::to_string(&unicode_data).unwrap(),
+        data: convert_data_to_object::<UnicodeData>(&unicode_data),
       };
     }
     "hex" => {
@@ -55,14 +61,14 @@ pub fn get_info_symbol(type_coding: String, content: String) -> Response {
       return Response {
         status: "success".to_string(),
         message: "".to_string(),
-        data: serde_json::to_string(&unicode_data).unwrap(),
+        data: convert_data_to_object::<UnicodeData>(&unicode_data),
       };
     }
     _ => {
       return Response {
         status: "error".to_string(),
         message: format!("Error: Unknown type!"),
-        data: "".to_string(),
+        data: DataValue::String("".to_string()),
       };
     }
   };

@@ -2,8 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+.textNormal {
+  @apply text-black dark:text-white
+}
+
+.textMuted {
+  @apply text-gray-600 dark:text-gray-300
+}
+
 .theme {
-  @apply text-black dark:text-white bg-white dark:bg-zinc-900
+  @apply textNormal bg-white dark:bg-zinc-900
 }
 
 .styleBody {
@@ -18,16 +26,16 @@
   @apply fixed min-[480px]:hidden grid grid-cols-4 bottom-0 m-0 p-3 !pb-5 theme w-full
 }
 
-.styleWindNotify {
-  @apply fixed flex flex-col top-1 right-1 z-[999] rounded-lg styleBorderSolid border !border-white text-white
-}
-
 .styleBackWind {
   @apply fixed left-0 top-0 m-0 bg-white/30 dark:bg-black/30 w-full h-[100vh]
 }
 
 .styleWind {
   @apply absolute top-1 p-4 mx-auto z-50 rounded-xl styleBorderSolid border bg-white dark:bg-zinc-900 w-10/12 sm:w-5/6 md:w-2/3 lg:w-1/2
+}
+
+.styleWindNotify {
+  @apply fixed flex flex-col top-1 right-1 z-[999] rounded-lg styleBorderSolid border !border-white text-white
 }
 
 .styleBorderSolid {
@@ -38,52 +46,12 @@
   @apply rounded-lg border-solid border-zinc-600 dark:border-zinc-500
 }
 
-.styleLinkMenu {
-  @apply flex flex-row gap-x-4 items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white
-}
-
-.styleLinkBlock {
-  @apply flex flex-col gap-y-2 items-center p-2 rounded-lg border-2 border-solid border-black dark:border-white hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white text-center
-}
-
-.styleLink {
-  @apply text-blue-700 dark:text-red-500 no-underline cursor-pointer
-}
-
-.styleLinkRedir {
-  @apply text-blue-600 decoration-blue-600 dark:text-lime-500 dark:decoration-lime-500 underline decoration-dashed decoration-1 underline-offset-4 cursor-pointer
-}
-
-.styleLabel {
-  @apply block mt-2 text-gray-900 dark:text-white font-medium
-}
-
-.styleElem {
-  @apply rounded-lg border border-gray-400 dark:border-gray-600 bg-slate-300 dark:bg-neutral-800 focus:ring-blue-500 dark:focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-500 text-gray-900 dark:text-white dark:placeholder:text-gray-100 placeholder:text-lg
-}
-
-.styleField {
-  @apply p-2.5 styleElem
-}
-
-.styleFileInput {
-  @apply p-2.5 styleElem
-}
-
-.styleTextarea {
-  @apply block p-2.5 styleElem w-full
-}
-
-.styleSelect {
-  @apply block px-3 py-2 styleElem w-full
-}
-
-.styleRadio {
-  @apply border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 focus:ring-2 focus:ring-red-500 dark:focus:ring-red-600 dark:ring-offset-gray-800 w-6 h-6 text-red-600
-}
-
 .styleBut {
   @apply flex flex-row justify-center items-center py-2 px-4 active:mt-1 rounded-lg border-b-4 active:border-0 border-solid text-white dark:text-white text-center
+}
+
+button:disabled {
+  @apply hover:!bg-red-500 dark:hover:!bg-red-500 cursor-not-allowed
 }
 
 .styleButInfo {
@@ -106,12 +74,68 @@
   @apply flex flex-row justify-center items-center gap-x-1 p-2 rounded-xl styleBorderSolidLite border hover:bg-gray-400 dark:hover:bg-gray-700 cursor-pointer
 }
 
+.styleLabel {
+  @apply block mt-2 text-gray-900 dark:text-white font-medium
+}
+
+.styleElem {
+  @apply rounded-lg border border-gray-400 dark:border-gray-600 bg-slate-300 dark:bg-neutral-800 focus:ring-blue-500 dark:focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-500 text-gray-900 dark:text-white dark:placeholder:text-gray-400 placeholder:text-lg
+}
+
+.styleField {
+  @apply p-2.5 styleElem
+}
+
+.styleFileInput {
+  @apply p-2.5 styleElem
+}
+
+.styleTextarea {
+  @apply block p-2.5 styleElem w-full
+}
+
+.styleCheckbox {
+  @apply w-5 h-5 rounded text-blue-600 dark:text-green-500 bg-gray-300 dark:bg-gray-700 border-gray-500 dark:border-gray-600 focus:ring-blue-600 dark:focus:ring-green-500 dark:ring-offset-gray-800 focus:ring-2
+}
+
+.styleToggle {
+  @apply relative after:absolute after:top-[2px] rounded-full after:rounded-full after:border after:border-gray-300 dark:border-gray-600 peer-checked:after:border-white bg-gray-200 dark:bg-gray-700 after:bg-white peer-checked:bg-blue-600 peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 peer-focus:outline-none after:content-[''] after:start-[2px] after:transition-all peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full w-11 h-6 after:w-5 after:h-5
+}
+
+.styleRadio{
+  @apply w-6 h-6 text-blue-600 dark:text-green-500 bg-gray-300 dark:bg-gray-700 border-gray-500 dark:border-gray-600 focus:ring-blue-600 dark:focus:ring-green-500 dark:ring-offset-gray-800 focus:ring-2
+}
+
+.styleRadio:disabled {
+  @apply !bg-red-700 !border-red-700 focus:!ring-red-700
+}
+
+.styleSelect {
+  @apply block px-3 py-2 styleElem w-full
+}
+
 .styleTD {
   @apply p-1 styleBorderSolid border-2 !border-gray-300 dark:!border-gray-600
 }
 
 .styleDetails {
   @apply mx-1
+}
+
+.styleLinkMenu {
+  @apply flex flex-row gap-x-4 items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white
+}
+
+.styleLinkBlock {
+  @apply flex flex-col gap-y-2 items-center p-2 rounded-lg border-2 border-solid border-black dark:border-white hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white text-center
+}
+
+.styleLink {
+  @apply text-blue-700 dark:text-red-500 no-underline cursor-pointer
+}
+
+.styleLinkRedir {
+  @apply text-blue-600 decoration-blue-600 dark:text-lime-500 dark:decoration-lime-500 underline decoration-dashed decoration-1 underline-offset-4 cursor-pointer
 }
 
 ion-icon {
@@ -204,6 +228,10 @@ pre {
 
 .mat-expansion-panel-header-title {
   @apply font-bold
+}
+
+.mat-expansion-panel-body {
+  @apply !p-0
 }
 
 .mat-mdc-form-field-subscript-wrapper {

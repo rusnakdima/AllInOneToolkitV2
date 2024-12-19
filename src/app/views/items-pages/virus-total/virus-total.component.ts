@@ -1,7 +1,10 @@
-/* system libraries */
+/* sys lib */
 import { CommonModule } from "@angular/common";
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
 import { Subject } from "rxjs";
+
+/* helpers */
+import { Common } from "@helpers/common";
 
 /* services */
 import { VirusTotalService } from "@services/virus-total.service";
@@ -54,7 +57,7 @@ export class VirusTotalComponent {
 
       const url = btoa(this.urlInput).replace(/=/g, "");
       const apiUrl = `https://www.virustotal.com/api/v3/urls/${encodeURIComponent(
-        url
+        url,
       )}`;
 
       this.virusTotalService
@@ -62,50 +65,66 @@ export class VirusTotalComponent {
         .then((data: Response) => {
           if (data.status == "success") {
             if (data.data && data.data != "") {
-              const json = data.data;
+              if (Common.isJsonAsString(data.data)) {
+                const json = JSON.parse(data.data);
+                if (!json.error) {
+                  const colors = [
+                    "green-600",
+                    "yellow-300",
+                    "orange-500",
+                    "red-600",
+                  ];
 
-              const colors = [
-                "green-600",
-                "yellow-300",
-                "orange-500",
-                "red-600",
-              ];
+                  this.milicious =
+                    json.data.attributes.last_analysis_stats.malicious || 0;
+                  this.allAntivirus = Object.keys(
+                    json.data.attributes.last_analysis_results,
+                  ).length;
+                  this.circleBlockColor =
+                    colors[
+                      Math.floor(
+                        (this.milicious / this.allAntivirus) *
+                          (colors.length - 1),
+                      )
+                    ];
 
-              this.milicious =
-                json.data.attributes.last_analysis_stats.malicious || 0;
-              this.allAntivirus = Object.keys(
-                json.data.attributes.last_analysis_results
-              ).length;
-              this.circleBlockColor =
-                colors[
-                  Math.floor(
-                    (this.milicious / this.allAntivirus) * colors.length
-                  )
-                ];
+                  this.listAntiviruses = [];
+                  const sites_analysis =
+                    json.data.attributes.last_analysis_results;
+                  Object.values(sites_analysis).forEach((elem: any) => {
+                    this.listAntiviruses.push({
+                      status: elem.result,
+                      name: elem.engine_name,
+                    });
+                  });
 
-              this.listAntiviruses = [];
-              const sites_analysis = json.data.attributes.last_analysis_results;
-              Object.values(sites_analysis).forEach((elem: any) => {
-                this.listAntiviruses.push({
-                  status: elem.result,
-                  name: elem.engine_name,
-                });
-              });
-
-              this.reqText = "";
-              this.isChecked = true;
-              this.dataNotify.next({
-                status: "success",
-                text: "Checked ended successfully!",
-              });
+                  this.reqText = "";
+                  this.isChecked = true;
+                  this.dataNotify.next({
+                    status: "success",
+                    text: "Checked ended successfully!",
+                  });
+                } else {
+                  this.dataNotify.next({
+                    status: "error",
+                    text: "VirusTotal API returned an error!",
+                  });
+                  this.milicious = 0;
+                  this.allAntivirus = 0;
+                  this.circleBlockColor = "";
+                  this.listAntiviruses = [];
+                  this.reqText = "";
+                  this.isChecked = false;
+                }
+              }
             }
           }
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
           this.dataNotify.next({
             status: "error",
-            text: err.message,
+            text: err,
           });
           this.reqText = "Errors occurred when executing the request!";
         });

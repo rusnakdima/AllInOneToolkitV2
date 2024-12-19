@@ -18,7 +18,14 @@ import { PaginationComponent } from "@views/shared/pagination/pagination.compone
 @Component({
   selector: "app-search-page",
   standalone: true,
-  imports: [CommonModule, NgxPaginationModule, SearchComponent, TileItemComponent, ShowItemComponent, PaginationComponent],
+  imports: [
+    CommonModule,
+    NgxPaginationModule,
+    SearchComponent,
+    TileItemComponent,
+    ShowItemComponent,
+    PaginationComponent,
+  ],
   templateUrl: "./search-page.component.html",
 })
 export class SearchPageComponent {

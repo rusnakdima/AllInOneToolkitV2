@@ -5,7 +5,6 @@ use crate::services::unicode;
 use crate::models::response::Response;
 
 #[tauri::command]
-pub fn get_info_symbol(type_coding: String, content: String) -> String {
-  let res: Response = unicode::get_info_symbol(type_coding, content);
-  format!("{}", serde_json::to_string(&res).unwrap())
+pub fn get_info_symbol(type_coding: String, content: String) -> Response {
+  return unicode::get_info_symbol(type_coding, content);
 }

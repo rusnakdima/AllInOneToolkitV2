@@ -1,4 +1,17 @@
 export class Common {
+  static isJson(data: Object): boolean {
+    return typeof data === "object";
+  }
+
+  static isJsonAsString(data: string): boolean {
+    try {
+      const parsed = JSON.parse(data);
+      return typeof parsed === "object" && parsed !== null;
+    } catch (e) {
+      return false;
+    }
+  }
+
   static formatTime(date: Date | string): string {
     if (typeof date === "string") {
       date = new Date(date);

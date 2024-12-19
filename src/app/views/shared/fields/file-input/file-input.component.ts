@@ -1,4 +1,4 @@
-/* system libraries */
+/* sys lib */
 import { CommonModule } from "@angular/common";
 import {
   Component,
@@ -45,7 +45,10 @@ export class FileInputComponent implements OnInit, OnDestroy {
     listen("tauri://drag-drop", (event) => {
       if (event) {
         this.filePath = (event.payload as { [key: string]: any })["paths"][0];
-        let fileExt = ((this.filePath.replace(/\\/g, "/").split("/").pop() ?? '').split(".")[1] ?? '');
+        let fileExt =
+          (this.filePath.replace(/\\/g, "/").split("/").pop() ?? "").split(
+            ".",
+          )[1] ?? "";
         if (fileExt == "xlsx" || fileExt == "xlsm" || fileExt == "xls") {
           fileExt = "xls";
         }
@@ -80,7 +83,8 @@ export class FileInputComponent implements OnInit, OnDestroy {
 
   async getDataFile() {
     if (this.typeFile == "xls") {
-      await this.fileService.getDataFromXLS(this.filePath)
+      await this.fileService
+        .getDataFromXLS(this.filePath)
         .then((data: Response) => {
           if (data.status == "success") {
             this.dataFile.next(data.data);
@@ -91,7 +95,8 @@ export class FileInputComponent implements OnInit, OnDestroy {
           this.dataNotify.next({ status: "error", text: err });
         });
     } else if (this.typeFile != "") {
-      await this.fileService.getDataFromAnyFile(this.filePath)
+      await this.fileService
+        .getDataFromAnyFile(this.filePath)
         .then((data: Response) => {
           if (data.status == "success") {
             this.dataFile.next(data.data);
@@ -105,9 +110,14 @@ export class FileInputComponent implements OnInit, OnDestroy {
   }
 
   async chooseFile() {
-    await this.fileService.chooseFile(this.typeFile).catch((err) => {
-      console.error(err);
-      this.dataNotify.next({ status: "error", text: err });
-    });
+    await this.fileService
+      .chooseFile(this.typeFile)
+      .then((data: Response) => {
+        this.dataNotify.next({ status: data.status, text: data.message });
+      })
+      .catch((err) => {
+        console.error(err);
+        this.dataNotify.next({ status: "error", text: err });
+      });
   }
 }

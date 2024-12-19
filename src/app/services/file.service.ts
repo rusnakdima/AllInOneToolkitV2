@@ -16,32 +16,26 @@ export class FileService {
   }
 
   async chooseFile(typeFile: string): Promise<any> {
-    const rawRes = (await invoke("choose_file", { typeFile })) as string;
-    return Response.fromJson(JSON.parse(rawRes));
+    return (await invoke("choose_file", { typeFile })) as Response;
   }
 
   async getDataFromAnyFile(filePath: string): Promise<Response> {
-    const rawRes = (await invoke("get_data_file_by_path", { filePath })) as string;
-    return Response.fromJson(JSON.parse(rawRes));
+    return (await invoke("get_data_file_by_path", { filePath })) as Response;
   }
 
   async getDataFromXLS(filePath: string): Promise<Response> {
-    const rawRes = (await invoke("get_data_file_by_path_xls", { filePath })) as string;
-    return Response.fromJson(JSON.parse(rawRes));
+    return (await invoke("get_data_file_by_path_xls", { filePath })) as Response;
   }
 
   async writeDataToFile(nameFile: string, content: string, extension: string): Promise<any> {
-    const rawRes = (await invoke("write_data_to_file", { nameFile, content, extension })) as string;
-    return Response.fromJson(JSON.parse(rawRes));
+    return (await invoke("write_data_to_file", { nameFile, content, extension })) as Response;
   }
 
   async writeDataToFileXls(nameFile: string, content: Array<Array<any>>): Promise<any> {
-    const rawRes = (await invoke("write_data_to_file_xls", { nameFile, content })) as string;
-    return Response.fromJson(JSON.parse(rawRes));
+    return (await invoke("write_data_to_file_xls", { nameFile, content })) as Response;
   }
 
   async openFileInApp(pathFile: string): Promise<any> {
-    const rawRes = (await invoke("open_file_in_app", { path: pathFile })) as string;
-    return Response.fromJson(JSON.parse(rawRes));
+    return (await invoke("open_file_in_app", { path: pathFile })) as Response;
   }
 }

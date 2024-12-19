@@ -11,7 +11,10 @@ use tauri_plugin_dialog::DialogExt;
 use crate::helpers::common;
 
 /* models */
-use crate::models::response::Response;
+use crate::models::response::{
+  DataValue,
+  Response
+};
 
 fn send_file_path(app_handle: tauri::AppHandle, file_path: String) {
   let _ = app_handle.emit("send_file_path", file_path);
@@ -42,7 +45,7 @@ pub fn open_dialog_window(app_handle: tauri::AppHandle, type_file: &str) -> Resp
   return Response {
     status: "error".to_string(),
     message: "Error!".to_string(),
-    data: "".to_string()
+    data: DataValue::String("".to_string())
   }
 }
 
@@ -56,14 +59,14 @@ pub fn get_data_file_by_path(file_path: String) -> Response {
       return Response {
         status: "success".to_string(),
         message: "".to_string(),
-        data: content
+        data: DataValue::String(content)
       };
     }
     Err(err) => {
       return Response {
         status: "error".to_string(),
         message: format!("Error: {:?}!", err),
-        data: "".to_string()
+        data: DataValue::String("".to_string())
       };
     }
   }
@@ -79,7 +82,7 @@ pub fn write_data_to_file(app_handle: tauri::AppHandle, name_file: String, conte
     return Response {
       status: "error".to_string(),
       message: "Error! Failed to get document folder.".to_string(),
-      data: "".to_string()
+      data: DataValue::String("".to_string())
     };
   }
 
@@ -90,7 +93,7 @@ pub fn write_data_to_file(app_handle: tauri::AppHandle, name_file: String, conte
       return Response {
         status: "error".to_string(),
         message: format!("Error! Failed to create app folder: {:?}", res_create),
-        data: "".to_string()
+        data: DataValue::String("".to_string())
       };
     }
   }
@@ -101,7 +104,7 @@ pub fn write_data_to_file(app_handle: tauri::AppHandle, name_file: String, conte
     return Response {
       status: "error".to_string(),
       message: format!("Error! Failed to create file!"),
-      data: "".to_string()
+      data: DataValue::String("".to_string())
     };
   }
 
@@ -110,14 +113,14 @@ pub fn write_data_to_file(app_handle: tauri::AppHandle, name_file: String, conte
     return Response {
       status: "error".to_string(),
       message: format!("Error! Failed to write data to file!"),
-      data: "".to_string()
+      data: DataValue::String("".to_string())
     };
   }
 
   return Response {
     status: "success".to_string(),
     message: "".to_string(),
-    data: format!("{}", file_path.display())
+    data: DataValue::String(file_path.display().to_string())
   };
 }
 
@@ -126,13 +129,13 @@ pub fn open_file(path: String) -> Response {
     return Response {
       status: "error".to_string(),
       message: format!("Failed to open file:: {}", err),
-      data: "".to_string()
+      data: DataValue::String("".to_string())
     }
   }
 
   return Response {
     status: "success".to_string(),
     message: "".to_string(),
-    data: format!("")
-  }
+    data: DataValue::String("".to_string())
+  };
 }

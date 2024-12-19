@@ -7,6 +7,9 @@ import { Subject } from "rxjs";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 
+/* models */
+import { Response } from "@models/response";
+
 /* services */
 import { UnicodeConverterService } from "@services/unicode-converter.service";
 
@@ -15,7 +18,6 @@ import {
   INotify,
   WindowNotifyComponent,
 } from "@views/shared/window-notify/window-notify.component";
-import { Response } from "@models/response";
 
 @Component({
   selector: "app-unicode-converter",
@@ -68,10 +70,10 @@ export class UnicodeConverterComponent {
             }
           })
           .catch((err) => {
-            console.log(err);
+            console.error(err);
             this.dataNotify.next({
               status: "error",
-              text: err.message,
+              text: err,
             });
           });
       });

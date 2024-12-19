@@ -1,4 +1,4 @@
-/* system libraries */
+/* sys lib */
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { Subject } from "rxjs";
@@ -85,7 +85,6 @@ export class PlistToTableComponent {
     for (let i = 0; i <= array.length - 1; i = i + 2) {
       const element = array[i];
       const element1 = array[i + 1];
-      console.log(element1.nodeName);
       if (element1.nodeName == "dict") {
         tempRow.push(
           this.parseData([...element1.children], element.textContent, padLeft)
@@ -156,8 +155,5 @@ export class PlistToTableComponent {
     let xmlDoc = parser.parseFromString(this.xmlData, "text/xml");
     let dict = xmlDoc.children[0].children[0];
     this.dataDetails = this.parseData(Array.from(dict.children), "Root", 20);
-    setTimeout(() => {
-      console.log(this.dataDetails);
-    }, 500);
   }
 }

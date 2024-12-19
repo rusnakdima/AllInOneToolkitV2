@@ -1,4 +1,4 @@
-/* system libraries */
+/* sys lib */
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { Subject } from "rxjs";
@@ -118,7 +118,7 @@ export class JsonToXmlComponent {
           console.error(err);
           this.dataNotify.next({
             status: "error",
-            text: `An error occurred while saving the data to a file: ${err.message}`,
+            text: `An error occurred while saving the data to a file: ${err}`,
           });
         });
     } else if (this.dataXml == "") {
@@ -148,7 +148,7 @@ export class JsonToXmlComponent {
         })
         .catch((err: any) => {
           console.error(err);
-          this.dataNotify.next({ status: "error", text: err.message });
+          this.dataNotify.next({ status: "error", text: err });
         });
     } else {
       this.dataNotify.next({

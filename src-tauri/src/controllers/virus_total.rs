@@ -5,7 +5,6 @@ use crate::services::virus_total;
 use crate::models::response::Response;
 
 #[tauri::command]
-pub async fn virus_total(url: String) -> String {
-  let res: Response = virus_total::req_site(url).await;
-  format!("{}", serde_json::to_string(&res).unwrap())
+pub async fn virus_total(url: String) -> Response {
+  return virus_total::req_site(url).await;
 }

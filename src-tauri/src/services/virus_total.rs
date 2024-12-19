@@ -2,7 +2,10 @@
 use tauri_plugin_http::reqwest;
 
 /* models */
-use crate::models::response::Response;
+use crate::models::response::{
+  DataValue,
+  Response
+};
 
 pub async fn req_site(url: String) -> Response {
   let client = reqwest::Client::new();
@@ -14,14 +17,14 @@ pub async fn req_site(url: String) -> Response {
       return Response {
         status: "success".to_string(),
         message: "".to_string(),
-        data: json,
+        data: DataValue::String(json),
       }
     }
     Err(err) => {
       return Response {
         status: "error".to_string(),
         message: format!("Error fetching data: {}", err),
-        data: "".to_string(),
+        data: DataValue::String("".to_string()),
       }
     }
   }
