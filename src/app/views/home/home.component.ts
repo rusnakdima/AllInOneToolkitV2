@@ -1,6 +1,7 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from "@angular/core";
+import { RouterModule } from "@angular/router";
 import { Subject } from "rxjs";
 
 /* models */
@@ -23,6 +24,7 @@ import {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     CommonModule,
+    RouterModule,
     CardItemComponent,
     TileItemComponent,
     WindowNotifyComponent,

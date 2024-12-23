@@ -16,26 +16,26 @@ export class FileService {
   }
 
   async chooseFile(typeFile: string): Promise<any> {
-    return (await invoke("choose_file", { typeFile })) as Response;
+    return await invoke<Response>("choose_file", { typeFile });
   }
 
   async getDataFromAnyFile(filePath: string): Promise<Response> {
-    return (await invoke("get_data_file_by_path", { filePath })) as Response;
+    return await invoke<Response>("get_data_file_by_path", { filePath });
   }
 
   async getDataFromXLS(filePath: string): Promise<Response> {
-    return (await invoke("get_data_file_by_path_xls", { filePath })) as Response;
+    return await invoke<Response>("get_data_file_by_path_xls", { filePath });
   }
 
   async writeDataToFile(nameFile: string, content: string, extension: string): Promise<any> {
-    return (await invoke("write_data_to_file", { nameFile, content, extension })) as Response;
+    return await invoke<Response>("write_data_to_file", { nameFile, content, extension });
   }
 
   async writeDataToFileXls(nameFile: string, content: Array<Array<any>>): Promise<any> {
-    return (await invoke("write_data_to_file_xls", { nameFile, content })) as Response;
+    return await invoke<Response>("write_data_to_file_xls", { nameFile, content });
   }
 
   async openFileInApp(pathFile: string): Promise<any> {
-    return (await invoke("open_file_in_app", { path: pathFile })) as Response;
+    return await invoke<Response>("open_file_in_app", { path: pathFile });
   }
 }

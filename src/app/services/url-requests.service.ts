@@ -14,14 +14,14 @@ export class UrlRequestsService {
   constructor() {}
 
   async sendRequest(infoRequest: Request): Promise<Response> {
-    return (await invoke("send_request", { infoRequest })) as Response;
+    return await invoke<Response>("send_request", { infoRequest });
   }
 
   async saveData(listCollections: Array<Collection>): Promise<Response> {
-    return (await invoke("save_data", { listCollections })) as Response;
+    return await invoke<Response>("save_data", { listCollections });
   }
 
   async getData(): Promise<Response> {
-    return (await invoke("get_data")) as Response;
+    return await invoke<Response>("get_data");
   }
 }

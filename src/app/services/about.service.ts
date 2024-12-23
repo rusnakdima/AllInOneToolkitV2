@@ -27,29 +27,29 @@ export class AboutService {
   getDate(version: string): Observable<any> {
     return this.http.get<any>(
       `https://api.github.com/repos/rusnakdima/${this.nameProduct}/releases/tags/v${version}`,
-      httpOptions,
+      httpOptions
     );
   }
 
   async getBinaryNameFile(): Promise<Response> {
-    return (await invoke("get_binary_name_file")) as Response;
+    return await invoke<Response>("get_binary_name_file");
   }
 
   checkUpdate(): Observable<any> {
     return this.http.get<any>(
       `https://api.github.com/repos/rusnakdima/${this.nameProduct}/releases/latest`,
-      httpOptions,
+      httpOptions
     );
   }
 
   async downloadUpdate(version: string, nameFile: string): Promise<Response> {
-    return (await invoke("download_update", {
+    return await invoke<Response>("download_update", {
       url: `https://github.com/rusnakdima/${this.nameProduct}/releases/download/${version}/${nameFile}`,
       fileName: nameFile,
-    })) as Response;
+    });
   }
 
   async openFile(path: string): Promise<Response> {
-    return (await invoke("open_file", { path: path })) as Response;
+    return await invoke<Response>("open_file", { path: path });
   }
 }

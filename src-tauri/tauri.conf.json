@@ -1,11 +1,11 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "allinonetoolkitv2",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "identifier": "com.tcs.allinonetoolkitv2",
   "build": {
     "beforeDevCommand": "pnpm start",
-    "devUrl": "http://localhost:1420",
+    "devUrl": "http://0.0.0.0:1420",
     "beforeBuildCommand": "pnpm build",
     "frontendDist": "../dist/allinonetoolkitv2/browser"
   },

@@ -108,6 +108,8 @@ export class HeaderComponent {
                 prevRouteTitle = catalog?.name ?? "";
               }
             }
+          } else if (route.snapshot.routeConfig?.path != "") {
+            prevRouteTitle = route.parent!.snapshot.data["breadcrumbs"];
           }
 
           return { prevRouteTitle, routeTitle, routeId, typeId };

@@ -12,6 +12,6 @@ export class VirusTotalService {
   constructor() { }
 
   async checkOnViruses(url: string): Promise<Response> {
-    return (await invoke("virus_total", { url })) as Response;
+    return await invoke<Response>("virus_total", { url });
   }
 }
