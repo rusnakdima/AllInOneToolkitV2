@@ -248,7 +248,7 @@ pre {
 
 .mat-icon,
 .material-icons {
-  @apply !w-[35px] !h-[33px] !text-3xl
+  @apply w-[35px] h-[33px] text-3xl
 }
 
 .ngx-pagination {
