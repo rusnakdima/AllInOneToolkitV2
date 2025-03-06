@@ -52,7 +52,7 @@ export class UnicodeConverterComponent {
   convertData() {
     this.listResult = [];
     if (this.inputText != "") {
-      this.inputText.split("").map((symbol: string) => {
+      this.inputText.replaceAll(/;\s*/gi, ";").split(";").map((symbol: string) => {
         this.unicodeConverterService
           .getInfoSymbol(this.typeCoding, symbol)
           .then((data: Response) => {

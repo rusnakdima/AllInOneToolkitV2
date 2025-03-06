@@ -23,7 +23,7 @@
 
   <div class="flex flex-col gap-y-3">
     <mat-form-field>
-      <mat-label>Enter the {{ (typeCoding == "symbol") ? "symbol" : (typeCoding == "dec") ? "decimal" : "hexadecimal" }}</mat-label>
+      <mat-label>Enter the {{ (typeCoding == "symbol") ? "symbol" : (typeCoding == "dec") ? "decimal" : "hexadecimal" }}(s) (separated by a separator ;)</mat-label>
       <textarea matInput (change)="setData($event)" rows="2"></textarea>
     </mat-form-field>
 
