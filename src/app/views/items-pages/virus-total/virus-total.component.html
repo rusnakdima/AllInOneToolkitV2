@@ -24,13 +24,13 @@
         @for (antiv of listAntiviruses; track antiv) {
           <div class="flex flex-col justify-center items-center rounded-lg p-2 bg-gray-300 dark:bg-gray-800 !w-[150px] !h-[150px]">
             @if (antiv['status'] == "clean") {
-              <ion-icon name="checkmark-circle-outline" class="!text-green-600 !fill-green-600 !w-[90px] !h-[90px]" />
+              <mat-icon fontIcon="check_circle" class="!text-green-600 !fill-green-600 !text-7xl !w-[72px] !h-[72px]" />
             } @else if (antiv['status'] == "suspicious") {
-              <ion-icon name="information-circle-outline" class="!text-orange-500 !fill-orange-500 !w-[90px] !h-[90px]" />
+              <mat-icon fontIcon="info" class="!text-orange-500 !fill-orange-500 !text-7xl !w-[72px] !h-[72px]" />
             } @else if (antiv['status'] == "malicious") {
-              <ion-icon name="alert-circle-outline" class="!text-red-600 !fill-red-600 !w-[90px] !h-[90px]" />
+              <mat-icon fontIcon="error" class="!text-red-600 !fill-red-600 !text-7xl !w-[72px] !h-[72px]" />
             } @else {
-              <ion-icon name="help-circle-outline" class="!text-gray-500 !fill-gray-500 !w-[90px] !h-[90px]" />
+              <mat-icon fontIcon="help" class="!text-gray-500 !fill-gray-500 !text-7xl !w-[72px] !h-[72px]" />
             }
             <span class="text-center">{{antiv['name']}}</span>
           </div>

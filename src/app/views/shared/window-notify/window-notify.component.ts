@@ -3,6 +3,9 @@ import { CommonModule } from "@angular/common";
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from "@angular/core";
 import { Subject } from "rxjs";
 
+/* materials */
+import { MatIconModule } from "@angular/material/icon";
+
 export interface INotify {
   status: "success" | "warning" | "error";
   text: string;
@@ -12,7 +15,7 @@ export interface INotify {
   selector: "app-window-notify",
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: "./window-notify.component.html",
 })
 export class WindowNotifyComponent {

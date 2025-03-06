@@ -3,7 +3,7 @@
     <div class="styleTD flex flex-row items-center w-full">
       <div class="w-1/3">
         <span class="font-normal flex flex-row items-center" [style]="{'padding-left': dataDetails.head.padLeft+'px'}">
-          <ion-icon [name]="dataDetails.head.open ? 'remove-circle-outline' : 'add-circle-outline'" />
+          <mat-icon [fontIcon]="dataDetails.head.open ? 'keyboard_arrow_up' : 'keyboard_arrow_down'" />
           {{dataDetails.head.key}}
         </span>
       </div>

@@ -9,7 +9,10 @@
     <span>{{ value }}</span>
   }
   <div class="absolute flex flex-col right-2 top-2">
-    <ion-icon class="cursor-pointer" name="copy" (click)="copyData()" />
+    <mat-icon
+      class="!w-[35px] !h-[35px] cursor-pointer"
+      fontIcon="content_copy"
+      (click)="copyData()" />
   </div>
 </div>
 

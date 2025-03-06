@@ -2,11 +2,14 @@
 import { CommonModule } from "@angular/common";
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from "@angular/core";
 
+/* materials */
+import { MatIconModule } from "@angular/material/icon";
+
 @Component({
   selector: "app-wheel-fortune",
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: "./wheel-fortune.component.html",
 })
 export class WheelFortuneComponent implements OnInit {

@@ -2,6 +2,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core';
 
+/* materials */
+import { MatIconModule } from '@angular/material/icon';
+
 interface HeadData {
   key: string;
   type: string;
@@ -28,7 +31,7 @@ interface DetailsData {
   schemas: [
     CUSTOM_ELEMENTS_SCHEMA
   ],
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './details.component.html'
 })
 export class DetailsComponent {

@@ -1,15 +1,15 @@
 @if (windNotify) {
   <div id="windNotify" class="styleWindNotify" [ngClass]="[color]">
-    <div class="flex flex-row p-3 items-start">
+    <div class="flex flex-row items-start gap-x-2 p-3">
       <div class="flex flex-col">
         <div class="flex flex-row gap-x-2">
-          <ion-icon class="text-4xl mr-3" name="notifications-outline"></ion-icon>
+          <mat-icon class="!w-[40px] !h-[40px] !text-4xl mr-3" fontIcon="notifications" />
           <span class="text-2xl">Notification</span>
         </div>
         <span>{{text}}</span>
       </div>
       <button (click)="windNotify = false">
-        <ion-icon name="close-outline" class="!w-7 !h-7"></ion-icon>
+        <mat-icon class="!w-7 !h-7 !text-xl" fontIcon="cancel_outline" />
       </button>
     </div>
     <div class="flex flex-col mb-1 bg-white w-full h-1" id="timeNotify"></div>

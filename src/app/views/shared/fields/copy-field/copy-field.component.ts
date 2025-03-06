@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core';
 import { Subject } from 'rxjs';
 
+/* materials */
+import { MatIconModule } from '@angular/material/icon';
+
 /* components */
 import { INotify, WindowNotifyComponent } from '@views/shared/window-notify/window-notify.component';
 
@@ -10,7 +13,7 @@ import { INotify, WindowNotifyComponent } from '@views/shared/window-notify/wind
   selector: 'app-copy-field',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, WindowNotifyComponent],
+  imports: [CommonModule, MatIconModule, WindowNotifyComponent],
   templateUrl: './copy-field.component.html'
 })
 export class CopyFieldComponent {

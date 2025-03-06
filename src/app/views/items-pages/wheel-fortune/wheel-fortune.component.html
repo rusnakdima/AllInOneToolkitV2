@@ -51,9 +51,9 @@
 
         <div class="flex md:hidden flex-col py-2 styleBorderSolid" [ngClass]="isShowPanel ? 'border-l' : ''">
           @if (isShowPanel) {
-            <ion-icon class="cursor-pointer" name="chevron-forward" (click)="isShowPanel = false" />
+            <mat-icon class="cursor-pointer" fontIcon="chevron_right" (click)="isShowPanel = false" />
           } @else {
-            <ion-icon class="cursor-pointer" name="chevron-back" (click)="isShowPanel = true" />
+            <mat-icon class="cursor-pointer" fontIcon="chevron_left" (click)="isShowPanel = true" />
           }
         </div>
       </div>

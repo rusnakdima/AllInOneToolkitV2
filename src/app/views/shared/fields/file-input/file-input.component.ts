@@ -12,6 +12,9 @@ import {
 import { listen } from "@tauri-apps/api/event";
 import { Subject } from "rxjs";
 
+/* materials */
+import { MatIconModule } from "@angular/material/icon";
+
 /* services */
 import { FileService } from "@services/file.service";
 
@@ -26,7 +29,7 @@ import { Response } from "@models/response";
   selector: "app-file-input",
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, WindowNotifyComponent],
+  imports: [CommonModule, MatIconModule, WindowNotifyComponent],
   templateUrl: "./file-input.component.html",
 })
 export class FileInputComponent implements OnInit, OnDestroy {

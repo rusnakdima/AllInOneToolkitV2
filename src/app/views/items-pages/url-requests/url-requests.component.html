@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-y-5 p-3 h-full" [style.width]="widthLeftSidebar + 'px'">
     <div class="flex flex-row !rounded-none styleBorderSolidLite border-b">
       <button (click)="createCollection()">
-        <ion-icon name="add" matTooltip="Create new collection" />
+        <mat-icon name="add" matTooltip="Create new collection" />
       </button>
     </div>
 
@@ -20,10 +20,10 @@
 
                 <div class="absolute flex flex-row justify-center items-center gap-x-1 right-0">
                   <button (click)="confirmRenameCollection($event, coll)">
-                    <ion-icon name="checkmark-outline" matTooltip="Save" />
+                    <mat-icon name="checkmark-outline" matTooltip="Save" />
                   </button>
                   <button (click)="cancelRenameCollection($event, coll)">
-                    <ion-icon name="close-outline" matTooltip="Cancel" />
+                    <mat-icon name="close-outline" matTooltip="Cancel" />
                   </button>
                 </div>
               } @else {
@@ -31,10 +31,10 @@
                 @if (hoveredCollIndex == i) {
                   <div class="flex flex-row gap-x-2">
                     <button (click)="renameCollection(coll)">
-                      <ion-icon class="!text-base" name="create-outline" matTooltip="Rename collection" />
+                      <mat-icon class="!text-base" name="create-outline" matTooltip="Rename collection" />
                     </button>
                     <button (click)="deleteCollection(i)">
-                      <ion-icon class="!text-base" name="trash-outline" matTooltip="Delete collection" />
+                      <mat-icon class="!text-base" name="trash-outline" matTooltip="Delete collection" />
                     </button>
                   </div>
                 }
@@ -45,7 +45,7 @@
           <div class="flex flex-col gap-y-5 p-2">
             <div class="flex flex-row !rounded-none styleBorderSolidLite border-b">
               <button (click)="createRequest(coll)">
-                <ion-icon name="add" matTooltip="Create request" />
+                <mat-icon name="add" matTooltip="Create request" />
               </button>
             </div>
 
@@ -65,10 +65,10 @@
 
                         <div class="absolute flex flex-row justify-center items-center gap-x-1 right-4">
                           <button (click)="confirmRenameRequest($event, req)">
-                            <ion-icon name="checkmark-outline" matTooltip="Save request" />
+                            <mat-icon name="checkmark-outline" matTooltip="Save request" />
                           </button>
                           <button (click)="cancelRenameRequest($event, req)">
-                            <ion-icon name="close-outline" matTooltip="Rename request" />
+                            <mat-icon name="close-outline" matTooltip="Rename request" />
                           </button>
                         </div>
                       </div>
@@ -78,10 +78,10 @@
                         @if (hoveredReqIndex == j) {
                           <div class="flex flex-row gap-x-2">
                             <button (click)="renameRequest(req)">
-                              <ion-icon class="!text-lg" name="create-outline" matTooltip="Rename request" />
+                              <mat-icon class="!text-lg" name="create-outline" matTooltip="Rename request" />
                             </button>
                             <button (click)="deleteRequest(coll, j)">
-                              <ion-icon class="!text-lg" name="trash-outline" matTooltip="Delete collection" />
+                              <mat-icon class="!text-lg" name="trash-outline" matTooltip="Delete collection" />
                             </button>
                           </div>
                         }
@@ -96,7 +96,7 @@
           @if (coll.requests.length == 0) {
             <div class="flex flex-col h-full text-center">
               <span>No requests found</span>
-              <span>Click the <ion-icon class="styleLinkRedir" name="add" /> button to create a request</span>
+              <span>Click the <mat-icon class="styleLinkRedir" name="add" /> button to create a request</span>
             </div>
           }
         </mat-expansion-panel>
@@ -105,7 +105,7 @@
       @if (listCollections.length == 0) {
         <div class="flex flex-col h-full text-center">
           <span>No collections found</span>
-          <span>Click the <ion-icon class="styleLinkRedir" name="add" /> button to create a collection</span>
+          <span>Click the <mat-icon class="styleLinkRedir" name="add" /> button to create a collection</span>
         </div>
       }
     </div>
@@ -126,7 +126,7 @@
         </div>
 
         <button class="styleFloatBut" (click)="saveData()">
-          <ion-icon name="save-outline" matTooltip="Save changes" />
+          <mat-icon name="save-outline" matTooltip="Save changes" />
           <span>Save</span>
         </button>
       </div>
@@ -239,7 +239,7 @@
             <td class="styleTD">
               @if (item.key != "") {
                 <button (click)="deleteRec(getList(type), $index)">
-                  <ion-icon class="!text-xl" name="trash-outline" matTooltip="Delete collection" />
+                  <mat-icon class="!text-xl" name="trash-outline" matTooltip="Delete collection" />
                 </button>
               }
             </td>

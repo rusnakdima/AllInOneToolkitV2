@@ -2,27 +2,23 @@
   <div class="flex flex-row justify-end px-2 pb-2 !rounded-none styleBorderSolidLite border-b">
     <button class="styleFloatBut" (click)="changeTypeView()">
       @if (typeViewList == 'grid') {
-        <ion-icon name="grid" />
+        <mat-icon class="!w-[32px] !h-[32px] !text-3xl" fontIcon="grid_view" />
       } @else if (typeViewList == 'list') {
-        <ion-icon name="list" />
+        <mat-icon class="!w-[32px] !h-[32px] !text-3xl" fontIcon="list" />
       }
     </button>
   </div>
 
   @if (typeViewList == 'grid') {
-    <div class="flex flex-row flex-wrap gap-3 h-[200px]">
+    <div class="flex flex-row flex-wrap gap-3" [ngClass]="listRecentLinks.length > 0 ? 'h-[200px]' : 'h-0'">
       @for (link of listRecentLinks; track link) {
-        <app-card-item
-          [link]="link"
-        ></app-card-item>
+        <app-card-item [link]="link" />
       }
     </div>
   } @else if (typeViewList == 'list') {
     <div class="flex flex-col gap-y-3">
       @for (link of listRecentLinks; track link) {
-        <app-tile-item
-          [link]="link"
-        ></app-tile-item>
+        <app-tile-item [link]="link" />
       }
     </div>
   } @else {
@@ -34,9 +30,9 @@
   @if (listRecentLinks.length == 0) {
     <div class="flex flex-col items-center justify-center gap-y-3">
       <span class="text-2xl">You haven't used more than one tool yet.</span>
-      <span class="text-2xl">Click the <ion-icon
-        class="styleLinkRedir cursor-pointer"
-        name="search"
+      <span class="text-2xl">Click the <mat-icon
+        class="styleLinkRedir !w-[36px] !h-[36px] !text-3xl cursor-pointer"
+        fontIcon="search"
       /> or <a [routerLink]="['/search']" class="styleLinkRedir">Search</a> button to start using the tools</span>
     </div>
   }

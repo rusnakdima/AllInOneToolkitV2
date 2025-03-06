@@ -4,6 +4,9 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Subject } from "rxjs";
 
+/* materials */
+import { MatIconModule } from "@angular/material/icon";
+
 /* models */
 import { Link } from "@models/link";
 
@@ -25,6 +28,7 @@ import {
   imports: [
     CommonModule,
     RouterModule,
+    MatIconModule,
     CardItemComponent,
     TileItemComponent,
     WindowNotifyComponent,

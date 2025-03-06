@@ -3,24 +3,29 @@ import { CommonModule } from "@angular/common";
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
 import { Subject } from "rxjs";
 
+/* materials */
+import { MatIconModule } from "@angular/material/icon";
+
 /* helpers */
 import { Common } from "@helpers/common";
 
 /* services */
 import { VirusTotalService } from "@services/virus-total.service";
 
+/* models */
+import { Response } from "@models/response";
+
 /* components */
 import {
   INotify,
   WindowNotifyComponent,
 } from "@views/shared/window-notify/window-notify.component";
-import { Response } from "@models/response";
 
 @Component({
   selector: "app-virus-total",
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, WindowNotifyComponent],
+  imports: [CommonModule, MatIconModule, WindowNotifyComponent],
   templateUrl: "./virus-total.component.html",
 })
 export class VirusTotalComponent {
