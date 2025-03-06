@@ -2,7 +2,7 @@
   <div class="flex flex-row justify-between px-2 pb-2 !rounded-none styleBorderSolidLite border-b">
     <div class="styleFloatBut">
       <button class="flex flex-col items-center justify-center" (click)="refresh()" id="refreshBut">
-        <mat-icon fontIcon="refresh" />
+        <mat-icon class="!w-[35px] !h-[35px]" fontIcon="refresh" />
       </button>
     </div>
 
@@ -13,9 +13,9 @@
       ></app-search>
       <button class="styleFloatBut" (click)="changeTypeView()">
         @if (typeViewList == 'grid') {
-          <mat-icon fontIcon="grid_view" />
+          <mat-icon class="!w-[35px] !h-[35px]" fontIcon="grid_view" />
         } @else if (typeViewList == 'list') {
-          <mat-icon fontIcon="list" />
+          <mat-icon class="!w-[35px] !h-[35px]" fontIcon="list" />
         }
       </button>
     </div>
