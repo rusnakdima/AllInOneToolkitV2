@@ -1,6 +1,8 @@
 /* sys lib */
 use std::fs::File;
 use std::io::Write;
+use dotenv::dotenv;
+use std::env;
 
 use tauri::Manager;
 use tauri_plugin_http::reqwest;
@@ -54,15 +56,17 @@ pub async fn download_file(app_handle: tauri::AppHandle, url: String, file_name:
 }
 
 pub async fn get_binary_name_file() -> Response {
-  let mut _name_app = String::new();
+  dotenv().ok();
+
+  let mut _name_app = env::var("NAME_APP").expect("NAME_APP not set");
   if cfg!(target_os = "linux") {
-    _name_app = "allinonetoolkitv2".to_string();
+    _name_app = _name_app.to_string();
   } else if cfg!(target_os = "windows") {
-    _name_app = "allinonetoolkitv2.exe".to_string();
+    _name_app = format!("{}.exe", _name_app);
   } else if cfg!(target_os = "macos") {
-    _name_app = "allinonetoolkitv2.app".to_string();
+    _name_app = format!("{}.app", _name_app);
   } else if cfg!(target_os = "android") {
-    _name_app = "allinonetoolkitv2.apk".to_string();
+    _name_app = format!("{}.apk", _name_app);
   } else {
     return Response {
       status: "error".to_string(),
