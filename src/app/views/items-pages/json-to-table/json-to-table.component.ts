@@ -32,7 +32,7 @@ export class JsonToTableComponent {
 
   dataNotify: Subject<INotify> = new Subject();
 
-  typeFile: string = "json";
+  typeFile: Array<string> = ["json"];
   jsonData: { [key: string]: any } = {};
 
   dataTable: TableData = { thead: [], tbody: [] };

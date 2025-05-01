@@ -27,7 +27,7 @@ export class JsonToXlsComponent {
 
   dataNotify: Subject<INotify> = new Subject();
 
-  typeFile: string = "json";
+  typeFile: Array<string> = ["json"];
   fileName: string = "";
   dataJson: { [key: string]: any } = {};
   dataXls: Array<any> = [];

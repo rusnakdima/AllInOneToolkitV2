@@ -29,7 +29,7 @@ export class XmlToXlsComponent {
 
   dataNotify: Subject<INotify> = new Subject();
 
-  typeFile: string = "xml";
+  typeFile: Array<string> = ["xml"];
   fileName: string = "";
   dataXml: string = "";
   dataXls: Array<any> = [];

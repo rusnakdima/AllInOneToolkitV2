@@ -21,7 +21,7 @@ export class WordCounterComponent {
 
   dataNotify: Subject<INotify> = new Subject();
 
-  typeFile: string = "txt";
+  typeFile: Array<string> = ["txt"];
 
   inputText: string = "";
   outputText: string = "";

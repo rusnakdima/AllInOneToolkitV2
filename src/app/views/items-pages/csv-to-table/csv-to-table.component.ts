@@ -25,7 +25,7 @@ export class CsvToTableComponent {
 
   dataNotify: Subject<INotify> = new Subject();
 
-  typeFile: string = "csv";
+  typeFile: Array<string> = ["csv"];
   arrCSV: Array<any> = [];
 
   dataTable: Array<any> = [];

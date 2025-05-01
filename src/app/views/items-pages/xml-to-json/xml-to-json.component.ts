@@ -27,7 +27,7 @@ export class XmlToJsonComponent {
 
   dataNotify: Subject<INotify> = new Subject();
 
-  typeFile: string = "xml";
+  typeFile: Array<string> = ["xml"];
   fileName: string = "";
   dataXml: string = "";
   dataJson: { [key: string]: any } | null = null;

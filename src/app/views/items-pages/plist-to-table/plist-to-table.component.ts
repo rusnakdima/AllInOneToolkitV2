@@ -51,7 +51,7 @@ export class PlistToTableComponent {
 
   dataNotify: Subject<INotify> = new Subject();
 
-  typeFile: string = "plist";
+  typeFile: Array<string> = ["plist"];
   xmlData: string = "";
   dataDetails: DetailsData = {
     head: { key: "", type: "", value: "", padLeft: 0, open: false },

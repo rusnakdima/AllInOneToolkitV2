@@ -15,7 +15,7 @@ export class FileService {
     return this.http.get<string>("https://raw.githubusercontent.com/rusnakdima/All_In_One_Toolkit_Tauri/refs/heads/master/css_library.json");
   }
 
-  async chooseFile(typeFile: string): Promise<any> {
+  async chooseFile(typeFile: Array<string>): Promise<any> {
     return await invoke<Response>("choose_file", { typeFile });
   }
 

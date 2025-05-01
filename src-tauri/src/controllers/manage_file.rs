@@ -5,7 +5,7 @@ use crate::services::manage_file;
 use crate::models::response::Response;
 
 #[tauri::command]
-pub fn choose_file(app_handle: tauri::AppHandle, type_file: &str) -> Response {
+pub fn choose_file(app_handle: tauri::AppHandle, type_file: Vec<&str>) -> Response {
   return manage_file::open_dialog_window(app_handle, type_file);
 }
 

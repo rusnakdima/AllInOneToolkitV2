@@ -17,18 +17,18 @@ use crate::models::response::{
 };
 
 fn send_file_path(app_handle: tauri::AppHandle, file_path: String) {
-  let _ = app_handle.emit("send_file_path", file_path);
+  let _ = app_handle.emit("send-file-path", file_path).unwrap();
 }
 
-pub fn open_dialog_window(app_handle: tauri::AppHandle, type_file: &str) -> Response {
+pub fn open_dialog_window(app_handle: tauri::AppHandle, type_file: Vec<&str>) -> Response {
   let mut _name_filter: String = String::new();
   let mut _list_ext: Vec<&str> = Vec::new();
-  if type_file == "xls" {
+  if type_file.contains(&"xls") || type_file.contains(&"xlsx") {
     _name_filter = "Excel Files".to_string();
     _list_ext = vec![&"xls", &"xlsx", &"xlsm"];
   } else {
-    _name_filter = format!("{} file", type_file.to_uppercase());
-    _list_ext = vec![type_file];
+    _name_filter = format!("{} file", type_file.join(",").to_uppercase());
+    _list_ext = type_file;
   }
 
   app_handle
@@ -43,8 +43,8 @@ pub fn open_dialog_window(app_handle: tauri::AppHandle, type_file: &str) -> Resp
     });
 
   return Response {
-    status: "error".to_string(),
-    message: "Error!".to_string(),
+    status: "success".to_string(),
+    message: "".to_string(),
     data: DataValue::String("".to_string())
   }
 }

@@ -15,6 +15,9 @@ import { Subject } from "rxjs";
 /* materials */
 import { MatIconModule } from "@angular/material/icon";
 
+/* models */
+import { Response } from "@models/response";
+
 /* services */
 import { FileService } from "@services/file.service";
 
@@ -23,7 +26,6 @@ import {
   INotify,
   WindowNotifyComponent,
 } from "@views/shared/window-notify/window-notify.component";
-import { Response } from "@models/response";
 
 @Component({
   selector: "app-file-input",
@@ -37,7 +39,7 @@ export class FileInputComponent implements OnInit, OnDestroy {
 
   dataNotify: Subject<INotify> = new Subject();
 
-  @Input() typeFile: string = "";
+  @Input() typeFile: Array<string> = [""];
   @Output() dataFile: EventEmitter<string> = new EventEmitter();
   @Output() reciveFileName: EventEmitter<string> = new EventEmitter();
 
@@ -46,33 +48,41 @@ export class FileInputComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     listen("tauri://drag-drop", (event) => {
-      if (event) {
-        this.filePath = (event.payload as { [key: string]: any })["paths"][0];
-        let fileExt =
-          (this.filePath.replace(/\\/g, "/").split("/").pop() ?? "").split(
-            ".",
-          )[1] ?? "";
-        if (fileExt == "xlsx" || fileExt == "xlsm" || fileExt == "xls") {
-          fileExt = "xls";
-        }
-        if (fileExt == this.typeFile) {
-          this.fileName = this.filePath.split(/[\/\\]/g).pop() ?? "";
-          this.reciveFileName.next(this.fileName);
-          this.getDataFile();
-        } else {
-          this.dataNotify.next({
-            status: "error",
-            text: "Invalid file type",
-          });
-        }
-      }
+      this.checkFileExt(event);
     });
 
     this.getFilePath();
   }
 
   ngOnDestroy(): void {
-    this.typeFile = "";
+    this.typeFile = [];
+  }
+
+  checkFileExt(event: any) {
+    if (event) {
+      if (typeof event.payload == "object") {
+        this.filePath = (event.payload as { [key: string]: any })["paths"][0];
+      } else if (typeof event.payload == "string") {
+        this.filePath = event.payload;
+      }
+      let fileExt =
+        (this.filePath.replace(/\\/g, "/").split("/").pop() ?? "").split(
+          "."
+        )[1] ?? "";
+      if (fileExt == "xlsx" || fileExt == "xlsm" || fileExt == "xls") {
+        fileExt = "xls";
+      }
+      if (this.typeFile.includes(fileExt)) {
+        this.fileName = this.filePath.split(/[\/\\]/g).pop() ?? "";
+        this.reciveFileName.next(this.fileName);
+        this.getDataFile();
+      } else {
+        this.dataNotify.next({
+          status: "error",
+          text: "Invalid file type",
+        });
+      }
+    }
   }
 
   async getFilePath() {
@@ -85,7 +95,7 @@ export class FileInputComponent implements OnInit, OnDestroy {
   }
 
   async getDataFile() {
-    if (this.typeFile == "xls") {
+    if (this.typeFile.includes("xls")) {
       await this.fileService
         .getDataFromXLS(this.filePath)
         .then((data: Response) => {
@@ -97,7 +107,7 @@ export class FileInputComponent implements OnInit, OnDestroy {
           console.error(err);
           this.dataNotify.next({ status: "error", text: err });
         });
-    } else if (this.typeFile != "") {
+    } else if (this.typeFile.length > 0) {
       await this.fileService
         .getDataFromAnyFile(this.filePath)
         .then((data: Response) => {

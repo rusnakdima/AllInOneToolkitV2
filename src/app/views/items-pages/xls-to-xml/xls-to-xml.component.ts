@@ -27,7 +27,7 @@ export class XlsToXmlComponent {
 
   dataNotify: Subject<INotify> = new Subject();
 
-  typeFile: string = "xls";
+  typeFile: Array<string> = ["xls"];
   fileName: string = "";
   dataXls: Array<any> = [];
   dataXml: string = "";

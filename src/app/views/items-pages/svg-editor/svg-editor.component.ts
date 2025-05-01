@@ -15,7 +15,7 @@ import { FileInputComponent } from "../../shared/fields/file-input/file-input.co
 export class SvgEditorComponent {
   constructor(private sanitizer: DomSanitizer) {}
 
-  typeFile: string = "svg";
+  typeFile: Array<string> = ["svg"];
   svgData: string = "";
   dataField: string = "";
 

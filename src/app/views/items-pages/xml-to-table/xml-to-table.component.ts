@@ -32,7 +32,7 @@ export class XmlToTableComponent {
 
   dataNotify: Subject<INotify> = new Subject();
 
-  typeFile: string = "xml";
+  typeFile: Array<string> = ["xml"];
   xmlData: string = "";
 
   dataTable: TableData = { thead: [], tbody: [] };

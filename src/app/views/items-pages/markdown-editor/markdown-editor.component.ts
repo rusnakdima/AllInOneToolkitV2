@@ -25,7 +25,7 @@ export class MarkdownEditorComponent {
 
   dataNotify: Subject<INotify> = new Subject();
 
-  typeFile: string = "md";
+  typeFile: Array<string> = ["md"];
   mdData: string = "";
   dataField: string = "";
 
