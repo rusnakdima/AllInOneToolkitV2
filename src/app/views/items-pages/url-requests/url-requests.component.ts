@@ -8,7 +8,6 @@ import {
 } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { v4 as UUID } from "uuid";
-import { Subject } from "rxjs";
 
 /* material */
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -33,12 +32,7 @@ import {
 
 /* services */
 import { UrlRequestsService } from "@services/url-requests.service";
-
-/* components */
-import {
-  INotify,
-  WindowNotifyComponent,
-} from "@views/shared/window-notify/window-notify.component";
+import { NotifyService } from "@services/notify.service";
 
 @Component({
   selector: "app-url-requests",
@@ -54,14 +48,14 @@ import {
     MatExpansionModule,
     MatSelectModule,
     MatTabsModule,
-    WindowNotifyComponent,
   ],
   templateUrl: "./url-requests.component.html",
 })
 export class UrlRequestsComponent implements OnInit {
-  constructor(private urlRequestsService: UrlRequestsService) {}
-
-  dataNotify: Subject<INotify> = new Subject();
+  constructor(
+    private urlRequestsService: UrlRequestsService,
+    private notifyService: NotifyService
+  ) {}
 
   widthLeftSidebar: number = 300;
   widthRightSidebar: number = 0;
@@ -124,18 +118,12 @@ export class UrlRequestsComponent implements OnInit {
           this.savedListCollections = data.data;
           this.listCollections = this.savedListCollections;
         } else {
-          this.dataNotify.next({
-            status: "error",
-            text: "Failed to load data",
-          });
+          this.notifyService.showError("Failed to load data");
         }
       })
       .catch((err) => {
         console.error(err);
-        this.dataNotify.next({
-          status: "error",
-          text: err,
-        });
+        this.notifyService.showError(err);
       });
   }
 
@@ -355,7 +343,7 @@ export class UrlRequestsComponent implements OnInit {
   selAll(event: any, typeObj: "params" | "headers" | "body") {
     if (this.infoRequest) {
       this.infoRequest[typeObj].forEach(
-        (rec) => (rec.isActive = event.target.checked),
+        (rec) => (rec.isActive = event.target.checked)
       );
     }
   }
@@ -370,7 +358,7 @@ export class UrlRequestsComponent implements OnInit {
     event: any,
     row: number,
     typeObj: "params" | "headers" | "body",
-    field: "key" | "value",
+    field: "key" | "value"
   ) {
     if (this.editingObj) {
       if (field == "value" && typeObj == "body") {
@@ -401,7 +389,7 @@ export class UrlRequestsComponent implements OnInit {
           if (this.infoRequest) {
             if (
               this.infoRequest.params.findIndex(
-                (param: RecObj) => param.key == key,
+                (param: RecObj) => param.key == key
               ) == -1
             ) {
               this.infoRequest.params.push({
@@ -418,7 +406,7 @@ export class UrlRequestsComponent implements OnInit {
     if (this.infoRequest?.params.findIndex((rec) => rec.key == "") != -1) {
       this.infoRequest?.params.splice(
         this.infoRequest?.params.findIndex((rec) => rec.key == ""),
-        1,
+        1
       );
       this.createObj("params");
     }
@@ -448,7 +436,7 @@ export class UrlRequestsComponent implements OnInit {
 
   getRawValue(
     type: "params" | "headers" | "body",
-    data: any | BodyValue,
+    data: any | BodyValue
   ): string {
     switch (type) {
       case "body":
@@ -577,10 +565,7 @@ export class UrlRequestsComponent implements OnInit {
         .sendRequest(this.infoRequest)
         .then((data: Response) => {
           this.selectedTabIndex = 3;
-          this.dataNotify.next({
-            status: data.status,
-            text: data.message,
-          });
+          this.notifyService.showNotify(data.status, data.message);
           if (data.status == "success") {
             if (Common.isJson(data.data)) {
               this.response = JSON.stringify(data.data);
@@ -591,7 +576,7 @@ export class UrlRequestsComponent implements OnInit {
         })
         .catch((err) => {
           console.error(err);
-          this.dataNotify.next({ status: "error", text: err });
+          this.notifyService.showError(err);
         });
     }
   }
@@ -600,11 +585,11 @@ export class UrlRequestsComponent implements OnInit {
     this.urlRequestsService
       .saveData(this.listCollections)
       .then((data: Response) => {
-        this.dataNotify.next({ status: data.status, text: data.message });
+        this.notifyService.showNotify(data.status, data.message);
       })
       .catch((err) => {
         console.error(err);
-        this.dataNotify.next({ status: "error", text: err });
+        this.notifyService.showError(err);
       });
   }
 }

@@ -2,7 +2,6 @@
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { HttpClientModule } from "@angular/common/http";
-import { Subject } from "rxjs";
 
 /* env */
 import { environment } from "@env/environment";
@@ -12,24 +11,20 @@ import { Response } from "@models/response";
 
 /* services */
 import { AboutService } from "@services/about.service";
-
-/* components */
-import {
-  INotify,
-  WindowNotifyComponent,
-} from "@views/shared/window-notify/window-notify.component";
+import { NotifyService } from "@services/notify.service";
 
 @Component({
   selector: "app-about",
   standalone: true,
   providers: [AboutService],
-  imports: [CommonModule, HttpClientModule, WindowNotifyComponent],
+  imports: [CommonModule, HttpClientModule],
   templateUrl: "./about.component.html",
 })
 export class AboutComponent {
-  constructor(private aboutService: AboutService) {}
-
-  dataNotify: Subject<INotify> = new Subject();
+  constructor(
+    private aboutService: AboutService,
+    private notifyService: NotifyService
+  ) {}
 
   version: string = environment.version;
   dateVersion: string = localStorage["dateVersion"] || "Unknown";
@@ -81,22 +76,19 @@ export class AboutComponent {
             this.nameFile = data.data;
           }
         } else {
-          this.dataNotify.next({
-            status: data.status,
-            text: data.message,
-          });
+          this.notifyService.showNotify(data.status, data.message);
         }
       })
       .catch((err: any) => {
         console.error(err);
-        this.dataNotify.next({ status: "error", text: err });
+        this.notifyService.showError(err);
       });
 
     this.aboutService.getDate(this.version).subscribe({
       next: (res: any) => {
         if (res && res.published_at) {
           localStorage["dateVersion"] = String(
-            this.formatDate(res.published_at),
+            this.formatDate(res.published_at)
           );
           this.dateVersion = String(this.formatDate(res.published_at));
         } else {
@@ -106,17 +98,14 @@ export class AboutComponent {
       error: (err: any) => {
         console.error(err);
         this.downloadProgress = false;
-        this.dataNotify.next({
-          status: "error",
-          text: err.status + " — " + err.error.message,
-        });
+        this.notifyService.showError(err.status + " — " + err.error.message);
       },
     });
   }
 
   checkUpdate() {
     localStorage["dateCheck"] = String(
-      this.formatDate(new Date().toUTCString()),
+      this.formatDate(new Date().toUTCString())
     );
     this.aboutService.checkUpdate().subscribe({
       next: (res: any) => {
@@ -124,17 +113,11 @@ export class AboutComponent {
           const lastVer: string = res.tag_name;
           setTimeout(() => {
             if (this.matchVersion(lastVer)) {
-              this.dataNotify.next({
-                status: "warning",
-                text: "A new version is available!",
-              });
+              this.notifyService.showWarning("A new version is available!");
               this.windUpdates = true;
               this.lastVersion = lastVer;
             } else {
-              this.dataNotify.next({
-                status: "success",
-                text: "You have the latest version!",
-              });
+              this.notifyService.showSuccess("You have the latest version!");
             }
           }, 1000);
         } else {
@@ -143,10 +126,7 @@ export class AboutComponent {
       },
       error: (err: any) => {
         console.error(err);
-        this.dataNotify.next({
-          status: "error",
-          text: err.status + " — " + err.error.message,
-        });
+        this.notifyService.showError(err.status + " — " + err.error.message);
       },
     });
   }
@@ -154,34 +134,31 @@ export class AboutComponent {
   downloadFile() {
     if (this.nameFile != "") {
       (this.downloadProgress = true),
-        this.dataNotify.next({
-          status: "warning",
-          text: "Wait until the program update is downloaded!",
-        });
+        this.notifyService.showWarning(
+          "Wait until the program update is downloaded!"
+        );
       this.aboutService
         .downloadUpdate(this.lastVersion, this.nameFile)
         .then((data: Response) => {
           if (data.status == "success") {
-            this.dataNotify.next({
-              status: "success",
-              text: "The new version of the program has been successfully downloaded!",
-            });
+            this.notifyService.showSuccess(
+              "The new version of the program has been successfully downloaded!"
+            );
             this.pathUpdate = data.data;
           } else {
-            this.dataNotify.next({ status: data.status, text: data.message });
+            this.notifyService.showNotify(data.status, data.message);
           }
         })
         .catch((err: any) => {
           console.error(err);
-          this.dataNotify.next({ status: "error", text: err });
+          this.notifyService.showError(err);
         });
       this.downloadProgress = false;
       this.windUpdates = false;
     } else {
-      this.dataNotify.next({
-        status: "error",
-        text: "System definition error! It is impossible to find a file for this OS!",
-      });
+      this.notifyService.showError(
+        "System definition error! It is impossible to find a file for this OS!"
+      );
     }
   }
 
@@ -189,14 +166,11 @@ export class AboutComponent {
     this.aboutService
       .openFile(this.pathUpdate)
       .then((data: Response) => {
-        this.dataNotify.next({
-          status: data.status,
-          text: data.message,
-        });
+        this.notifyService.showNotify(data.status, data.message);
       })
       .catch((err: any) => {
         console.error(err);
-        this.dataNotify.next({ status: "error", text: err });
+        this.notifyService.showError(err);
       });
   }
 }

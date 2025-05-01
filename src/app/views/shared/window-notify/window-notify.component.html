@@ -1,21 +1,36 @@
-@if (windNotify) {
-  <div id="windNotify" class="styleWindNotify" [ngClass]="[color]">
-    <div class="flex flex-row items-start gap-x-2 p-3">
-      <div class="flex flex-col">
-        <div class="flex flex-row gap-x-2">
-          <mat-icon class="!w-[40px] !h-[40px] !text-4xl mr-3" fontIcon="notifications" />
-          <span class="text-2xl">Notification</span>
+<div class="fixed flex flex-col-reverse gap-4 top-4 right-4 z-[9999] max-w-md">
+  @for (notification of notifications; track notification.id) {
+    <div class="notification-item shadow-lg animate-slideInRight" [ngClass]="[notification.color]">
+      <div class="flex items-start p-4">
+        <div class="flex-shrink-0 mr-3">
+          <mat-icon class="text-white !w-[32px] !h-[32px] !text-2xl">{{ notification.icon }}</mat-icon>
         </div>
-        <span>{{text}}</span>
-      </div>
-      <button (click)="windNotify = false">
-        <mat-icon class="!w-7 !h-7 !text-xl" fontIcon="cancel_outline" />
-      </button>
-    </div>
-    <div class="flex flex-col mb-1 bg-white w-full h-1" id="timeNotify"></div>
-  </div>
-}
 
+        <div class="flex-1">
+          <div class="flex justify-between items-start">
+            <h4 class="text-lg font-medium text-white">
+              {{ getNotificationTitle(notification.status) }}
+            </h4>
+            <button
+              class="text-white opacity-70 hover:opacity-100 transition-opacity"
+              (click)="closeNotification(notification.id)"
+              aria-label="Close notification"
+            >
+              <mat-icon class="!w-[28px] !h-[28px] !text-xl">close</mat-icon>
+            </button>
+          </div>
+          <p class="text-white mt-1">{{ notification.message }}</p>
+        </div>
+      </div>
+
+      <div class="h-1 bg-white/30 w-full">
+        <div class="h-1 bg-white transition-all duration-75 origin-left" [style.width.%]="notification.width"></div>
+      </div>
+    </div>
+  }
+</div>
+
+<span class="hidden bg-blue-500"></span>
 <span class="hidden bg-green-700"></span>
 <span class="hidden bg-yellow-500"></span>
 <span class="hidden bg-red-700"></span>

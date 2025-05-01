@@ -2,7 +2,6 @@
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { HttpClientModule } from "@angular/common/http";
-import { Subject } from "rxjs";
 
 /* materials */
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -10,13 +9,10 @@ import { MatInputModule } from "@angular/material/input";
 
 /* services */
 import { FileService } from "@services/file.service";
+import { NotifyService } from "@services/notify.service";
 
 /* components */
-import {
-  INotify,
-  WindowNotifyComponent,
-} from "@views/shared/window-notify/window-notify.component";
-import { TableComponent } from "../../shared/table/table.component";
+import { TableComponent } from "@shared/table/table.component";
 
 interface TableData {
   thead: Array<any>;
@@ -31,15 +27,15 @@ interface TableData {
     HttpClientModule,
     MatFormFieldModule,
     MatInputModule,
-    WindowNotifyComponent,
-    TableComponent
-],
+    TableComponent,
+  ],
   templateUrl: "./css-converter.component.html",
 })
 export class CssConverterComponent {
-  constructor(private fileService: FileService) {}
-
-  dataNotify: Subject<INotify> = new Subject();
+  constructor(
+    private fileService: FileService,
+    private notifyService: NotifyService
+  ) {}
 
   typeStyle: string = "";
   dataField: string = "";
@@ -61,10 +57,7 @@ export class CssConverterComponent {
       },
       error: (err: any) => {
         console.error(err);
-        this.dataNotify.next({
-          status: "error",
-          text: "Error reading CSS library file",
-        });
+        this.notifyService.showError("Error reading CSS library file");
       },
     });
   }
@@ -212,7 +205,7 @@ export class CssConverterComponent {
         textElem = key + "-[" + propCSS![2] + "]";
       }
     } catch (err: any) {
-      this.dataNotify.next({ status: "error", text: err });
+      this.notifyService.showError(err);
       console.error(err);
     }
     return textElem;
@@ -265,20 +258,15 @@ export class CssConverterComponent {
         };
       }, 500);
     } else if (this.dataArr.length == 0) {
-      this.dataNotify.next({
-        status: "error",
-        text: "You don't have a style library! Download it from the git repository from this program!",
-      });
+      this.notifyService.showError(
+        "You don't have a style library! Download it from the git repository from this program!"
+      );
     } else if (this.typeStyle == "") {
-      this.dataNotify.next({
-        status: "error",
-        text: "You have not selected the type of source styles!",
-      });
+      this.notifyService.showError(
+        "You have not selected the type of source styles!"
+      );
     } else if (this.dataField == "") {
-      this.dataNotify.next({
-        status: "error",
-        text: "The field is empty! Insert the data!",
-      });
+      this.notifyService.showError("The field is empty! Insert the data!");
     }
   }
 }

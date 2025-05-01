@@ -1,7 +1,6 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
-import { Subject } from "rxjs";
 
 /* materials */
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -12,28 +11,19 @@ import { Response } from "@models/response";
 
 /* services */
 import { UnicodeConverterService } from "@services/unicode-converter.service";
-
-/* components */
-import {
-  INotify,
-  WindowNotifyComponent,
-} from "@views/shared/window-notify/window-notify.component";
+import { NotifyService } from "@services/notify.service";
 
 @Component({
   selector: "app-unicode-converter",
   standalone: true,
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    WindowNotifyComponent,
-  ],
+  imports: [CommonModule, MatFormFieldModule, MatInputModule],
   templateUrl: "./unicode-converter.component.html",
 })
 export class UnicodeConverterComponent {
-  constructor(private unicodeConverterService: UnicodeConverterService) {}
-
-  dataNotify: Subject<INotify> = new Subject();
+  constructor(
+    private unicodeConverterService: UnicodeConverterService,
+    private notifyService: NotifyService
+  ) {}
 
   typeCoding: string = "symbol";
 
@@ -52,31 +42,28 @@ export class UnicodeConverterComponent {
   convertData() {
     this.listResult = [];
     if (this.inputText != "") {
-      this.inputText.replaceAll(/;\s*/gi, ";").split(";").map((symbol: string) => {
-        this.unicodeConverterService
-          .getInfoSymbol(this.typeCoding, symbol)
-          .then((data: Response) => {
-            if (data.status === "success") {
-              this.listResult.push({
-                symbol: data.data.symbol,
-                dec: data.data.dec,
-                hex: data.data.hex,
-              });
-            } else {
-              this.dataNotify.next({
-                status: "error",
-                text: data.message,
-              });
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            this.dataNotify.next({
-              status: "error",
-              text: err,
+      this.inputText
+        .replaceAll(/;\s*/gi, ";")
+        .split(";")
+        .map((symbol: string) => {
+          this.unicodeConverterService
+            .getInfoSymbol(this.typeCoding, symbol)
+            .then((data: Response) => {
+              if (data.status === "success") {
+                this.listResult.push({
+                  symbol: data.data.symbol,
+                  dec: data.data.dec,
+                  hex: data.data.hex,
+                });
+              } else {
+                this.notifyService.showError(data.message);
+              }
+            })
+            .catch((err) => {
+              console.error(err);
+              this.notifyService.showError(err);
             });
-          });
-      });
+        });
     }
   }
 }

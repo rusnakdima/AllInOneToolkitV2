@@ -1,29 +1,18 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
-import { Subject } from "rxjs";
 
 /* components */
-import { FileInputComponent } from "@views/shared/fields/file-input/file-input.component";
-import {
-  INotify,
-  WindowNotifyComponent,
-} from "@views/shared/window-notify/window-notify.component";
+import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
 
 @Component({
   selector: "app-csv-to-table",
   standalone: true,
-  imports: [
-    CommonModule,
-    FileInputComponent,
-    WindowNotifyComponent,
-  ],
+  imports: [CommonModule, FileInputComponent],
   templateUrl: "./csv-to-table.component.html",
 })
 export class CsvToTableComponent {
   constructor() {}
-
-  dataNotify: Subject<INotify> = new Subject();
 
   typeFile: Array<string> = ["csv"];
   arrCSV: Array<any> = [];

@@ -9,7 +9,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 
 /* components */
-import { CopyFieldComponent } from "../../shared/fields/copy-field/copy-field.component";
+import { CopyFieldComponent } from "@shared/fields/copy-field/copy-field.component";
 
 @Component({
   selector: "app-uuid-generator",

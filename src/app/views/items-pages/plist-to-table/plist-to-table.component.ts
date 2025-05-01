@@ -1,15 +1,10 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
-import { Subject } from "rxjs";
 
 /* components */
-import { DetailsComponent } from "@views/shared/details/details.component";
-import { FileInputComponent } from "@views/shared/fields/file-input/file-input.component";
-import {
-  INotify,
-  WindowNotifyComponent,
-} from "@views/shared/window-notify/window-notify.component";
+import { DetailsComponent } from "@shared/details/details.component";
+import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
 
 interface HeadData {
   key: string;
@@ -38,18 +33,11 @@ interface DetailsData {
 @Component({
   selector: "app-plist-to-table",
   standalone: true,
-  imports: [
-    CommonModule,
-    FileInputComponent,
-    DetailsComponent,
-    WindowNotifyComponent,
-  ],
+  imports: [CommonModule, FileInputComponent, DetailsComponent],
   templateUrl: "./plist-to-table.component.html",
 })
 export class PlistToTableComponent {
   constructor() {}
-
-  dataNotify: Subject<INotify> = new Subject();
 
   typeFile: Array<string> = ["plist"];
   xmlData: string = "";

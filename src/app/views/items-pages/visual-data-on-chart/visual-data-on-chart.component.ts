@@ -1,7 +1,6 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
-import { Subject } from "rxjs";
 import {
   ArcElement,
   BarController,
@@ -24,13 +23,12 @@ import {
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 
+/* services */
+import { NotifyService } from "@services/notify.service";
+
 /* components */
-import { FileInputComponent } from "@views/shared/fields/file-input/file-input.component";
-import { TableComponent } from "@views/shared/table/table.component";
-import {
-  INotify,
-  WindowNotifyComponent,
-} from "@views/shared/window-notify/window-notify.component";
+import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
+import { TableComponent } from "@shared/table/table.component";
 
 Chart.register(
   BarController,
@@ -57,14 +55,11 @@ Chart.register(
     MatInputModule,
     FileInputComponent,
     TableComponent,
-    WindowNotifyComponent,
   ],
   templateUrl: "./visual-data-on-chart.component.html",
 })
 export class VisualDataOnChartComponent {
-  constructor() {}
-
-  dataNotify: Subject<INotify> = new Subject();
+  constructor(private notifyService: NotifyService) {}
 
   typeFile: Array<string> = ["xls"];
   dataXls: Array<any> = [];
@@ -95,10 +90,7 @@ export class VisualDataOnChartComponent {
         .split("\n")
         .map((elem: string) => elem.split("\t"));
     } else {
-      this.dataNotify.next({
-        status: "error",
-        text: "The field is empty! Insert the data!",
-      });
+      this.notifyService.showError("The field is empty! Insert the data!");
     }
   }
 
@@ -128,10 +120,7 @@ export class VisualDataOnChartComponent {
       this.dataXls = dataArr;
       this.createTable();
     } else {
-      this.dataNotify.next({
-        status: "error",
-        text: "The fields are empty! Enter the data!",
-      });
+      this.notifyService.showError("The fields are empty! Enter the data!");
     }
   }
 
@@ -172,10 +161,7 @@ export class VisualDataOnChartComponent {
         }
 
         if (!this.isValidChartType(this.chartType)) {
-          this.dataNotify.next({
-            status: "error",
-            text: "No such chart type was found!",
-          });
+          this.notifyService.showError("No such chart type was found!");
           return;
         }
 

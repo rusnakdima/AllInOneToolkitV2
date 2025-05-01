@@ -10,7 +10,6 @@ import {
   Output,
 } from "@angular/core";
 import { listen } from "@tauri-apps/api/event";
-import { Subject } from "rxjs";
 
 /* materials */
 import { MatIconModule } from "@angular/material/icon";
@@ -20,24 +19,20 @@ import { Response } from "@models/response";
 
 /* services */
 import { FileService } from "@services/file.service";
-
-/* components */
-import {
-  INotify,
-  WindowNotifyComponent,
-} from "@views/shared/window-notify/window-notify.component";
+import { NotifyService } from "@services/notify.service";
 
 @Component({
   selector: "app-file-input",
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, MatIconModule, WindowNotifyComponent],
+  imports: [CommonModule, MatIconModule],
   templateUrl: "./file-input.component.html",
 })
 export class FileInputComponent implements OnInit, OnDestroy {
-  constructor(private fileService: FileService) {}
-
-  dataNotify: Subject<INotify> = new Subject();
+  constructor(
+    private fileService: FileService,
+    private notifyService: NotifyService
+  ) {}
 
   @Input() typeFile: Array<string> = [""];
   @Output() dataFile: EventEmitter<string> = new EventEmitter();
@@ -77,10 +72,7 @@ export class FileInputComponent implements OnInit, OnDestroy {
         this.reciveFileName.next(this.fileName);
         this.getDataFile();
       } else {
-        this.dataNotify.next({
-          status: "error",
-          text: "Invalid file type",
-        });
+        this.notifyService.showError("Invalid file type");
       }
     }
   }
@@ -105,7 +97,7 @@ export class FileInputComponent implements OnInit, OnDestroy {
         })
         .catch((err: any) => {
           console.error(err);
-          this.dataNotify.next({ status: "error", text: err });
+          this.notifyService.showError(err);
         });
     } else if (this.typeFile.length > 0) {
       await this.fileService
@@ -117,7 +109,7 @@ export class FileInputComponent implements OnInit, OnDestroy {
         })
         .catch((err: any) => {
           console.error(err);
-          this.dataNotify.next({ status: "error", text: err });
+          this.notifyService.showError(err);
         });
     }
   }
@@ -126,11 +118,11 @@ export class FileInputComponent implements OnInit, OnDestroy {
     await this.fileService
       .chooseFile(this.typeFile)
       .then((data: Response) => {
-        this.dataNotify.next({ status: data.status, text: data.message });
+        this.notifyService.showNotify(data.status, data.message);
       })
       .catch((err) => {
         console.error(err);
-        this.dataNotify.next({ status: "error", text: err });
+        this.notifyService.showError(err);
       });
   }
 }

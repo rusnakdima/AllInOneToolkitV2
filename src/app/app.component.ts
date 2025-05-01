@@ -11,6 +11,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { HeaderComponent } from "./views/shared/header/header.component";
 import { NavComponent } from "./views/shared/nav/nav.component";
 import { BottomNavComponent } from "./views/shared/bottom-nav/bottom-nav.component";
+import { WindowNotifyComponent } from "./views/shared/window-notify/window-notify.component";
 
 @Component({
   selector: "app-root",
@@ -23,7 +24,8 @@ import { BottomNavComponent } from "./views/shared/bottom-nav/bottom-nav.compone
     HeaderComponent,
     NavComponent,
     BottomNavComponent,
-  ],
+    WindowNotifyComponent
+],
   templateUrl: "./app.component.html",
 })
 export class AppComponent implements OnInit {

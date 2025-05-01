@@ -3,18 +3,16 @@ import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { Md5 } from "ts-md5";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { Subject } from "rxjs";
 
 /* materials */
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 
+/* services */
+import { NotifyService } from "@services/notify.service";
+
 /* components */
-import { CopyFieldComponent } from "../../shared/fields/copy-field/copy-field.component";
-import {
-  INotify,
-  WindowNotifyComponent,
-} from "@views/shared/window-notify/window-notify.component";
+import { CopyFieldComponent } from "@shared/fields/copy-field/copy-field.component"; 
 
 @Component({
   selector: "app-md5-enc-dec",
@@ -26,14 +24,11 @@ import {
     FormsModule,
     ReactiveFormsModule,
     CopyFieldComponent,
-    WindowNotifyComponent,
   ],
   templateUrl: "./md5-enc-dec.component.html",
 })
 export class Md5EncDecComponent {
-  constructor() {}
-
-  dataNotify: Subject<INotify> = new Subject();
+  constructor(private notifyService: NotifyService) {}
 
   inputText: string = "";
   outputText: string = "";
@@ -44,7 +39,7 @@ export class Md5EncDecComponent {
       this.outputText = encodeData;
     } catch (error: any) {
       console.error(error);
-      this.dataNotify.next({ status: "error", text: error.toString() });
+      this.notifyService.showError(error.toString());
     }
   }
 

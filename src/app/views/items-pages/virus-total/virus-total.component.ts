@@ -1,7 +1,6 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
-import { Subject } from "rxjs";
 
 /* materials */
 import { MatIconModule } from "@angular/material/icon";
@@ -11,27 +10,23 @@ import { Common } from "@helpers/common";
 
 /* services */
 import { VirusTotalService } from "@services/virus-total.service";
+import { NotifyService } from "@services/notify.service";
 
 /* models */
 import { Response } from "@models/response";
-
-/* components */
-import {
-  INotify,
-  WindowNotifyComponent,
-} from "@views/shared/window-notify/window-notify.component";
 
 @Component({
   selector: "app-virus-total",
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, MatIconModule, WindowNotifyComponent],
+  imports: [CommonModule, MatIconModule],
   templateUrl: "./virus-total.component.html",
 })
 export class VirusTotalComponent {
-  constructor(private virusTotalService: VirusTotalService) {}
-
-  dataNotify: Subject<INotify> = new Subject();
+  constructor(
+    private virusTotalService: VirusTotalService,
+    private notifyService: NotifyService
+  ) {}
 
   urlInput: string = "";
   reqText: string = "";
@@ -49,20 +44,14 @@ export class VirusTotalComponent {
   async checkOnVirus() {
     this.reqText = "The request is being executed! Wait...";
     if (this.urlInput == "") {
-      this.dataNotify.next({
-        status: "error",
-        text: "Please enter a URL",
-      });
+      this.notifyService.showError("Please enter a URL");
       this.reqText = "Errors occurred when executing the request!";
     } else {
-      this.dataNotify.next({
-        status: "warning",
-        text: "Checking...",
-      });
+      this.notifyService.showWarning("Checking...");
 
       const url = btoa(this.urlInput).replace(/=/g, "");
       const apiUrl = `https://www.virustotal.com/api/v3/urls/${encodeURIComponent(
-        url,
+        url
       )}`;
 
       this.virusTotalService
@@ -83,13 +72,13 @@ export class VirusTotalComponent {
                   this.milicious =
                     json.data.attributes.last_analysis_stats.malicious || 0;
                   this.allAntivirus = Object.keys(
-                    json.data.attributes.last_analysis_results,
+                    json.data.attributes.last_analysis_results
                   ).length;
                   this.circleBlockColor =
                     colors[
                       Math.floor(
                         (this.milicious / this.allAntivirus) *
-                          (colors.length - 1),
+                          (colors.length - 1)
                       )
                     ];
 
@@ -105,15 +94,11 @@ export class VirusTotalComponent {
 
                   this.reqText = "";
                   this.isChecked = true;
-                  this.dataNotify.next({
-                    status: "success",
-                    text: "Checked ended successfully!",
-                  });
+                  this.notifyService.showSuccess("Checked ended successfully!");
                 } else {
-                  this.dataNotify.next({
-                    status: "error",
-                    text: "VirusTotal API returned an error!",
-                  });
+                  this.notifyService.showError(
+                    "VirusTotal API returned an error!"
+                  );
                   this.milicious = 0;
                   this.allAntivirus = 0;
                   this.circleBlockColor = "";
@@ -127,10 +112,7 @@ export class VirusTotalComponent {
         })
         .catch((err) => {
           console.error(err);
-          this.dataNotify.next({
-            status: "error",
-            text: err,
-          });
+          this.notifyService.showError(err);
           this.reqText = "Errors occurred when executing the request!";
         });
     }

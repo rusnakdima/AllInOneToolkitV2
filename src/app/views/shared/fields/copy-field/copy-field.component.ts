@@ -1,38 +1,32 @@
 /* sys lib */
-import { CommonModule } from '@angular/common';
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core';
-import { Subject } from 'rxjs';
+import { CommonModule } from "@angular/common";
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from "@angular/core";
 
 /* materials */
-import { MatIconModule } from '@angular/material/icon';
+import { MatIconModule } from "@angular/material/icon";
 
-/* components */
-import { INotify, WindowNotifyComponent } from '@views/shared/window-notify/window-notify.component';
+/* services */
+import { NotifyService } from "@services/notify.service";
 
 @Component({
-  selector: 'app-copy-field',
+  selector: "app-copy-field",
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule, MatIconModule, WindowNotifyComponent],
-  templateUrl: './copy-field.component.html'
+  imports: [CommonModule, MatIconModule],
+  templateUrl: "./copy-field.component.html",
 })
 export class CopyFieldComponent {
-  constructor() {}
+  constructor(private notifyService: NotifyService) {}
 
-  dataNotify: Subject<INotify> = new Subject();
-
-  @Input() value: string | Array<string> = '';
+  @Input() value: string | Array<string> = "";
 
   copyData() {
-    if (typeof(this.value) === 'string') {
+    if (typeof this.value === "string") {
       navigator.clipboard.writeText(this.value ?? "");
     } else if (Array.isArray(this.value) && this.value.length > 0) {
       navigator.clipboard.writeText(this.value.join("\n"));
     }
-    this.dataNotify.next({
-      status: "success",
-      text: "Data copied successfully!"
-    })
+    this.notifyService.showSuccess("Data copied successfully!");
   }
 
   isArray() {

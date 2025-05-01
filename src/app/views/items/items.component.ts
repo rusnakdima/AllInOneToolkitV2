@@ -13,7 +13,7 @@ import { Link } from "@models/link";
 import { LinksService } from "@services/links.service";
 
 /* components */
-import { SearchComponent } from "../shared/fields/search/search.component";
+import { SearchComponent } from "@shared/fields/search/search.component"; 
 import { TileItemComponent } from "./tile-item/tile-item.component";
 import { CardItemComponent } from "./card-item/card-item.component";
 

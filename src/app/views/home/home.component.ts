@@ -2,7 +2,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { Subject } from "rxjs";
 
 /* materials */
 import { MatIconModule } from "@angular/material/icon";
@@ -16,10 +15,6 @@ import { RecentLinksService } from "@services/recent-links.service";
 /* components */
 import { CardItemComponent } from "@views/items/card-item/card-item.component";
 import { TileItemComponent } from "@views/items/tile-item/tile-item.component";
-import {
-  INotify,
-  WindowNotifyComponent,
-} from "@views/shared/window-notify/window-notify.component";
 
 @Component({
   selector: "app-home",
@@ -31,14 +26,11 @@ import {
     MatIconModule,
     CardItemComponent,
     TileItemComponent,
-    WindowNotifyComponent,
   ],
   templateUrl: "./home.component.html",
 })
 export class HomeComponent implements OnInit {
   constructor(private recentLinksService: RecentLinksService) {}
-
-  dataNotify: Subject<INotify> = new Subject();
 
   listRecentLinks: Array<Link> = [];
 

@@ -1,15 +1,13 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
-import { Subject } from "rxjs";
+
+/* services */
+import { NotifyService } from "@services/notify.service";
 
 /* components */
-import { FileInputComponent } from "@views/shared/fields/file-input/file-input.component";
-import { TableComponent } from "@views/shared/table/table.component";
-import {
-  INotify,
-  WindowNotifyComponent,
-} from "@views/shared/window-notify/window-notify.component";
+import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
+import { TableComponent } from "@shared/table/table.component";
 
 interface TableData {
   thead: string[];
@@ -19,18 +17,11 @@ interface TableData {
 @Component({
   selector: "app-xml-to-table",
   standalone: true,
-  imports: [
-    CommonModule,
-    FileInputComponent,
-    TableComponent,
-    WindowNotifyComponent,
-  ],
+  imports: [CommonModule, FileInputComponent, TableComponent],
   templateUrl: "./xml-to-table.component.html",
 })
 export class XmlToTableComponent {
-  constructor() {}
-
-  dataNotify: Subject<INotify> = new Subject();
+  constructor(private notifyService: NotifyService) {}
 
   typeFile: Array<string> = ["xml"];
   xmlData: string = "";
@@ -47,7 +38,7 @@ export class XmlToTableComponent {
       this.xmlData = event.target.value;
     } catch (err: any) {
       console.error(err);
-      this.dataNotify.next({ status: "error", text: err.toString() });
+      this.notifyService.showError(err.toString());
     }
   }
 

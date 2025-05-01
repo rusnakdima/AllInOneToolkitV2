@@ -1,31 +1,28 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
-import { Subject } from "rxjs";
 
 /* models */
 import { Response } from "@models/response";
 
 /* services */
 import { FileService } from "@services/file.service";
+import { NotifyService } from "@services/notify.service";
 
 /* components */
-import { FileInputComponent } from "@views/shared/fields/file-input/file-input.component";
-import {
-  INotify,
-  WindowNotifyComponent,
-} from "@views/shared/window-notify/window-notify.component";
+import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
 
 @Component({
   selector: "app-xml-to-json",
   standalone: true,
-  imports: [CommonModule, FileInputComponent, WindowNotifyComponent],
+  imports: [CommonModule, FileInputComponent],
   templateUrl: "./xml-to-json.component.html",
 })
 export class XmlToJsonComponent {
-  constructor(private fileService: FileService) {}
-
-  dataNotify: Subject<INotify> = new Subject();
+  constructor(
+    private fileService: FileService,
+    private notifyService: NotifyService
+  ) {}
 
   typeFile: Array<string> = ["xml"];
   fileName: string = "";
@@ -67,21 +64,14 @@ export class XmlToJsonComponent {
       this.dataJson = this.parseData(Array.from(xmlDoc.children[0].children));
 
       if (this.dataJson && Object.keys(this.dataJson).length > 0) {
-        this.dataNotify.next({
-          status: "success",
-          text: "The data has been successfully converted!",
-        });
+        this.notifyService.showSuccess(
+          "The data has been successfully converted!"
+        );
       } else {
-        this.dataNotify.next({
-          status: "error",
-          text: "No data was received from the file!",
-        });
+        this.notifyService.showError("No data was received from the file!");
       }
     } else {
-      this.dataNotify.next({
-        status: "error",
-        text: "There is no data for conversion!",
-      });
+      this.notifyService.showError("There is no data for conversion!");
     }
   }
 
@@ -96,29 +86,21 @@ export class XmlToJsonComponent {
         .then((data: Response) => {
           if (data.status == "success") {
             this.pathNewFile = data.data;
-            this.dataNotify.next({
-              status: "success",
-              text: `The data has been successfully saved to a file "${this.pathNewFile}"!`,
-            });
+            this.notifyService.showSuccess(
+              `The data has been successfully saved to a file "${this.pathNewFile}"!`
+            );
           } else {
-            this.dataNotify.next({
-              status: data.status,
-              text: data.message,
-            });
+            this.notifyService.showNotify(data.status, data.message);
           }
         })
         .catch((err) => {
           console.error(err);
-          this.dataNotify.next({
-            status: "error",
-            text: `An error occurred while saving the data to a file: ${err}`,
-          });
+          this.notifyService.showError(
+            `An error occurred while saving the data to a file: ${err}`
+          );
         });
     } else if (this.dataJson == null) {
-      this.dataNotify.next({
-        status: "error",
-        text: "No data was received from the file!",
-      });
+      this.notifyService.showError("No data was received from the file!");
     }
   }
 
@@ -128,26 +110,19 @@ export class XmlToJsonComponent {
         .openFileInApp(this.pathNewFile)
         .then((data: Response) => {
           if (data.status == "success") {
-            this.dataNotify.next({
-              status: "warning",
-              text: "Wait a bit until the program starts to read this file format!",
-            });
+            this.notifyService.showWarning(
+              "Wait a bit until the program starts to read this file format!"
+            );
           } else {
-            this.dataNotify.next({
-              status: data.status,
-              text: data.message,
-            });
+            this.notifyService.showNotify(data.status, data.message);
           }
         })
         .catch((err: any) => {
           console.error(err);
-          this.dataNotify.next({ status: "error", text: err });
+          this.notifyService.showError(err);
         });
     } else {
-      this.dataNotify.next({
-        status: "error",
-        text: "You didn't save the file to open it!",
-      });
+      this.notifyService.showError("You didn't save the file to open it!");
     }
   }
 }

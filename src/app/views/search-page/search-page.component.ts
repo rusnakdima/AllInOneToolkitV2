@@ -10,10 +10,10 @@ import { Link } from "@models/link";
 import { LinksService } from "@services/links.service";
 
 /* components */
-import { SearchComponent } from "@views/shared/fields/search/search.component";
+import { SearchComponent } from "@shared/fields/search/search.component";
 import { TileItemComponent } from "@views/items/tile-item/tile-item.component";
-import { ShowItemComponent } from "@views/shared/fields/show-item/show-item.component";
-import { PaginationComponent } from "@views/shared/pagination/pagination.component";
+import { ShowItemComponent } from "@shared/fields/show-item/show-item.component";
+import { PaginationComponent } from "@shared/pagination/pagination.component";
 
 @Component({
   selector: "app-search-page",
