@@ -66,7 +66,7 @@ export class VisualDataOnChartComponent {
 
   dataNotify: Subject<INotify> = new Subject();
 
-  typeFile: string = "xls";
+  typeFile: Array<string> = ["xls"];
   dataXls: Array<any> = [];
   dataField: string = "";
   columns: number = 0;
