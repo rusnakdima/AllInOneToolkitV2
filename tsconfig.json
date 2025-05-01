@@ -25,6 +25,7 @@
       "@models/*": ["./src/app/models/*"],
       "@services/*": ["./src/app/services/*"],
       "@env/*": ["./src/environments/*"],
+      "@shared/*": ["./src/app/views/shared/*"],
       "@views/*": ["./src/app/views/*"],
       "@app/*": ["./src/app/*"],
     }
