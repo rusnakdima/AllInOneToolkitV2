@@ -40,6 +40,7 @@ pub fn run() {
   tauri::Builder::default()
     .plugin(tauri_plugin_dialog::init())
     .plugin(tauri_plugin_shell::init())
+    .plugin(tauri_plugin_http::init())
     .invoke_handler(tauri::generate_handler![
       get_binary_name_file,
       download_update,
