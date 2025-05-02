@@ -27,9 +27,9 @@
       <span>{{dateCheck}}</span>
     </div>
   </div>
-  <div class="text-xl font-bold mt-3">
-    <span class="styleLink" (click)="checkUpdate()"> Check for updates...</span>
-  </div>
+  <button class="styleButInfo" (click)="checkUpdate()">
+    <span>Check for updates...</span>
+  </button>
   @if (pathUpdate != '') {
     <div class="text-xl font-bold mt-3">
       <span class="styleLink" (click)="openFile()">Open new version</span>
