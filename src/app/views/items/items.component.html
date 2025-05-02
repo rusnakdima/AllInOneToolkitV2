@@ -1,8 +1,8 @@
 <div class="flex flex-col gap-y-5 m-3">
-  <div class="flex flex-row justify-between px-2 pb-2 !rounded-none styleBorderSolidLite border-b">
+  <div class="relative flex flex-row justify-between px-2 pb-2 !rounded-none styleBorderSolidLite border-b">
     <div class="styleFloatBut">
       <button class="flex flex-col items-center justify-center" (click)="refresh()" id="refreshBut">
-        <mat-icon class="!w-[35px] !h-[35px]" fontIcon="refresh" />
+        <mat-icon class="!w-[35px] !h-[35px] !text-3xl" fontIcon="refresh" />
       </button>
     </div>
 
@@ -13,16 +13,16 @@
       ></app-search>
       <button class="styleFloatBut" (click)="changeTypeView()">
         @if (typeViewList == 'grid') {
-          <mat-icon class="!w-[35px] !h-[35px]" fontIcon="grid_view" />
+          <mat-icon class="!w-[35px] !h-[35px] !text-3xl" fontIcon="grid_view" />
         } @else if (typeViewList == 'list') {
-          <mat-icon class="!w-[35px] !h-[35px]" fontIcon="list" />
+          <mat-icon class="!w-[35px] !h-[35px] !text-3xl" fontIcon="list" />
         }
       </button>
     </div>
   </div>
 
   @if (typeViewList == 'grid') {
-    <div class="flex flex-row flex-wrap gap-3 h-[200px]">
+    <div class="flex flex-row flex-wrap gap-3">
       @for (link of listLinks; track link) {
         <app-card-item
           [link]="link"
