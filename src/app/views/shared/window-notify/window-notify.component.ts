@@ -22,9 +22,9 @@ export class WindowNotifyComponent implements OnInit {
 
   notifications: ActiveNotification[] = [];
   private nextId = 1;
-  private readonly NOTIFICATION_DURATION = 5000;
+  private readonly NOTIFICATION_DURATION = 3000;
   private readonly ANIMATION_DURATION = 300;
-  private readonly PROGRESS_INTERVAL = 50;
+  private readonly PROGRESS_INTERVAL = 60;
 
   ngOnInit() {
     this.notifyService.notify.subscribe((value: INotify) => {
@@ -159,13 +159,13 @@ export class WindowNotifyComponent implements OnInit {
   getNotificationTitle(status: ResponseStatus): string {
     switch (status) {
       case ResponseStatus.SUCCESS:
-        return 'Success';
+        return 'Success Message';
       case ResponseStatus.INFO:
-        return 'Info';
+        return 'Info Message';
       case ResponseStatus.WARNING:
-        return 'Warning';
+        return 'Warning Message';
       case ResponseStatus.ERROR:
-        return 'Error';
+        return 'Error Message';
       default:
         return 'Notification';
     }
