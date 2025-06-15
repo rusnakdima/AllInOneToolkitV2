@@ -6,10 +6,10 @@ export enum ResponseStatus {
 }
 
 export enum ResponseStatusIcon {
-  SUCCESS = 'check_circle',
+  SUCCESS = 'check_circle_outlined',
   INFO = 'info_outlined',
-  WARNING = 'warning',
-  ERROR = 'error',
+  WARNING = 'warning_outline',
+  ERROR = 'dangerous',
   '' = 'notifications',
 }
 
