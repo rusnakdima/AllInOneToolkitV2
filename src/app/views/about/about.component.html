@@ -1,36 +1,52 @@
 <div class="flex flex-col items-center gap-y-2 m-5">
-  <img src="/assets/images/icon.png" alt="icon app" class="rounded-xl !w-[100px]" />
+  <img
+    src="/assets/images/icon.png"
+    alt="icon app"
+    class="rounded-xl !w-[100px]"
+  />
   <span class="font-bold text-2xl text-center">All In One Toolkit v2.0</span>
   <div class="flex flex-col gap-y-1 mt-3 text-lg">
     <div class="grid grid-cols-2 gap-x-3">
-      <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end">Version</span>
-      <span>{{version}}</span>
+      <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
+        >Version</span
+      >
+      <span>{{ version }}</span>
     </div>
     <div class="grid grid-cols-2 gap-x-3">
-      <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end">Date of released</span>
-      <span>{{dateVersion}}</span>
+      <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
+        >Date of released</span
+      >
+      <span>{{ dateVersion }}</span>
     </div>
     <div class="grid grid-cols-2 gap-x-3">
-      <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end">Author</span>
+      <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
+        >Author</span
+      >
       <span>Dmitriy303</span>
     </div>
     <div class="grid grid-cols-2 gap-x-3">
-      <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end">Company</span>
+      <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
+        >Company</span
+      >
       <span>TechCraft Solutions</span>
     </div>
     <div class="grid grid-cols-2 gap-x-3">
-      <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end">Year of creation</span>
+      <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
+        >Year of creation</span
+      >
       <span>2024</span>
     </div>
     <div class="grid grid-cols-2 gap-x-3">
-      <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end">Last checked</span>
-      <span>{{dateCheck}}</span>
+      <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
+        >Last checked</span
+      >
+      <span>{{ dateCheck }}</span>
     </div>
   </div>
   <button class="styleButInfo" (click)="checkUpdate()">
     <span>Check for updates...</span>
   </button>
-  @if (pathUpdate != '') {
+  @if (pathUpdate != "") {
     <div class="text-xl font-bold mt-3">
       <span class="styleLink" (click)="openFile()">Open new version</span>
     </div>
@@ -46,16 +62,23 @@
       <div class="flex flex-col my-3 gap-y-2">
         <span>Do you want to download the update?</span>
         @if (downloadProgress) {
-          <div class="w-full bg-gray-300 rounded-full mb-4 dark:bg-gray-700 h-[20px]">
-            <div class="w-full rounded-full h-[20px]"
-                [style]="{
-                  backgroundImage: 'repeating-linear-gradient( 45deg, transparent, transparent 10px, rgb(5 122 85) 10px, rgb(5 122 85) 20px )',
-                  animation: 'slide 4s linear infinite'
-                }"></div>
+          <div
+            class="w-full bg-gray-300 rounded-full mb-4 dark:bg-gray-700 h-[20px]"
+          >
+            <div
+              class="w-full rounded-full h-[20px]"
+              [style]="{
+                backgroundImage:
+                  'repeating-linear-gradient( 45deg, transparent, transparent 10px, rgb(5 122 85) 10px, rgb(5 122 85) 20px )',
+                animation: 'slide 4s linear infinite',
+              }"
+            ></div>
           </div>
         }
       </div>
-      <div class="flex flex-row justify-end gap-x-3 pt-2 border-t-2 styleBorderSolid">
+      <div
+        class="flex flex-row justify-end gap-x-3 pt-2 border-t-2 styleBorderSolid"
+      >
         <button class="styleButDanger" (click)="windUpdates = false">No</button>
         <button class="styleButSuccess" (click)="downloadFile()">Yes</button>
       </div>

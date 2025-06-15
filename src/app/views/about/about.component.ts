@@ -23,7 +23,7 @@ import { NotifyService } from "@services/notify.service";
 export class AboutComponent {
   constructor(
     private aboutService: AboutService,
-    private notifyService: NotifyService
+    private notifyService: NotifyService,
   ) {}
 
   version: string = environment.version;
@@ -88,7 +88,7 @@ export class AboutComponent {
       next: (res: any) => {
         if (res && res.published_at) {
           localStorage["dateVersion"] = String(
-            this.formatDate(res.published_at)
+            this.formatDate(res.published_at),
           );
           this.dateVersion = String(this.formatDate(res.published_at));
         } else {
@@ -105,8 +105,9 @@ export class AboutComponent {
 
   checkUpdate() {
     localStorage["dateCheck"] = String(
-      this.formatDate(new Date().toUTCString())
+      this.formatDate(new Date().toUTCString()),
     );
+    this.dateCheck = localStorage["dateCheck"];
     this.aboutService.checkUpdate().subscribe({
       next: (res: any) => {
         if (res && res.tag_name) {
@@ -135,14 +136,14 @@ export class AboutComponent {
     if (this.nameFile != "") {
       (this.downloadProgress = true),
         this.notifyService.showWarning(
-          "Wait until the program update is downloaded!"
+          "Wait until the program update is downloaded!",
         );
       this.aboutService
         .downloadUpdate(this.lastVersion, this.nameFile)
         .then((data: Response) => {
           if (data.status == "success") {
             this.notifyService.showSuccess(
-              "The new version of the program has been successfully downloaded!"
+              "The new version of the program has been successfully downloaded!",
             );
             this.pathUpdate = data.data;
           } else {
@@ -157,7 +158,7 @@ export class AboutComponent {
       this.windUpdates = false;
     } else {
       this.notifyService.showError(
-        "System definition error! It is impossible to find a file for this OS!"
+        "System definition error! It is impossible to find a file for this OS!",
       );
     }
   }
