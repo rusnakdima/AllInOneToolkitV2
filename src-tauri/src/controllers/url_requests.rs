@@ -3,9 +3,7 @@ use crate::services::url_requests;
 
 /* models */
 use crate::models::{
-  response::Response,
-  request_data::RequestData,
-  collection_data::CollectionData,
+  collection_data::CollectionData, request_data::RequestData, response::Response,
 };
 
 #[tauri::command]

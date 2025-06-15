@@ -1,19 +1,20 @@
 /* sys lib */
-use std::fs::File;
-use std::io::Write;
 use dotenv::dotenv;
 use std::env;
+use std::fs::File;
+use std::io::Write;
 
 use tauri::Manager;
 use tauri_plugin_http::reqwest;
 
 /* models */
-use crate::models::response::{
-  DataValue,
-  Response
-};
+use crate::models::response::{DataValue, Response};
 
-pub async fn download_file(app_handle: tauri::AppHandle, url: String, file_name: String) -> Response {
+pub async fn download_file(
+  app_handle: tauri::AppHandle,
+  url: String,
+  file_name: String,
+) -> Response {
   let response = reqwest::get(url).await;
 
   if response.is_err() {
@@ -29,7 +30,10 @@ pub async fn download_file(app_handle: tauri::AppHandle, url: String, file_name:
   if download_folder.is_err() {
     return Response {
       status: "error".to_string(),
-      message: format!("Error! Failed to get download folder: {}", download_folder.unwrap_err()),
+      message: format!(
+        "Error! Failed to get download folder: {}",
+        download_folder.unwrap_err()
+      ),
       data: DataValue::String("".to_string()),
     };
   }

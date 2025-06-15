@@ -15,7 +15,12 @@ pub fn get_data_file_by_path(file_path: String) -> Response {
 }
 
 #[tauri::command]
-pub fn write_data_to_file(app_handle: tauri::AppHandle, name_file: String, content: String, extension: String) -> Response {
+pub fn write_data_to_file(
+  app_handle: tauri::AppHandle,
+  name_file: String,
+  content: String,
+  extension: String,
+) -> Response {
   return manage_file::write_data_to_file(app_handle, name_file, content, extension);
 }
 

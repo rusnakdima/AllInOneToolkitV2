@@ -1,11 +1,11 @@
 /* sys lib */
 use std::collections::HashMap;
+use std::io::{Read, Write};
 use std::str::FromStr;
 use std::{fs::File, path::Path};
-use std::io::{Read, Write};
+use tauri::http::{HeaderMap, HeaderName};
 use tauri::Manager;
 use tauri_plugin_http::reqwest;
-use tauri::http::{HeaderMap, HeaderName};
 
 /* helpers */
 use crate::helpers::common::convert_data_to_array;
@@ -13,15 +13,8 @@ use crate::helpers::common::convert_data_to_array;
 /* models */
 use crate::models::{
   collection_data::CollectionData,
-  request_data::{
-    RequestData,
-    TypeRequest,
-    BodyValue,
-  },
-  response::{
-    DataValue,
-    Response
-  },
+  request_data::{BodyValue, RequestData, TypeRequest},
+  response::{DataValue, Response},
 };
 
 pub async fn send_request(info_request: RequestData) -> Response {
@@ -36,7 +29,13 @@ pub async fn send_request(info_request: RequestData) -> Response {
     for param in info_request.params.iter() {
       if param.isActive {
         if param.key != "" {
-          url = format!("{}{}{}={}", url, if url.ends_with('?') { "" } else { "&" }, param.key, param.value.clone());
+          url = format!(
+            "{}{}{}={}",
+            url,
+            if url.ends_with('?') { "" } else { "&" },
+            param.key,
+            param.value.clone()
+          );
         }
       }
     }
@@ -74,10 +73,10 @@ pub async fn send_request(info_request: RequestData) -> Response {
             }
             json_arr.push_str("]");
             value = serde_json::to_value::<Vec<serde_json::Value>>(arr.clone()).unwrap();
-          },
+          }
           BodyValue::Object(obj) => {
             value = serde_json::to_value::<serde_json::Value>(obj.clone()).unwrap();
-          },
+          }
         }
 
         body.insert(rec.key.clone(), value.clone());
@@ -87,11 +86,7 @@ pub async fn send_request(info_request: RequestData) -> Response {
 
   match info_request.typeReq {
     TypeRequest::GET => {
-      let response_result = client
-        .get(url)
-        .headers(headers)
-        .send()
-        .await;
+      let response_result = client.get(url).headers(headers).send().await;
 
       match response_result {
         Ok(response) => {
@@ -133,12 +128,8 @@ pub async fn send_request(info_request: RequestData) -> Response {
       }
     }
     TypeRequest::POST => {
-      let response_result: Result<reqwest::Response, reqwest::Error> = client
-        .post(url)
-        .headers(headers)
-        .json(&body)
-        .send()
-        .await;
+      let response_result: Result<reqwest::Response, reqwest::Error> =
+        client.post(url).headers(headers).json(&body).send().await;
 
       match response_result {
         Ok(response) => {
@@ -180,12 +171,7 @@ pub async fn send_request(info_request: RequestData) -> Response {
       }
     }
     TypeRequest::PUT => {
-      let response_result = client
-        .put(url)
-        .headers(headers)
-        .json(&body)
-        .send()
-        .await;
+      let response_result = client.put(url).headers(headers).json(&body).send().await;
 
       match response_result {
         Ok(response) => {
@@ -227,11 +213,7 @@ pub async fn send_request(info_request: RequestData) -> Response {
       }
     }
     TypeRequest::DEL => {
-      let response_result = client
-        .delete(url)
-        .headers(headers)
-        .send()
-        .await;
+      let response_result = client.delete(url).headers(headers).send().await;
 
       match response_result {
         Ok(response) => {
@@ -281,7 +263,7 @@ pub fn save_data(app_handle: tauri::AppHandle, list_collections: Vec<CollectionD
     return Response {
       status: "error".to_string(),
       message: "Error! Failed to get document folder.".to_string(),
-      data: DataValue::String("".to_string())
+      data: DataValue::String("".to_string()),
     };
   }
 
@@ -291,8 +273,11 @@ pub fn save_data(app_handle: tauri::AppHandle, list_collections: Vec<CollectionD
     if res_create.is_err() {
       return Response {
         status: "error".to_string(),
-        message: format!("Error! Failed to create app folder: {:?}", res_create.unwrap_err()),
-        data: DataValue::String("".to_string())
+        message: format!(
+          "Error! Failed to create app folder: {:?}",
+          res_create.unwrap_err()
+        ),
+        data: DataValue::String("".to_string()),
       };
     }
   }
@@ -328,7 +313,7 @@ pub fn save_data(app_handle: tauri::AppHandle, list_collections: Vec<CollectionD
   return Response {
     status: "success".to_string(),
     message: "Save successfully!".to_string(),
-    data: DataValue::String("".to_string())
+    data: DataValue::String("".to_string()),
   };
 }
 
@@ -338,16 +323,16 @@ pub fn get_data(app_handle: tauri::AppHandle) -> Response {
     return Response {
       status: "error".to_string(),
       message: "Error! Failed to get document folder.".to_string(),
-      data: DataValue::String("".to_string())
+      data: DataValue::String("".to_string()),
     };
   }
 
   let app_folder = document_folder.unwrap().join("AllInOneToolkit");
-  if!Path::new(&app_folder).exists() {
+  if !Path::new(&app_folder).exists() {
     return Response {
       status: "error".to_string(),
       message: "Error! App folder not found.".to_string(),
-      data: DataValue::String("".to_string())
+      data: DataValue::String("".to_string()),
     };
   }
 
@@ -373,7 +358,8 @@ pub fn get_data(app_handle: tauri::AppHandle) -> Response {
     };
   }
 
-  let deserialized_data: Result<Vec<CollectionData>, serde_json::Error> = serde_json::from_str(&buf);
+  let deserialized_data: Result<Vec<CollectionData>, serde_json::Error> =
+    serde_json::from_str(&buf);
 
   match deserialized_data {
     Ok(data) => {
@@ -387,9 +373,8 @@ pub fn get_data(app_handle: tauri::AppHandle) -> Response {
       return Response {
         status: "error".to_string(),
         message: "Error parsing data".to_string(),
-        data: DataValue::String("".to_string())
+        data: DataValue::String("".to_string()),
       };
     }
   }
-
 }

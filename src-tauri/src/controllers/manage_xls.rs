@@ -10,6 +10,10 @@ pub fn get_data_file_by_path_xls(file_path: String) -> Response {
 }
 
 #[tauri::command]
-pub fn write_data_to_file_xls(app_handle: tauri::AppHandle, name_file: String, content: Vec<Vec<String>>) -> Response {
+pub fn write_data_to_file_xls(
+  app_handle: tauri::AppHandle,
+  name_file: String,
+  content: Vec<Vec<String>>,
+) -> Response {
   return manage_xls::write_data_to_file_xls(app_handle, name_file, content);
 }

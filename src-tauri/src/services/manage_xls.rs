@@ -1,20 +1,14 @@
 /* sys lib */
-use tauri::Manager;
-use std::path::Path;
 use calamine::{open_workbook, Reader, Xlsx};
 use rust_xlsxwriter::Workbook;
+use std::path::Path;
+use tauri::Manager;
 
 /* helpers */
-use crate::helpers::common::{
-  convert_data_to_array,
-  get_current_date
-};
+use crate::helpers::common::{convert_data_to_array, get_current_date};
 
 /* models */
-use crate::models::response::{
-  DataValue,
-  Response
-};
+use crate::models::response::{DataValue, Response};
 
 /* struct */
 struct ExcelData {
@@ -22,12 +16,13 @@ struct ExcelData {
 }
 
 pub fn get_data_file_by_path_xls(file_path: String) -> Response {
-  let workbook: Result<Xlsx<std::io::BufReader<std::fs::File>>, calamine::XlsxError> = open_workbook::<Xlsx<_>, &Path>(Path::new(&file_path));
+  let workbook: Result<Xlsx<std::io::BufReader<std::fs::File>>, calamine::XlsxError> =
+    open_workbook::<Xlsx<_>, &Path>(Path::new(&file_path));
   if workbook.is_err() {
     return Response {
       status: "error".to_string(),
       message: "Error! Failed to open file xls!".to_string(),
-      data: DataValue::String("".to_string())
+      data: DataValue::String("".to_string()),
     };
   }
 
@@ -43,28 +38,30 @@ pub fn get_data_file_by_path_xls(file_path: String) -> Response {
     return Response {
       status: "success".to_string(),
       message: "".to_string(),
-      data: convert_data_to_array::<Vec<String>>(&excel_data.rows)
+      data: convert_data_to_array::<Vec<String>>(&excel_data.rows),
     };
   } else {
     return Response {
       status: "error".to_string(),
       message: "Failed read file xls!".to_string(),
-      data: DataValue::String("".to_string())
+      data: DataValue::String("".to_string()),
     };
   }
 }
 
-pub fn write_data_to_file_xls(app_handle: tauri::AppHandle, name_file: String, content: Vec<Vec<String>>) -> Response {
+pub fn write_data_to_file_xls(
+  app_handle: tauri::AppHandle,
+  name_file: String,
+  content: Vec<Vec<String>>,
+) -> Response {
   let full_name: String = format!("{}_{}.{}", name_file, get_current_date(), "xlsx");
 
-  let document_folder = app_handle
-    .path()
-    .document_dir();
+  let document_folder = app_handle.path().document_dir();
   if document_folder.is_err() {
     return Response {
       status: "error".to_string(),
       message: "Error! Failed to get document folder.".to_string(),
-      data: DataValue::String("".to_string())
+      data: DataValue::String("".to_string()),
     };
   }
 
@@ -75,7 +72,7 @@ pub fn write_data_to_file_xls(app_handle: tauri::AppHandle, name_file: String, c
       return Response {
         status: "error".to_string(),
         message: format!("Error! Failed to create app folder: {:?}", res_create),
-        data: DataValue::String("".to_string())
+        data: DataValue::String("".to_string()),
       };
     }
   }
@@ -97,7 +94,7 @@ pub fn write_data_to_file_xls(app_handle: tauri::AppHandle, name_file: String, c
       return Response {
         status: "success".to_string(),
         message: "".to_string(),
-        data: DataValue::String(file_path.display().to_string())
+        data: DataValue::String(file_path.display().to_string()),
       };
     }
     Err(error) => {
@@ -105,7 +102,7 @@ pub fn write_data_to_file_xls(app_handle: tauri::AppHandle, name_file: String, c
       return Response {
         status: "error".to_string(),
         message: format!("Error! Failed to write data to file!"),
-        data: DataValue::String("".to_string())
+        data: DataValue::String("".to_string()),
       };
     }
   }

@@ -5,7 +5,11 @@ use crate::services::about;
 use crate::models::response::Response;
 
 #[tauri::command]
-pub async fn download_update(app_handle: tauri::AppHandle, url: String, file_name: String) -> Response {
+pub async fn download_update(
+  app_handle: tauri::AppHandle,
+  url: String,
+  file_name: String,
+) -> Response {
   return about::download_file(app_handle, url, file_name).await;
 }
 

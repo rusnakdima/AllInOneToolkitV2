@@ -11,10 +11,7 @@ use tauri_plugin_dialog::DialogExt;
 use crate::helpers::common;
 
 /* models */
-use crate::models::response::{
-  DataValue,
-  Response
-};
+use crate::models::response::{DataValue, Response};
 
 fn send_file_path(app_handle: tauri::AppHandle, file_path: String) {
   let _ = app_handle.emit("send-file-path", file_path).unwrap();
@@ -37,16 +34,19 @@ pub fn open_dialog_window(app_handle: tauri::AppHandle, type_file: Vec<&str>) ->
     .add_filter(_name_filter, &_list_ext)
     .pick_file(|file_path| match file_path {
       Some(path) => {
-        let _ = send_file_path(app_handle, path.as_path().unwrap().to_str().unwrap().to_string());
-      },
+        let _ = send_file_path(
+          app_handle,
+          path.as_path().unwrap().to_str().unwrap().to_string(),
+        );
+      }
       _ => {}
     });
 
   return Response {
     status: "success".to_string(),
     message: "".to_string(),
-    data: DataValue::String("".to_string())
-  }
+    data: DataValue::String("".to_string()),
+  };
 }
 
 pub fn get_data_file_by_path(file_path: String) -> Response {
@@ -59,30 +59,33 @@ pub fn get_data_file_by_path(file_path: String) -> Response {
       return Response {
         status: "success".to_string(),
         message: "".to_string(),
-        data: DataValue::String(content)
+        data: DataValue::String(content),
       };
     }
     Err(err) => {
       return Response {
         status: "error".to_string(),
         message: format!("Error: {:?}!", err),
-        data: DataValue::String("".to_string())
+        data: DataValue::String("".to_string()),
       };
     }
   }
 }
 
-pub fn write_data_to_file(app_handle: tauri::AppHandle, name_file: String, content: String, extension: String) -> Response {
+pub fn write_data_to_file(
+  app_handle: tauri::AppHandle,
+  name_file: String,
+  content: String,
+  extension: String,
+) -> Response {
   let full_name: String = format!("{}_{}.{}", name_file, common::get_current_date(), extension);
 
-  let document_folder = app_handle
-    .path()
-    .document_dir();
+  let document_folder = app_handle.path().document_dir();
   if document_folder.is_err() {
     return Response {
       status: "error".to_string(),
       message: "Error! Failed to get document folder.".to_string(),
-      data: DataValue::String("".to_string())
+      data: DataValue::String("".to_string()),
     };
   }
 
@@ -93,7 +96,7 @@ pub fn write_data_to_file(app_handle: tauri::AppHandle, name_file: String, conte
       return Response {
         status: "error".to_string(),
         message: format!("Error! Failed to create app folder: {:?}", res_create),
-        data: DataValue::String("".to_string())
+        data: DataValue::String("".to_string()),
       };
     }
   }
@@ -104,7 +107,7 @@ pub fn write_data_to_file(app_handle: tauri::AppHandle, name_file: String, conte
     return Response {
       status: "error".to_string(),
       message: format!("Error! Failed to create file!"),
-      data: DataValue::String("".to_string())
+      data: DataValue::String("".to_string()),
     };
   }
 
@@ -113,14 +116,14 @@ pub fn write_data_to_file(app_handle: tauri::AppHandle, name_file: String, conte
     return Response {
       status: "error".to_string(),
       message: format!("Error! Failed to write data to file!"),
-      data: DataValue::String("".to_string())
+      data: DataValue::String("".to_string()),
     };
   }
 
   return Response {
     status: "success".to_string(),
     message: "".to_string(),
-    data: DataValue::String(file_path.display().to_string())
+    data: DataValue::String(file_path.display().to_string()),
   };
 }
 
@@ -129,13 +132,13 @@ pub fn open_file(path: String) -> Response {
     return Response {
       status: "error".to_string(),
       message: format!("Failed to open file:: {}", err),
-      data: DataValue::String("".to_string())
-    }
+      data: DataValue::String("".to_string()),
+    };
   }
 
   return Response {
     status: "success".to_string(),
     message: "".to_string(),
-    data: DataValue::String("".to_string())
+    data: DataValue::String("".to_string()),
   };
 }

@@ -3,11 +3,8 @@ use crate::helpers::common::convert_data_to_object;
 
 /* models */
 use crate::models::{
-  response::{
-    DataValue,
-    Response
-  },
-  unicode_data::UnicodeData
+  response::{DataValue, Response},
+  unicode_data::UnicodeData,
 };
 
 pub fn get_info_symbol(type_coding: String, content: String) -> Response {
@@ -22,7 +19,7 @@ pub fn get_info_symbol(type_coding: String, content: String) -> Response {
       unicode_data = UnicodeData {
         symbol: content,
         dec: format!("&#{}", dec.to_string()),
-        hex: format!("U+{}", hex)
+        hex: format!("U+{}", hex),
       };
 
       return Response {
@@ -39,7 +36,7 @@ pub fn get_info_symbol(type_coding: String, content: String) -> Response {
       unicode_data = UnicodeData {
         symbol: char.to_string(),
         dec: format!("&#{}", content.replace("&#", "")),
-        hex: format!("U+{}", hex)
+        hex: format!("U+{}", hex),
       };
 
       return Response {
@@ -49,7 +46,8 @@ pub fn get_info_symbol(type_coding: String, content: String) -> Response {
       };
     }
     "hex" => {
-      let dec = u32::from_str_radix(content.to_lowercase().replace("u+", "").trim(), 16).unwrap_or(0);
+      let dec =
+        u32::from_str_radix(content.to_lowercase().replace("u+", "").trim(), 16).unwrap_or(0);
       let char = char::from_u32(dec).unwrap();
 
       unicode_data = UnicodeData {
