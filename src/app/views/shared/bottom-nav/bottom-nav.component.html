@@ -1,37 +1,21 @@
 <div class="styleBottomNav">
   <div class="flex flex-col items-center justify-center">
-    <mat-icon
-      class="!w-[35px] !h-[35px] !text-3xl cursor-pointer"
-      [routerLink]="['/home']"
-      fontIcon="home"
-      [ngClass]="[ url == 'home' ? '!text-blue-500 dark:!text-green-500' : '' ]"
-    />
+    <mat-icon class="cursor-pointer" [routerLink]="['/home']" fontIcon="home"
+      [ngClass]="[ url == 'home' ? '!text-blue-500 dark:!text-green-500' : '' ]" />
   </div>
 
   <div class="flex flex-col items-center justify-center">
-    <mat-icon
-      class="!w-[35px] !h-[35px] !text-3xl cursor-pointer"
-      [routerLink]="['/search']"
-      fontIcon="search"
-      [ngClass]="[ url == 'search' ? '!text-blue-500 dark:!text-green-500' : '' ]"
-    />
+    <mat-icon class="cursor-pointer" [routerLink]="['/search']" fontIcon="search"
+      [ngClass]="[ url == 'search' ? '!text-blue-500 dark:!text-green-500' : '' ]" />
   </div>
 
   <div class="flex flex-col items-center justify-center">
-    <mat-icon
-      class="!w-[35px] !h-[35px] !text-3xl cursor-pointer"
-      [routerLink]="['/catalogs']"
-      fontIcon="category"
-      [ngClass]="[ url == 'catalogs' ? '!text-blue-500 dark:!text-green-500' : '' ]"
-    />
+    <mat-icon class="cursor-pointer" [routerLink]="['/catalogs']" fontIcon="category"
+      [ngClass]="[ url == 'catalogs' ? '!text-blue-500 dark:!text-green-500' : '' ]" />
   </div>
 
   <div class="flex flex-col items-center justify-center">
-    <mat-icon
-      class="!w-[35px] !h-[35px] !text-3xl cursor-pointer"
-      [routerLink]="['/about']"
-      fontIcon="information"
-      [ngClass]="[ url == 'about' ? '!text-blue-500 dark:!text-green-500' : '' ]"
-    />
+    <mat-icon class="cursor-pointer" [routerLink]="['/about']" fontIcon="information"
+      [ngClass]="[ url == 'about' ? '!text-blue-500 dark:!text-green-500' : '' ]" />
   </div>
 </div>

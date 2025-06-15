@@ -1,36 +1,35 @@
-<div class="fixed top-0 left-0 m-0 p-0 z-[999] bg-white/60 dark:bg-black/30 w-full h-screen" [ngClass]="showNav ? 'block' : '-translate-x-full'" (click)="showNav = false">
-  <div class="p-4 bg-gray-200 dark:bg-zinc-800 w-64 h-screen transition-transform" [ngClass]="showNav ? '' : '-translate-x-full'">
+<div class="fixed top-0 left-0 m-0 p-0 z-[999] bg-white/60 dark:bg-black/30 w-full h-screen"
+  [ngClass]="showNav ? 'block' : '-translate-x-full'" (click)="showNav = false">
+  <div class="p-4 bg-gray-200 dark:bg-zinc-800 w-64 h-screen transition-transform"
+    [ngClass]="showNav ? '' : '-translate-x-full'">
     <div class="flex flex-row justify-between items-center">
-      <div class="styleFloatBut !p-0">
-        <mat-icon
-          class="!w-[36px] !h-[36px] !text-3xl"
-          fontIcon="chevron_left"
-        />
-      </div>
+      <img src="/assets/images/icon.png" class="rounded-xl w-10 h-10" />
 
       <span class="text-2xl">Menu</span>
 
-      <img src="/assets/images/icon.png" class="rounded-xl w-10 h-10" />
+      <div class="flex flex-col items-center">
+        <mat-icon fontIcon="close" />
+      </div>
     </div>
 
     <div class="flex flex-col gap-y-2 py-4 h-full font-medium overflow-y-auto">
       <div class="styleLinkMenu" [routerLink]="['/home']">
-        <mat-icon class="!w-[36px] !h-[36px] !text-3xl" fontIcon="home"/>
+        <mat-icon fontIcon="home" />
         <span>Home</span>
       </div>
 
       <div class="styleLinkMenu" [routerLink]="['/search']">
-        <mat-icon class="!w-[36px] !h-[36px] !text-3xl" fontIcon="search"/>
+        <mat-icon fontIcon="search" />
         <span>Search</span>
       </div>
 
       <div class="styleLinkMenu" [routerLink]="['/catalogs']">
-        <mat-icon class="!w-[36px] !h-[36px] !text-3xl" fontIcon="category"/>
+        <mat-icon fontIcon="category" />
         <span>Catalogs</span>
       </div>
 
       <div class="styleLinkMenu" [routerLink]="['/about']">
-        <mat-icon class="!w-[36px] !h-[36px] !text-3xl" fontIcon="info_outline"/>
+        <mat-icon fontIcon="info_outline" />
         <span>About</span>
       </div>
     </div>

@@ -178,12 +178,6 @@ button:disabled {
   }
 }
 
-.notification-item {
-  @apply rounded-lg overflow-hidden w-full max-w-md border-l-4 border-white;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
 @keyframes slideInRight {
   from {
     transform: translateX(100%);
@@ -201,10 +195,10 @@ button:disabled {
 
 @keyframes fadeOut {
   from {
-    opacity: 1;
+    transform: translateX(100%);
   }
   to {
-    opacity: 0;
+    transform: translateX(0);
   }
 }
 
@@ -212,12 +206,8 @@ button:disabled {
   animation: fadeOut 0.3s ease-out forwards;
 }
 
-ion-icon {
-  @apply z-0 !text-2xl !min-w-[25px] !min-h-[25px]
-}
-
-svg {
-  @apply fill-black dark:fill-white stroke-black dark:stroke-white
+mat-icon {
+  @apply !w-[30px] !h-[30px] !text-3xl
 }
 
 pre {
@@ -282,7 +272,7 @@ pre {
 }
 
 .ngx-pagination .current {
-  @apply !px-4 !py-2 z-10 text-xl !text-blue-600 dark:!text-white hover:!text-blue-700 !bg-blue-50 dark:!bg-zinc-600 hover:!bg-blue-100 border border-blue-300 dark:!border-zinc-400 dark:hover:!bg-zinc-700
+  @apply !px-4 !py-2 z-0 text-xl !text-blue-600 dark:!text-white hover:!text-blue-700 !bg-blue-50 dark:!bg-zinc-600 hover:!bg-blue-100 border border-blue-300 dark:!border-zinc-400 dark:hover:!bg-zinc-700
 }
 
 .mat-calendar,

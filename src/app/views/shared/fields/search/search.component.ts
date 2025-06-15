@@ -1,13 +1,6 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
-import {
-  CUSTOM_ELEMENTS_SCHEMA,
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-} from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 /* materials */
@@ -16,7 +9,6 @@ import { MatIconModule } from "@angular/material/icon";
 @Component({
   selector: "app-search",
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, MatIconModule],
   templateUrl: "./search.component.html",
 })
@@ -73,7 +65,7 @@ export class SearchComponent implements OnInit {
                           .includes(term.toLowerCase());
                       }
                       return false;
-                    }
+                    },
                   );
                 } else if (typeof this.getValueObj(item, field) === "object") {
                   return Object.values(this.getValueObj(item, field)).some(
@@ -93,7 +85,7 @@ export class SearchComponent implements OnInit {
                         });
                       }
                       return false;
-                    }
+                    },
                   );
                 }
                 return false;
@@ -138,7 +130,7 @@ export class SearchComponent implements OnInit {
           });
         }
         return true;
-      })
+      }),
     );
   }
 

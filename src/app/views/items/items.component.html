@@ -1,40 +1,35 @@
 <div class="flex flex-col gap-y-5 m-3">
-  <div class="relative flex flex-row justify-between px-2 pb-2 !rounded-none styleBorderSolidLite border-b">
-    <div class="styleFloatBut">
-      <button class="flex flex-col items-center justify-center" (click)="refresh()" id="refreshBut">
-        <mat-icon class="!w-[35px] !h-[35px] !text-3xl" fontIcon="refresh" />
-      </button>
-    </div>
+  <div
+    class="relative flex flex-row justify-between px-2 pb-2 !rounded-none styleBorderSolidLite border-b"
+  >
+    <button class="styleFloatBut !p-1 w-10 h-10" (click)="refresh()">
+      <div id="refreshBut">
+        <mat-icon fontIcon="refresh" />
+      </div>
+    </button>
 
-    <div class="flex flex-row gap-x-2">
-      <app-search
-        [tempArray]="tempListLinks"
-        (array)="searchFunc($event)"
-      ></app-search>
-      <button class="styleFloatBut" (click)="changeTypeView()">
-        @if (typeViewList == 'grid') {
-          <mat-icon class="!w-[35px] !h-[35px] !text-3xl" fontIcon="grid_view" />
-        } @else if (typeViewList == 'list') {
-          <mat-icon class="!w-[35px] !h-[35px] !text-3xl" fontIcon="list" />
+    <div class="flex flex-row gap-x-2 items-center">
+      <app-search [tempArray]="tempListLinks" (array)="searchFunc($event)" />
+      <button class="styleFloatBut !p-1 w-10 h-10" (click)="changeTypeView()">
+        @if (typeViewList == "grid") {
+          <mat-icon fontIcon="grid_view" />
+        } @else if (typeViewList == "list") {
+          <mat-icon fontIcon="list" />
         }
       </button>
     </div>
   </div>
 
-  @if (typeViewList == 'grid') {
+  @if (typeViewList == "grid") {
     <div class="flex flex-row flex-wrap gap-3">
       @for (link of listLinks; track link) {
-        <app-card-item
-          [link]="link"
-        ></app-card-item>
+        <app-card-item [link]="link"></app-card-item>
       }
     </div>
-  } @else if (typeViewList == 'list') {
+  } @else if (typeViewList == "list") {
     <div class="flex flex-col gap-y-3">
       @for (link of listLinks; track link) {
-        <app-tile-item
-          [link]="link"
-        ></app-tile-item>
+        <app-tile-item [link]="link"></app-tile-item>
       }
     </div>
   } @else {

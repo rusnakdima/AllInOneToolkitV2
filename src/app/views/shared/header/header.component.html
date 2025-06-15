@@ -1,7 +1,7 @@
 <div class="styleHeader">
   <div class="flex flex-row items-center gap-x-3">
     <mat-icon
-      class="!hidden min-[480px]:!block !w-[36px] !h-[36px] !text-3xl cursor-pointer"
+      class="!hidden min-[480px]:!block !w-[30px] !h-[36px] !text-3xl cursor-pointer"
       (click)="showNav()"
       fontIcon="menu"
     />
@@ -11,18 +11,28 @@
     }
 
     <div class="flex flex-col">
-      @if (prevTitle != '') {
-        <span class="styleLinkRedir text-sm" (click)="goBack()">{{ prevTitle }}</span>
+      @if (prevTitle != "") {
+        <span class="styleLinkRedir text-sm" (click)="goBack()">{{
+          prevTitle
+        }}</span>
       }
       <span class="text-xl">{{ title }}</span>
     </div>
   </div>
 
   <div class="flex flex-row gap-x-2 justify-center items-center">
-    @if (themeVal == '') {
-      <mat-icon class="!w-[36px] !h-[36px] !text-3xl cursor-pointer" fontIcon="light_mode" (click)="setTheme('dark')" />
-    } @else if (themeVal == 'dark') {
-      <mat-icon class="!w-[36px] !h-[36px] !text-3xl cursor-pointer" fontIcon="dark_mode" (click)="setTheme('')" />
+    @if (themeVal == "") {
+      <mat-icon
+        class="cursor-pointer"
+        fontIcon="light_mode"
+        (click)="setTheme('dark')"
+      />
+    } @else if (themeVal == "dark") {
+      <mat-icon
+        class="cursor-pointer"
+        fontIcon="dark_mode"
+        (click)="setTheme('')"
+      />
     }
   </div>
 </div>

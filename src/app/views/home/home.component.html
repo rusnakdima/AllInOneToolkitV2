@@ -1,11 +1,13 @@
 <div class="flex flex-col gap-y-5 m-3">
   <div class="flex flex-row justify-end px-2 pb-2 !rounded-none styleBorderSolidLite border-b">
-    <button class="styleFloatBut" (click)="changeTypeView()">
-      @if (typeViewList == 'grid') {
-        <mat-icon class="!w-[32px] !h-[32px] !text-3xl" fontIcon="grid_view" />
-      } @else if (typeViewList == 'list') {
-        <mat-icon class="!w-[32px] !h-[32px] !text-3xl" fontIcon="list" />
-      }
+    <button class="styleFloatBut !p-1" (click)="changeTypeView()">
+      <div>
+        @if (typeViewList == 'grid') {
+          <mat-icon fontIcon="grid_view" />
+        } @else if (typeViewList == 'list') {
+          <mat-icon fontIcon="list" />
+        }
+      </div>
     </button>
   </div>
 
@@ -31,7 +33,7 @@
     <div class="flex flex-col items-center justify-center gap-y-3">
       <span class="text-2xl">You haven't used more than one tool yet.</span>
       <span class="text-2xl">Click the <mat-icon
-        class="styleLinkRedir !w-[36px] !h-[36px] !text-3xl cursor-pointer"
+        class="styleLinkRedir !w-[24px] !h-[24px] !text-2xl cursor-pointer"
         fontIcon="search"
       /> or <a [routerLink]="['/search']" class="styleLinkRedir">Search</a> button to start using the tools</span>
     </div>
