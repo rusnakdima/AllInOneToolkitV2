@@ -1,7 +1,7 @@
 /* sys lib */
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { INotify, Response, ResponseStatus } from '@models/response';
+import { Response, ResponseStatus } from '@models/response';
 
 @Injectable({
   providedIn: 'root'
