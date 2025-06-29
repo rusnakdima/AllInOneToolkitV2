@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 
 /* models */
-import { Response } from "@models/response";
+import { Response, ResponseStatus } from "@models/response";
 
 /* services */
 import { FileService } from "@services/file.service";
@@ -89,7 +89,7 @@ export class XlsToJsonComponent {
       await this.fileService
         .writeDataToFile(nameNewFile, JSON.stringify(this.dataJson), "json")
         .then((data: Response) => {
-          if (data.status == "success") {
+          if (data.status == ResponseStatus.SUCCESS) {
             this.pathNewFile = data.data;
             this.notifyService.showSuccess(
               `The data has been successfully saved to a file "${this.pathNewFile}"!`
@@ -114,7 +114,7 @@ export class XlsToJsonComponent {
       await this.fileService
         .openFileInApp(this.pathNewFile)
         .then((data: Response) => {
-          if (data.status == "success") {
+          if (data.status == ResponseStatus.SUCCESS) {
             this.notifyService.showWarning(
               "Wait a bit until the program starts to read this file format!"
             );

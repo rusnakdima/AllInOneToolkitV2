@@ -13,7 +13,7 @@ import { VirusTotalService } from "@services/virus-total.service";
 import { NotifyService } from "@services/notify.service";
 
 /* models */
-import { Response } from "@models/response";
+import { Response, ResponseStatus } from "@models/response";
 
 @Component({
   selector: "app-virus-total",
@@ -57,7 +57,7 @@ export class VirusTotalComponent {
       this.virusTotalService
         .checkOnViruses(apiUrl)
         .then((data: Response) => {
-          if (data.status == "success") {
+          if (data.status == ResponseStatus.SUCCESS) {
             if (data.data && data.data != "") {
               if (Common.isJsonAsString(data.data)) {
                 const json = JSON.parse(data.data);

@@ -9,7 +9,12 @@ import { MatIconModule } from "@angular/material/icon";
 import { NotifyService } from "@services/notify.service";
 
 /* models */
-import { ActiveNotification, INotify, ResponseStatus, ResponseStatusIcon } from "@models/response";
+import {
+  ActiveNotification,
+  INotify,
+  ResponseStatus,
+  ResponseStatusIcon,
+} from "@models/response";
 
 @Component({
   selector: "app-window-notify",
@@ -87,7 +92,7 @@ export class WindowNotifyComponent implements OnInit {
     if (!notification) return;
 
     const element = document.querySelector(
-      `.notification-item[data-id="${id}"]`
+      `.notification-item[data-id="${id}"]`,
     ) as HTMLElement;
     if (element) {
       element.classList.add("animate-fadeOut");
@@ -159,15 +164,15 @@ export class WindowNotifyComponent implements OnInit {
   getNotificationTitle(status: ResponseStatus): string {
     switch (status) {
       case ResponseStatus.SUCCESS:
-        return 'Success Message';
+        return "Success Message";
       case ResponseStatus.INFO:
-        return 'Info Message';
+        return "Info Message";
       case ResponseStatus.WARNING:
-        return 'Warning Message';
+        return "Warning Message";
       case ResponseStatus.ERROR:
-        return 'Error Message';
+        return "Error Message";
       default:
-        return 'Notification';
+        return "Notification";
     }
   }
 }

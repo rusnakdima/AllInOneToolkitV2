@@ -20,7 +20,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { Common } from "@helpers/common";
 
 /* models */
-import { Response } from "@models/response";
+import { Response, ResponseStatus } from "@models/response";
 import { Collection } from "@models/collection";
 import {
   BodyData,
@@ -114,7 +114,7 @@ export class UrlRequestsComponent implements OnInit {
     this.urlRequestsService
       .getData()
       .then((data: Response) => {
-        if (data.status == "success") {
+        if (data.status == ResponseStatus.SUCCESS) {
           this.savedListCollections = data.data;
           this.listCollections = this.savedListCollections;
         } else {
@@ -566,7 +566,7 @@ export class UrlRequestsComponent implements OnInit {
         .then((data: Response) => {
           this.selectedTabIndex = 3;
           this.notifyService.showNotify(data.status, data.message);
-          if (data.status == "success") {
+          if (data.status == ResponseStatus.SUCCESS) {
             if (Common.isJson(data.data)) {
               this.response = JSON.stringify(data.data);
             } else {

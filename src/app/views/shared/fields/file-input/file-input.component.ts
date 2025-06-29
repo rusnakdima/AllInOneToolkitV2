@@ -15,7 +15,7 @@ import { listen } from "@tauri-apps/api/event";
 import { MatIconModule } from "@angular/material/icon";
 
 /* models */
-import { Response } from "@models/response";
+import { Response, ResponseStatus } from "@models/response";
 
 /* services */
 import { FileService } from "@services/file.service";
@@ -91,7 +91,7 @@ export class FileInputComponent implements OnInit, OnDestroy {
       await this.fileService
         .getDataFromXLS(this.filePath)
         .then((data: Response) => {
-          if (data.status == "success") {
+          if (data.status == ResponseStatus.SUCCESS) {
             this.dataFile.next(data.data);
           }
         })
@@ -103,7 +103,7 @@ export class FileInputComponent implements OnInit, OnDestroy {
       await this.fileService
         .getDataFromAnyFile(this.filePath)
         .then((data: Response) => {
-          if (data.status == "success") {
+          if (data.status == ResponseStatus.SUCCESS) {
             this.dataFile.next(data.data);
           }
         })
