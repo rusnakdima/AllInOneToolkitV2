@@ -7,7 +7,8 @@ import { HttpClientModule } from "@angular/common/http";
 import { environment } from "@env/environment";
 
 /* models */
-import { Response } from "@models/response";
+import { Response, ResponseStatus } from "@models/response";
+import { Author } from "@models/author";
 
 /* services */
 import { AboutService } from "@services/about.service";
@@ -27,6 +28,10 @@ export class AboutComponent {
   ) {}
 
   version: string = environment.version;
+  nameProduct: string = environment.nameProduct;
+  yearCreate: number = environment.yearCreate;
+  companyName: string = environment.companyName;
+  authors: Array<Author> = environment.authors;
   dateVersion: string = localStorage["dateVersion"] || "Unknown";
   dateCheck: string = localStorage["dateCheck"] || "Unknown";
 
@@ -71,7 +76,7 @@ export class AboutComponent {
     this.aboutService
       .getBinaryNameFile()
       .then((data: Response) => {
-        if (data.status == "success") {
+        if (data.status == ResponseStatus.SUCCESS) {
           if (data.data != "Unknown") {
             this.nameFile = data.data;
           }
@@ -108,6 +113,7 @@ export class AboutComponent {
       this.formatDate(new Date().toUTCString()),
     );
     this.dateCheck = localStorage["dateCheck"];
+
     this.aboutService.checkUpdate().subscribe({
       next: (res: any) => {
         if (res && res.tag_name) {
@@ -134,14 +140,15 @@ export class AboutComponent {
 
   downloadFile() {
     if (this.nameFile != "") {
-      (this.downloadProgress = true),
-        this.notifyService.showWarning(
-          "Wait until the program update is downloaded!",
-        );
+      this.downloadProgress = true;
+      this.notifyService.showWarning(
+        "Wait until the program update is downloaded!",
+      );
+
       this.aboutService
         .downloadUpdate(this.lastVersion, this.nameFile)
         .then((data: Response) => {
-          if (data.status == "success") {
+          if (data.status == ResponseStatus.SUCCESS) {
             this.notifyService.showSuccess(
               "The new version of the program has been successfully downloaded!",
             );

@@ -4,48 +4,61 @@
     alt="icon app"
     class="rounded-xl !w-[100px]"
   />
-  <span class="font-bold text-2xl text-center">All In One Toolkit v2.0</span>
-  <div class="flex flex-col gap-y-1 mt-3 text-lg">
-    <div class="grid grid-cols-2 gap-x-3">
-      <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
-        >Version</span
-      >
-      <span>{{ version }}</span>
-    </div>
-    <div class="grid grid-cols-2 gap-x-3">
-      <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
-        >Date of released</span
-      >
-      <span>{{ dateVersion }}</span>
-    </div>
-    <div class="grid grid-cols-2 gap-x-3">
+  <span class="font-bold text-2xl text-center">{{ nameProduct }}</span>
+
+  <div class="grid grid-cols-2 gap-x-3 gap-y-1 mt-3 text-lg">
+    <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
+      >Version</span
+    >
+    <span>{{ version }}</span>
+
+    <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
+      >Date of released</span
+    >
+    <span>{{ dateVersion }}</span>
+
+    @if (authors.length == 1) {
       <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
         >Author</span
       >
-      <span>Dmitriy303</span>
-    </div>
-    <div class="grid grid-cols-2 gap-x-3">
+    } @else if (authors.length > 1) {
       <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
-        >Company</span
+        >Authors</span
       >
-      <span>TechCraft Solutions</span>
-    </div>
-    <div class="grid grid-cols-2 gap-x-3">
+    } @else {
       <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
-        >Year of creation</span
+        >Author</span
       >
-      <span>2024</span>
-    </div>
-    <div class="grid grid-cols-2 gap-x-3">
-      <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
-        >Last checked</span
-      >
-      <span>{{ dateCheck }}</span>
-    </div>
+    }
+    @for (author of authors; track $index) {
+      @if ($index > 0) {
+        <span></span>
+      }
+      <a class="styleLinkRedir" [href]="author.url" target="_blank">{{
+        author.name
+      }}</a>
+    }
+
+    <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
+      >Company</span
+    >
+    <span>{{ companyName }}</span>
+
+    <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
+      >Year of creation</span
+    >
+    <span>{{ yearCreate }}</span>
+
+    <span class="font-bold !text-gray-600 dark:!text-gray-300 text-end"
+      >Last checked</span
+    >
+    <span>{{ dateCheck }}</span>
   </div>
+
   <button class="styleButInfo" (click)="checkUpdate()">
     <span>Check for updates...</span>
   </button>
+
   @if (pathUpdate != "") {
     <div class="text-xl font-bold mt-3">
       <span class="styleLink" (click)="openFile()">Open new version</span>
