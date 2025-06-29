@@ -1,34 +1,36 @@
 export class Common {
-  static isJson(data: Object): boolean {
-    return typeof data === "object";
-  }
+  static truncateString(str: string, length: number = 25): string {
+    if (str) {
+      const endIndex: number = length;
+      if (str.length <= endIndex) {
+        return str;
+      }
 
-  static isJsonAsString(data: string): boolean {
-    try {
-      const parsed = JSON.parse(data);
-      return typeof parsed === "object" && parsed !== null;
-    } catch (e) {
-      return false;
+      return str.slice(0, endIndex) + '...';
     }
+    return '';
   }
 
   static formatTime(date: Date | string): string {
-    if (typeof date === "string") {
+    if (typeof date === 'string') {
       date = new Date(date);
     }
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${hours}:${minutes}`;
   }
 
   static formatLocaleDate(date: Date | string): string {
-    if (typeof date === "string") {
+    if (typeof date === 'string' && date == '') {
+      date = new Date();
+    }
+    if (typeof date === 'string') {
       date = new Date(date);
     }
     return date.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
     });
   }
 
@@ -60,19 +62,7 @@ export class Common {
     if (dateRec < twoDaysAgo) {
       return this.formatLocaleDate(dateRec);
     }
-    return "";
-  }
-
-  static truncateString(str: string, length: number = 25): string {
-    if (str) {
-      const endIndex: number = length;
-      if (str.length <= endIndex) {
-        return str;
-      }
-
-      return str.slice(0, endIndex) + "...";
-    }
-    return "";
+    return '';
   }
 
   static formatTimeAgo(date: string | number | Date): string {
@@ -80,58 +70,43 @@ export class Common {
     const curDate = new Date();
 
     if (curDate.getTime() >= dateRec.getTime()) {
-      const year = Math.floor(
-        (curDate.getTime() - dateRec.getTime()) / (1000 * 60 * 60 * 24 * 365)
-      );
-      if (year > 0) {
-        if (year == 0) {
-          return `${year} year ago`;
-        }
-        return `${year} years ago`;
+      const diff = curDate.getTime() - dateRec.getTime();
+
+      const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+      if (years >= 1) {
+        return `${years} year${years > 1 ? 's' : ''} ago`;
       }
 
+      const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
       const days = Math.floor(
-        (curDate.getTime() - dateRec.getTime()) / (1000 * 60 * 60 * 24)
+        (diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24)
       );
-      if (days > 0) {
-        if (days == 1) {
-          return `${days} day ago`;
-        }
-        return `${days} days ago`;
+      if (months >= 1) {
+        return `${months} month${months > 1 ? 's' : ''}${
+          days > 0 ? ` ${days} day${days > 1 ? 's' : ''}` : ''
+        } ago`;
       }
 
+      const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor(
-        (curDate.getTime() - dateRec.getTime()) / (1000 * 60 * 60)
+        (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
       );
-      if (hours > 0) {
-        if (hours == 1) {
-          return `${hours} hour ago`;
-        }
-        return `${hours} hours ago`;
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      if (totalDays >= 1) {
+        return `${totalDays} day${totalDays > 1 ? 's' : ''} ${hours
+          .toString()
+          .padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds
+          .toString()
+          .padStart(2, '0')} ago`;
       }
 
-      const minutes = Math.floor(
-        (curDate.getTime() - dateRec.getTime()) / (1000 * 60)
-      );
-      if (minutes > 0) {
-        if (minutes == 1) {
-          return `${minutes} minute ago`;
-        }
-        return `${minutes} minutes ago`;
-      }
-
-      const seconds = Math.floor(
-        (curDate.getTime() - dateRec.getTime()) / 1000
-      );
-      if (seconds >= 0) {
-        if (seconds == 1 || seconds == 0) {
-          return `${seconds} second ago`;
-        }
-        return `${seconds} seconds ago`;
-      }
+      return `${hours.toString().padStart(2, '0')}:${minutes
+        .toString()
+        .padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ago`;
     }
 
-    return "";
+    return '';
   }
 
   static formatTimeIn(date: string | number | Date): string {
@@ -139,57 +114,86 @@ export class Common {
     const curDate = new Date();
 
     if (dateRec.getTime() >= curDate.getTime()) {
-      const year = Math.floor(
-        (dateRec.getTime() - curDate.getTime()) / (1000 * 60 * 60 * 24 * 365)
-      );
-      if (year > 0) {
-        if (year == 0) {
-          return `in ${year} year`;
-        }
-        return `in ${year} years`;
+      const diff = dateRec.getTime() - curDate.getTime();
+
+      const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+      if (years >= 1) {
+        return `in ${years} year${years > 1 ? 's' : ''}`;
       }
 
+      const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
       const days = Math.floor(
-        (dateRec.getTime() - curDate.getTime()) / (1000 * 60 * 60 * 24)
+        (diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24)
       );
-      if (days > 0) {
-        if (days == 1) {
-          return `in ${days} day`;
-        }
-        return `in ${days} days`;
+      if (months >= 1) {
+        return `in ${months} month${months > 1 ? 's' : ''}${
+          days > 0 ? ` ${days} day${days > 1 ? 's' : ''}` : ''
+        }`;
       }
 
+      const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor(
-        (dateRec.getTime() - curDate.getTime()) / (1000 * 60 * 60)
+        (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
       );
-      if (hours > 0) {
-        if (hours == 1) {
-          return `in ${hours} hour`;
-        }
-        return `in ${hours} hours`;
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      if (totalDays >= 1) {
+        return `in ${totalDays} day${totalDays > 1 ? 's' : ''} ${hours
+          .toString()
+          .padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds
+          .toString()
+          .padStart(2, '0')}`;
       }
 
-      const minutes = Math.floor(
-        (dateRec.getTime() - curDate.getTime()) / (1000 * 60)
-      );
-      if (minutes > 0) {
-        if (minutes == 1) {
-          return `in ${minutes} minute`;
-        }
-        return `in ${minutes} minutes`;
-      }
-
-      const seconds = Math.floor(
-        (dateRec.getTime() - curDate.getTime()) / 1000
-      );
-      if (seconds >= 0) {
-        if (seconds == 1 || seconds == 0) {
-          return `in ${seconds} second`;
-        }
-        return `in ${seconds} seconds`;
-      }
+      return `in ${hours.toString().padStart(2, '0')}:${minutes
+        .toString()
+        .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
 
-    return "";
+    return '';
+  }
+
+  static formatTimeLeft(date: string | number | Date): string {
+    const dateRec = new Date(date);
+    const curDate = new Date();
+
+    if (dateRec.getTime() >= curDate.getTime()) {
+      const diff = dateRec.getTime() - curDate.getTime();
+
+      const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+      if (years >= 1) {
+        return `${years} year${years > 1 ? 's' : ''} left`;
+      }
+
+      const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
+      const days = Math.floor(
+        (diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24)
+      );
+      if (months >= 1) {
+        return `${months} month${months > 1 ? 's' : ''}${
+          days > 0 ? ` ${days} day${days > 1 ? 's' : ''}` : ''
+        } left`;
+      }
+
+      const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      if (totalDays >= 1) {
+        return `${totalDays} day${totalDays > 1 ? 's' : ''} ${hours
+          .toString()
+          .padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds
+          .toString()
+          .padStart(2, '0')} left`;
+      }
+
+      return `${hours.toString().padStart(2, '0')}:${minutes
+        .toString()
+        .padStart(2, '0')}:${seconds.toString().padStart(2, '0')} left`;
+    }
+
+    return '';
   }
 }
