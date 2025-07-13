@@ -54,7 +54,7 @@ import { NotifyService } from "@services/notify.service";
 export class UrlRequestsComponent implements OnInit {
   constructor(
     private urlRequestsService: UrlRequestsService,
-    private notifyService: NotifyService
+    private notifyService: NotifyService,
   ) {}
 
   widthLeftSidebar: number = 300;
@@ -343,7 +343,7 @@ export class UrlRequestsComponent implements OnInit {
   selAll(event: any, typeObj: "params" | "headers" | "body") {
     if (this.infoRequest) {
       this.infoRequest[typeObj].forEach(
-        (rec) => (rec.isActive = event.target.checked)
+        (rec) => (rec.isActive = event.target.checked),
       );
     }
   }
@@ -358,7 +358,7 @@ export class UrlRequestsComponent implements OnInit {
     event: any,
     row: number,
     typeObj: "params" | "headers" | "body",
-    field: "key" | "value"
+    field: "key" | "value",
   ) {
     if (this.editingObj) {
       if (field == "value" && typeObj == "body") {
@@ -389,7 +389,7 @@ export class UrlRequestsComponent implements OnInit {
           if (this.infoRequest) {
             if (
               this.infoRequest.params.findIndex(
-                (param: RecObj) => param.key == key
+                (param: RecObj) => param.key == key,
               ) == -1
             ) {
               this.infoRequest.params.push({
@@ -406,7 +406,7 @@ export class UrlRequestsComponent implements OnInit {
     if (this.infoRequest?.params.findIndex((rec) => rec.key == "") != -1) {
       this.infoRequest?.params.splice(
         this.infoRequest?.params.findIndex((rec) => rec.key == ""),
-        1
+        1,
       );
       this.createObj("params");
     }
@@ -436,7 +436,7 @@ export class UrlRequestsComponent implements OnInit {
 
   getRawValue(
     type: "params" | "headers" | "body",
-    data: any | BodyValue
+    data: any | BodyValue,
   ): string {
     switch (type) {
       case "body":
