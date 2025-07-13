@@ -312,7 +312,8 @@ pre {
 .mat-mdc-option,
 .mat-expansion-panel,
 .mat-expansion-indicator::after,
-.mat-expansion-panel-header-title {
+.mat-expansion-panel-header-title,
+.mdc-tab__text-label {
   @apply !text-black dark:!text-white
 }
 
@@ -351,6 +352,10 @@ pre {
 
 .mdc-line-ripple {
   @apply hidden
+}
+
+.mdc-tab-indicator__content--underline {
+  @apply !border-black dark:!border-white
 }
 
 .fc-theme-standard .fc-popover,
