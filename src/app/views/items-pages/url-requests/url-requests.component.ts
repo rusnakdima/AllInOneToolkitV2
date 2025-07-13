@@ -15,6 +15,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTabsModule } from "@angular/material/tabs";
+import { MatIconModule } from "@angular/material/icon";
 
 /* helpers */
 import { Common } from "@helpers/common";
@@ -48,6 +49,7 @@ import { NotifyService } from "@services/notify.service";
     MatExpansionModule,
     MatSelectModule,
     MatTabsModule,
+    MatIconModule,
   ],
   templateUrl: "./url-requests.component.html",
 })
@@ -77,9 +79,6 @@ export class UrlRequestsComponent implements OnInit {
 
   prevTitleCollection: string = "";
   prevTitleRequest: string = "";
-
-  hoveredCollIndex: number = -1;
-  hoveredReqIndex: number = -1;
 
   infoCollection: Collection | null = null;
   infoRequest: Request | null = null;

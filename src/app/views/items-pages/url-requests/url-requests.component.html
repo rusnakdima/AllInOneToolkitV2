@@ -1,90 +1,137 @@
 <div class="sticky flex flex-row w-full h-screen">
-  <div class="flex flex-col gap-y-5 p-3 h-full" [style.width]="widthLeftSidebar + 'px'">
+  <div
+    class="flex flex-col gap-y-5 p-3 h-full"
+    [style.width]="widthLeftSidebar + 'px'"
+  >
     <div class="flex flex-row !rounded-none styleBorderSolidLite border-b">
       <button (click)="createCollection()">
-        <mat-icon name="add" matTooltip="Create new collection" />
+        <mat-icon fontIcon="add" matTooltip="Create new collection" />
       </button>
     </div>
 
     <div class="flex flex-col gap-y-3">
       @for (coll of listCollections; track coll; let i = $index) {
-        <mat-expansion-panel [togglePosition]="'before'"
-                            (mouseenter)="hoveredCollIndex = i"
-                            (mouseleave)="hoveredCollIndex = -1">
+        <mat-expansion-panel [togglePosition]="'before'">
           <mat-expansion-panel-header>
-            <div class="relative flex flex-row justify-between items-center gap-x-3 w-full overflow-x-auto">
+            <div
+              class="relative flex flex-row justify-between items-center gap-x-3 w-full overflow-x-auto"
+            >
               @if (coll.editTitle) {
-                <input class="styleField !text-base !w-full" type="text"
-                      [(ngModel)]="prevTitleCollection"
-                      (keyup)="setTitle($event, 'collection', coll)"/>
+                <input
+                  class="styleField !text-base !w-full"
+                  type="text"
+                  [(ngModel)]="prevTitleCollection"
+                  (keyup)="setTitle($event, 'collection', coll)"
+                />
 
-                <div class="absolute flex flex-row justify-center items-center gap-x-1 right-0">
+                <div
+                  class="absolute flex flex-row justify-center items-center gap-x-1 right-0"
+                >
                   <button (click)="confirmRenameCollection($event, coll)">
-                    <mat-icon name="checkmark-outline" matTooltip="Save" />
+                    <mat-icon fontIcon="checkmark" matTooltip="Save" />
                   </button>
                   <button (click)="cancelRenameCollection($event, coll)">
-                    <mat-icon name="close-outline" matTooltip="Cancel" />
+                    <mat-icon fontIcon="close" matTooltip="Cancel" />
                   </button>
                 </div>
               } @else {
-                <span>{{ coll.title }}</span>
-                @if (hoveredCollIndex == i) {
-                  <div class="flex flex-row gap-x-2">
+                <div
+                  class="flex flex-row justify-center items-center gap-x-3 group"
+                >
+                  <span>{{ coll.title }}</span>
+                  <div
+                    class="flex flex-row justify-center items-center gap-x-2 opacity-0 group-hover:opacity-100"
+                  >
                     <button (click)="renameCollection(coll)">
-                      <mat-icon class="!text-base" name="create-outline" matTooltip="Rename collection" />
+                      <mat-icon
+                        class="!text-xl"
+                        fontIcon="create"
+                        matTooltip="Rename collection"
+                      />
                     </button>
                     <button (click)="deleteCollection(i)">
-                      <mat-icon class="!text-base" name="trash-outline" matTooltip="Delete collection" />
+                      <mat-icon
+                        class="!text-xl"
+                        fontIcon="delete"
+                        matTooltip="Delete collection"
+                      />
                     </button>
                   </div>
-                }
+                </div>
               }
             </div>
           </mat-expansion-panel-header>
 
           <div class="flex flex-col gap-y-5 p-2">
-            <div class="flex flex-row !rounded-none styleBorderSolidLite border-b">
+            <div
+              class="flex flex-row !rounded-none styleBorderSolidLite border-b"
+            >
               <button (click)="createRequest(coll)">
-                <mat-icon name="add" matTooltip="Create request" />
+                <mat-icon fontIcon="add" matTooltip="Create request" />
               </button>
             </div>
 
             <div class="flex flex-col gap-y-3 w-full">
               @for (req of coll.requests; track req; let j = $index) {
-                <div class="flex flex-row justify-between items-center gap-x-3 p-4 hover:py-3 rounded-xl hover:bg-slate-300 dark:hover:bg-gray-600 w-full overflow-x-auto cursor-pointer"
-                    (mouseenter)="hoveredReqIndex = j"
-                    (mouseleave)="hoveredReqIndex = -1"
-                    (click)="getInfo(coll, req)">
+                <div
+                  class="flex flex-row justify-between items-center gap-x-3 p-4 hover:py-3 rounded-xl hover:bg-slate-300 dark:hover:bg-gray-600 w-full overflow-x-auto cursor-pointer"
+                  (click)="getInfo(coll, req)"
+                >
                   <div class="flex flex-row items-center gap-x-2 w-full">
-                    <span [ngClass]="colorTypeRequest[req.typeReq]">{{ req.typeReq }}</span>
+                    <span [ngClass]="colorTypeRequest[req.typeReq]">{{
+                      req.typeReq
+                    }}</span>
                     @if (req.editTitle) {
-                      <div class="flex flex-row justify-between items-center w-full">
-                        <input class="styleField !text-base !w-full" type="text"
-                              [(ngModel)]="prevTitleRequest"
-                              (keyup)="setTitle($event, 'request', req)" />
+                      <div
+                        class="flex flex-row justify-between items-center w-full"
+                      >
+                        <input
+                          class="styleField !text-base !w-full"
+                          type="text"
+                          [(ngModel)]="prevTitleRequest"
+                          (keyup)="setTitle($event, 'request', req)"
+                        />
 
-                        <div class="absolute flex flex-row justify-center items-center gap-x-1 right-4">
+                        <div
+                          class="absolute flex flex-row justify-center items-center gap-x-1 right-4"
+                        >
                           <button (click)="confirmRenameRequest($event, req)">
-                            <mat-icon name="checkmark-outline" matTooltip="Save request" />
+                            <mat-icon
+                              fontIcon="checkmark"
+                              matTooltip="Save request"
+                            />
                           </button>
                           <button (click)="cancelRenameRequest($event, req)">
-                            <mat-icon name="close-outline" matTooltip="Rename request" />
+                            <mat-icon
+                              fontIcon="close"
+                              matTooltip="Rename request"
+                            />
                           </button>
                         </div>
                       </div>
                     } @else {
-                      <div class="flex flex-row justify-between items-center w-full">
+                      <div
+                        class="flex flex-row justify-between items-center w-full group"
+                      >
                         <span>{{ req.title }}</span>
-                        @if (hoveredReqIndex == j) {
-                          <div class="flex flex-row gap-x-2">
-                            <button (click)="renameRequest(req)">
-                              <mat-icon class="!text-lg" name="create-outline" matTooltip="Rename request" />
-                            </button>
-                            <button (click)="deleteRequest(coll, j)">
-                              <mat-icon class="!text-lg" name="trash-outline" matTooltip="Delete collection" />
-                            </button>
-                          </div>
-                        }
+                        <div
+                          class="flex flex-row gap-x-2 opacity-0 group-hover:opacity-100"
+                        >
+                          <button (click)="renameRequest(req)">
+                            <mat-icon
+                              class="!text-xl"
+                              fontIcon="create"
+                              matTooltip="Rename request"
+                            />
+                          </button>
+                          <button (click)="deleteRequest(coll, j)">
+                            <mat-icon
+                              class="!text-xl"
+                              fontIcon="delete"
+                              matTooltip="Delete collection"
+                            />
+                          </button>
+                        </div>
                       </div>
                     }
                   </div>
@@ -96,7 +143,11 @@
           @if (coll.requests.length == 0) {
             <div class="flex flex-col h-full text-center">
               <span>No requests found</span>
-              <span>Click the <mat-icon class="styleLinkRedir" name="add" /> button to create a request</span>
+              <span
+                >Click the
+                <mat-icon class="styleLinkRedir" fontIcon="add" /> button to
+                create a request</span
+              >
             </div>
           }
         </mat-expansion-panel>
@@ -105,18 +156,25 @@
       @if (listCollections.length == 0) {
         <div class="flex flex-col h-full text-center">
           <span>No collections found</span>
-          <span>Click the <mat-icon class="styleLinkRedir" name="add" /> button to create a collection</span>
+          <span
+            >Click the <mat-icon class="styleLinkRedir" fontIcon="add" /> button
+            to create a collection</span
+          >
         </div>
       }
     </div>
   </div>
 
-  <hr class="fixed flex flex-col !rounded-none styleBorderSolidLite border-r-2 min-h-full cursor-ew-resize"
-      [style.left]="widthLeftSidebar + 'px'"
-      (mousedown)="onMouseDown($event)"
+  <hr
+    class="fixed flex flex-col !rounded-none styleBorderSolidLite border-r-2 min-h-full cursor-ew-resize"
+    [style.left]="widthLeftSidebar + 'px'"
+    (mousedown)="onMouseDown($event)"
   />
 
-  <div class="flex flex-col gap-y-5 p-3 h-full" [style.width]="widthRightSidebar + 'px'">
+  <div
+    class="flex flex-col gap-y-5 p-3 h-full"
+    [style.width]="widthRightSidebar + 'px'"
+  >
     @if (infoCollection && infoRequest) {
       <div class="flex flex-row justify-between items-center">
         <div class="flex flex-row gap-x-3">
@@ -126,7 +184,7 @@
         </div>
 
         <button class="styleFloatBut" (click)="saveData()">
-          <mat-icon name="save-outline" matTooltip="Save changes" />
+          <mat-icon fontIcon="save" matTooltip="Save changes" />
           <span>Save</span>
         </button>
       </div>
@@ -134,40 +192,69 @@
       <div class="flex flex-row items-center gap-x-3 w-full">
         <div class="flex flex-row gap-x-2 styleElem !w-full">
           <mat-form-field class="!w-[130px]">
-            <mat-select (valueChange)="infoRequest.typeReq = $event" [value]="infoRequest.typeReq">
+            <mat-select
+              (valueChange)="infoRequest.typeReq = $event"
+              [value]="infoRequest.typeReq"
+            >
               @for (type of listTypesRequest; track type) {
-                <mat-option [ngClass]="type.color" [value]="type.title">{{ type.title }}</mat-option>
+                <mat-option [ngClass]="type.color" [value]="type.title">{{
+                  type.title
+                }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
 
-          <input class="styleField !w-full" type="text" placeholder="Enter url address"
-                [(ngModel)]="infoRequest.url"
-                (change)="parseUrl()"
-                (keyup)="setUrl($event)" />
+          <input
+            class="styleField !w-full"
+            type="text"
+            placeholder="Enter url address"
+            [(ngModel)]="infoRequest.url"
+            (change)="parseUrl()"
+            (keyup)="setUrl($event)"
+          />
         </div>
 
         <button class="styleButInfo" (click)="sendRequest()">Send</button>
       </div>
 
       <div class="flex flex-col">
-        <mat-tab-group [selectedIndex]="selectedTabIndex" (selectedIndexChange)="selectedTabIndex = $event">
+        <mat-tab-group
+          [selectedIndex]="selectedTabIndex"
+          (selectedIndexChange)="selectedTabIndex = $event"
+        >
           <mat-tab label="Params">
-            <ng-container *ngTemplateOutlet="context; context: { type: 'params' }"></ng-container>
+            <ng-container
+              *ngTemplateOutlet="context; context: { type: 'params' }"
+            ></ng-container>
           </mat-tab>
 
           <mat-tab label="Headers">
             <div class="flex flex-col gap-y-1">
               @if (typeEditorData.headers == "table") {
                 <div class="flex flex-row justify-end items-center">
-                  <span class="styleLinkRedir" (click)="typeEditorData.headers = 'json'">Json editor</span>
+                  <span
+                    class="styleLinkRedir"
+                    (click)="typeEditorData.headers = 'json'"
+                    >Json editor</span
+                  >
                 </div>
-                <ng-container *ngTemplateOutlet="context; context: { type: 'headers' }"></ng-container>
+                <ng-container
+                  *ngTemplateOutlet="context; context: { type: 'headers' }"
+                ></ng-container>
               } @else if (typeEditorData.headers == "json") {
                 <div class="flex flex-row justify-end items-center">
-                  <span class="styleLinkRedir" (click)="typeEditorData.headers = 'table'">Table editor</span>
+                  <span
+                    class="styleLinkRedir"
+                    (click)="typeEditorData.headers = 'table'"
+                    >Table editor</span
+                  >
                 </div>
-                <textarea class="styleTextarea" rows="15" [value]="getRawHeaders()" (change)="parseHeader($event)"></textarea>
+                <textarea
+                  class="styleTextarea"
+                  rows="15"
+                  [value]="getRawHeaders()"
+                  (change)="parseHeader($event)"
+                ></textarea>
               }
             </div>
           </mat-tab>
@@ -176,14 +263,29 @@
             <div class="flex flex-col gap-y-1">
               @if (typeEditorData.body == "table") {
                 <div class="flex flex-row justify-end items-center">
-                  <span class="styleLinkRedir" (click)="typeEditorData.body = 'json'">Json Editor</span>
+                  <span
+                    class="styleLinkRedir"
+                    (click)="typeEditorData.body = 'json'"
+                    >Json Editor</span
+                  >
                 </div>
-                <ng-container *ngTemplateOutlet="context; context: { type: 'body' }"></ng-container>
+                <ng-container
+                  *ngTemplateOutlet="context; context: { type: 'body' }"
+                ></ng-container>
               } @else if (typeEditorData.body == "json") {
                 <div class="flex flex-row justify-end items-center">
-                  <span class="styleLinkRedir" (click)="typeEditorData.body = 'table'">Table Editor</span>
+                  <span
+                    class="styleLinkRedir"
+                    (click)="typeEditorData.body = 'table'"
+                    >Table Editor</span
+                  >
                 </div>
-                <textarea class="styleTextarea" rows="15" [value]="getRawBody()" (change)="parseBody($event)"></textarea>
+                <textarea
+                  class="styleTextarea"
+                  rows="15"
+                  [value]="getRawBody()"
+                  (change)="parseBody($event)"
+                ></textarea>
               }
             </div>
           </mat-tab>
@@ -207,7 +309,11 @@
       <thead>
         <tr>
           <td class="styleTD !w-[50px]">
-            <input class="styleCheckbox" type="checkbox" (change)="selAll($event, type)">
+            <input
+              class="styleCheckbox"
+              type="checkbox"
+              (change)="selAll($event, type)"
+            />
           </td>
           <th class="styleTD">Key</th>
           <th class="styleTD">Value</th>
@@ -219,27 +325,53 @@
           <tr>
             <td class="styleTD h-[35px]">
               @if (item.key != "") {
-                <input class="styleCheckbox" type="checkbox" [checked]="item.isActive">
+                <input
+                  class="styleCheckbox"
+                  type="checkbox"
+                  [checked]="item.isActive"
+                />
               }
             </td>
-            <td class="styleTD w-1/2 cursor-text" (click)="editObj($index, 'key', item)">
-              @if (editingRow == $index && editingCol == 'key') {
-                <input class="styleField w-full" type="text" [value]="item.key" (keyup)="inputChange($event, $index, type, 'key')">
+            <td
+              class="styleTD w-1/2 cursor-text"
+              (click)="editObj($index, 'key', item)"
+            >
+              @if (editingRow == $index && editingCol == "key") {
+                <input
+                  class="styleField w-full"
+                  type="text"
+                  [value]="item.key"
+                  (keyup)="inputChange($event, $index, type, 'key')"
+                />
               } @else {
                 <span class="w-full cursor-text">{{ item.key }}</span>
               }
             </td>
-            <td class="styleTD w-1/2 cursor-text" (click)="editObj($index, 'value', item)">
-              @if (editingRow == $index && editingCol == 'value') {
-                <textarea class="styleField w-full" rows="5" [value]="getRawValue(type, item.value)" (keyup)="inputChange($event, $index, type, 'value')"></textarea>
+            <td
+              class="styleTD w-1/2 cursor-text"
+              (click)="editObj($index, 'value', item)"
+            >
+              @if (editingRow == $index && editingCol == "value") {
+                <textarea
+                  class="styleField w-full"
+                  rows="5"
+                  [value]="getRawValue(type, item.value)"
+                  (keyup)="inputChange($event, $index, type, 'value')"
+                ></textarea>
               } @else {
-                <span class="w-full cursor-text">{{ getRawValue(type, item.value) }}</span>
+                <span class="w-full cursor-text">{{
+                  getRawValue(type, item.value)
+                }}</span>
               }
             </td>
             <td class="styleTD">
               @if (item.key != "") {
                 <button (click)="deleteRec(getList(type), $index)">
-                  <mat-icon class="!text-xl" name="trash-outline" matTooltip="Delete collection" />
+                  <mat-icon
+                    class="!text-xl"
+                    fontIcon="delete"
+                    matTooltip="Delete collection"
+                  />
                 </button>
               }
             </td>
