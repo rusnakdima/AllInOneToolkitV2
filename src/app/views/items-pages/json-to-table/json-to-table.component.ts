@@ -47,7 +47,7 @@ export class JsonToTableComponent {
     this.dataTable = this.parseObj(this.jsonData);
   }
 
-  parseArr(arr: Array<any>) {
+  parseArr(arr: Array<any>): TableData {
     let table: TableData = { thead: [], tbody: [] };
     const keys: Array<any> = [];
     arr.forEach((elem: any) => {
@@ -78,7 +78,7 @@ export class JsonToTableComponent {
     return table;
   }
 
-  parseObj(obj: { [key: string]: any }) {
+  parseObj(obj: { [key: string]: any }): TableData {
     let table: TableData = { thead: ["Key", "Value"], tbody: [] };
     Object.entries(obj).forEach(([key, value]) => {
       let tempRow: (string | TableData)[] = [];
