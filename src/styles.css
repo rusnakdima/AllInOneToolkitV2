@@ -211,7 +211,7 @@ mat-icon {
 }
 
 pre {
-  @apply p-5 rounded-lg bg-slate-300 dark:bg-slate-700 w-full
+  @apply p-5 rounded-lg styleBorderSolidLite border bg-transparent w-full
 }
 
 .dividerIcon > div {
@@ -317,6 +317,10 @@ pre {
   @apply !text-black dark:!text-white
 }
 
+.mat-expansion-indicator::after {
+  @apply !border-black dark:!border-white
+}
+
 .mat-mdc-form-field-required-marker {
   @apply ml-2 text-red-500
 }
@@ -338,8 +342,16 @@ pre {
   @apply !text-gray-400 dark:!text-zinc-500
 }
 
+.mat-expansion-panel-header {
+  @apply !px-3 !h-[40px]
+}
+
 .mat-expansion-panel-header-title {
   @apply font-bold
+}
+
+.mat-expansion-panel-body {
+  @apply !p-1
 }
 
 .mat-mdc-form-field-subscript-wrapper {
