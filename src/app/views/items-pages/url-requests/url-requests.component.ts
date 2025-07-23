@@ -34,6 +34,7 @@ import {
 /* services */
 import { UrlRequestsService } from "@services/url-requests.service";
 import { NotifyService } from "@services/notify.service";
+import { JsonParserComponent } from "@shared/json-parser/json-parser.component";
 
 @Component({
   selector: "app-url-requests",
@@ -50,7 +51,8 @@ import { NotifyService } from "@services/notify.service";
     MatSelectModule,
     MatTabsModule,
     MatIconModule,
-  ],
+    JsonParserComponent
+],
   templateUrl: "./url-requests.component.html",
 })
 export class UrlRequestsComponent implements OnInit {
@@ -68,7 +70,7 @@ export class UrlRequestsComponent implements OnInit {
   listTypesRequest: Array<{ title: string; color: string }> = [];
   colorTypeRequest = {
     [TypeRequest.GET]: "text-green-500",
-    [TypeRequest.POST]: "text-yellow-300",
+    [TypeRequest.POST]: "text-yellow-500 dark:text-yellow-300",
     [TypeRequest.PUT]: "text-blue-500",
     [TypeRequest.DEL]: "text-red-500",
   };
@@ -90,6 +92,10 @@ export class UrlRequestsComponent implements OnInit {
   selectedTabIndex: number = 0;
   response: string = "";
 
+  isShowSidebar: boolean = false;
+
+  isJsonAsString = Common.isJsonAsString;
+
   ngOnInit(): void {
     document.addEventListener("mousedown", (e: any) => {
       if (
@@ -106,6 +112,13 @@ export class UrlRequestsComponent implements OnInit {
     setInterval(() => {
       this.widthRightSidebar = window.innerWidth - this.widthLeftSidebar - 10;
     }, 500);
+
+    if (window.innerWidth > 768) {
+      this.isShowSidebar = true;
+    } else {
+      this.isShowSidebar = false;
+    }
+
     Object.entries(this.colorTypeRequest).forEach((item) => {
       this.listTypesRequest.push({ title: item[0], color: item[1] });
     });

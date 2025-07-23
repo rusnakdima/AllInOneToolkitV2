@@ -1,179 +1,181 @@
-<div class="sticky flex flex-row w-full h-screen">
+<div class="sticky flex flex-row w-full" style="height: calc(100vh - 72px)">
   <div
-    class="flex flex-col gap-y-5 p-3 h-full"
-    [style.width]="widthLeftSidebar + 'px'"
+    class="flex flex-col gap-y-5 p-3"
+    style="height: calc(100vh - 72px)"
+    [style.width]="isShowSidebar ? widthLeftSidebar + 'px' : '100px'"
   >
-    <div class="flex flex-row !rounded-none styleBorderSolidLite border-b">
+    <div class="flex flex-row justify-between !rounded-none styleBorderSolidLite border-b">
       <button (click)="createCollection()">
         <mat-icon fontIcon="add" matTooltip="Create new collection" />
       </button>
+
+      @if (isShowSidebar) {
+        <button (click)="isShowSidebar = false">
+          <mat-icon fontIcon="chevron_left" matTooltip="Close Menu" />
+        </button>
+      } @else {
+        <button (click)="isShowSidebar = true">
+          <mat-icon fontIcon="chevron_right" matTooltip="Open Menu" />
+        </button>
+      }
     </div>
 
-    <div class="flex flex-col gap-y-3">
-      @for (coll of listCollections; track coll; let i = $index) {
-        <mat-expansion-panel [togglePosition]="'before'">
-          <mat-expansion-panel-header>
-            <div
-              class="relative flex flex-row justify-between items-center gap-x-3 w-full overflow-x-auto"
-            >
-              @if (coll.editTitle) {
-                <input
-                  class="styleField !text-base !w-full"
-                  type="text"
-                  [(ngModel)]="prevTitleCollection"
-                  (keyup)="setTitle($event, 'collection', coll)"
-                />
-
+    @if (isShowSidebar) {
+      <div class="overflow-y-auto" style="height: calc(100vh - 150px)">
+        <div class="flex flex-col gap-y-3">
+          @for (coll of listCollections; track coll; let i = $index) {
+            <mat-expansion-panel [togglePosition]="'before'">
+              <mat-expansion-panel-header>
                 <div
-                  class="absolute flex flex-row justify-center items-center gap-x-1 right-0"
+                  class="relative flex flex-row justify-between items-center gap-x-3 w-full h-auto overflow-x-auto"
                 >
-                  <button (click)="confirmRenameCollection($event, coll)">
-                    <mat-icon fontIcon="checkmark" matTooltip="Save" />
-                  </button>
-                  <button (click)="cancelRenameCollection($event, coll)">
-                    <mat-icon fontIcon="close" matTooltip="Cancel" />
+                  @if (coll.editTitle) {
+                    <input
+                      class="styleField !text-base !w-full"
+                      type="text"
+                      [(ngModel)]="prevTitleCollection"
+                      (keyup)="setTitle($event, 'collection', coll)"
+                    />
+
+                    <div class="absolute flex flex-row justify-center items-center gap-x-1 right-0">
+                      <button (click)="confirmRenameCollection($event, coll)">
+                        <mat-icon fontIcon="checkmark" matTooltip="Save" />
+                      </button>
+                      <button (click)="cancelRenameCollection($event, coll)">
+                        <mat-icon fontIcon="close" matTooltip="Cancel" />
+                      </button>
+                    </div>
+                  } @else {
+                    <div class="flex flex-row justify-between items-center gap-x-3 group w-full">
+                      <span>{{ coll.title }}</span>
+                      <div
+                        class="flex flex-row justify-center items-center gap-x-2 opacity-0 group-hover:opacity-100"
+                      >
+                        <button (click)="renameCollection(coll)">
+                          <mat-icon
+                            class="!text-xl"
+                            fontIcon="create"
+                            matTooltip="Rename collection"
+                          />
+                        </button>
+                        <button (click)="deleteCollection(i)">
+                          <mat-icon
+                            class="!text-xl"
+                            fontIcon="delete"
+                            matTooltip="Delete collection"
+                          />
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </mat-expansion-panel-header>
+
+              <div class="flex flex-col gap-y-5 p-2">
+                <div class="flex flex-row !rounded-none styleBorderSolidLite border-b">
+                  <button (click)="createRequest(coll)">
+                    <mat-icon fontIcon="add" matTooltip="Create request" />
                   </button>
                 </div>
-              } @else {
-                <div
-                  class="flex flex-row justify-center items-center gap-x-3 group"
-                >
-                  <span>{{ coll.title }}</span>
-                  <div
-                    class="flex flex-row justify-center items-center gap-x-2 opacity-0 group-hover:opacity-100"
-                  >
-                    <button (click)="renameCollection(coll)">
-                      <mat-icon
-                        class="!text-xl"
-                        fontIcon="create"
-                        matTooltip="Rename collection"
-                      />
-                    </button>
-                    <button (click)="deleteCollection(i)">
-                      <mat-icon
-                        class="!text-xl"
-                        fontIcon="delete"
-                        matTooltip="Delete collection"
-                      />
-                    </button>
+
+                <div class="flex flex-col gap-y-2 w-full">
+                  @for (req of coll.requests; track req; let j = $index) {
+                    <div
+                      class="flex flex-row justify-between items-center gap-x-3 px-1 rounded-xl hover:bg-slate-300 dark:hover:bg-gray-700 w-full overflow-x-auto cursor-pointer"
+                      (click)="getInfo(coll, req)"
+                    >
+                      <div class="grid grid-cols-12 items-center gap-x-2 w-full">
+                        <span class="col-span-3" [ngClass]="colorTypeRequest[req.typeReq]">{{
+                          req.typeReq
+                        }}</span>
+
+                        @if (req.editTitle) {
+                          <div class="flex flex-row col-span-9 justify-between items-center w-full">
+                            <input
+                              class="styleField !text-base !w-full"
+                              type="text"
+                              [(ngModel)]="prevTitleRequest"
+                              (keyup)="setTitle($event, 'request', req)"
+                            />
+
+                            <div
+                              class="absolute flex flex-row justify-center items-center gap-x-1 right-4"
+                            >
+                              <button (click)="confirmRenameRequest($event, req)">
+                                <mat-icon fontIcon="checkmark" matTooltip="Save request" />
+                              </button>
+                              <button (click)="cancelRenameRequest($event, req)">
+                                <mat-icon fontIcon="close" matTooltip="Rename request" />
+                              </button>
+                            </div>
+                          </div>
+                        } @else {
+                          <div
+                            class="flex flex-row col-span-9 justify-between items-center w-full group"
+                          >
+                            <span>{{ req.title }}</span>
+
+                            <div class="flex flex-row gap-x-2 opacity-0 group-hover:opacity-100">
+                              <button (click)="renameRequest(req)">
+                                <mat-icon
+                                  class="!text-xl"
+                                  fontIcon="create"
+                                  matTooltip="Rename request"
+                                />
+                              </button>
+                              <button (click)="deleteRequest(coll, j)">
+                                <mat-icon
+                                  class="!text-xl"
+                                  fontIcon="delete"
+                                  matTooltip="Delete collection"
+                                />
+                              </button>
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              @if (coll.requests.length == 0) {
+                <div class="flex flex-col h-full text-center">
+                  <span>No requests found</span>
+                  <div class="flex flex-row items-center">
+                    <span>Click the</span>
+                    <mat-icon class="styleLinkRedir !w-[25px] !h-[25px] !text-2xl" fontIcon="add" />
+                    <span>button to create a request</span>
                   </div>
                 </div>
               }
-            </div>
-          </mat-expansion-panel-header>
+            </mat-expansion-panel>
+          }
 
-          <div class="flex flex-col gap-y-5 p-2">
-            <div
-              class="flex flex-row !rounded-none styleBorderSolidLite border-b"
-            >
-              <button (click)="createRequest(coll)">
-                <mat-icon fontIcon="add" matTooltip="Create request" />
-              </button>
-            </div>
-
-            <div class="flex flex-col gap-y-3 w-full">
-              @for (req of coll.requests; track req; let j = $index) {
-                <div
-                  class="flex flex-row justify-between items-center gap-x-3 p-4 hover:py-3 rounded-xl hover:bg-slate-300 dark:hover:bg-gray-600 w-full overflow-x-auto cursor-pointer"
-                  (click)="getInfo(coll, req)"
-                >
-                  <div class="flex flex-row items-center gap-x-2 w-full">
-                    <span [ngClass]="colorTypeRequest[req.typeReq]">{{
-                      req.typeReq
-                    }}</span>
-                    @if (req.editTitle) {
-                      <div
-                        class="flex flex-row justify-between items-center w-full"
-                      >
-                        <input
-                          class="styleField !text-base !w-full"
-                          type="text"
-                          [(ngModel)]="prevTitleRequest"
-                          (keyup)="setTitle($event, 'request', req)"
-                        />
-
-                        <div
-                          class="absolute flex flex-row justify-center items-center gap-x-1 right-4"
-                        >
-                          <button (click)="confirmRenameRequest($event, req)">
-                            <mat-icon
-                              fontIcon="checkmark"
-                              matTooltip="Save request"
-                            />
-                          </button>
-                          <button (click)="cancelRenameRequest($event, req)">
-                            <mat-icon
-                              fontIcon="close"
-                              matTooltip="Rename request"
-                            />
-                          </button>
-                        </div>
-                      </div>
-                    } @else {
-                      <div
-                        class="flex flex-row justify-between items-center w-full group"
-                      >
-                        <span>{{ req.title }}</span>
-                        <div
-                          class="flex flex-row gap-x-2 opacity-0 group-hover:opacity-100"
-                        >
-                          <button (click)="renameRequest(req)">
-                            <mat-icon
-                              class="!text-xl"
-                              fontIcon="create"
-                              matTooltip="Rename request"
-                            />
-                          </button>
-                          <button (click)="deleteRequest(coll, j)">
-                            <mat-icon
-                              class="!text-xl"
-                              fontIcon="delete"
-                              matTooltip="Delete collection"
-                            />
-                          </button>
-                        </div>
-                      </div>
-                    }
-                  </div>
-                </div>
-              }
-            </div>
-          </div>
-
-          @if (coll.requests.length == 0) {
+          @if (listCollections.length == 0) {
             <div class="flex flex-col h-full text-center">
-              <span>No requests found</span>
-              <span
-                >Click the
-                <mat-icon class="styleLinkRedir" fontIcon="add" /> button to
-                create a request</span
-              >
+              <span>No collections found</span>
+              <div class="flex flex-row items-center">
+                <span>Click the</span>
+                <mat-icon class="styleLinkRedir !w-[25px] !h-[25px] !text-2xl" fontIcon="add" />
+                <span>button to create a collection</span>
+              </div>
             </div>
           }
-        </mat-expansion-panel>
-      }
-
-      @if (listCollections.length == 0) {
-        <div class="flex flex-col h-full text-center">
-          <span>No collections found</span>
-          <span
-            >Click the <mat-icon class="styleLinkRedir" fontIcon="add" /> button
-            to create a collection</span
-          >
         </div>
-      }
-    </div>
+      </div>
+    }
   </div>
 
   <hr
     class="fixed flex flex-col !rounded-none styleBorderSolidLite border-r-2 min-h-full cursor-ew-resize"
-    [style.left]="widthLeftSidebar + 'px'"
+    [style.left]="isShowSidebar ? widthLeftSidebar + 'px' : '100px'"
     (mousedown)="onMouseDown($event)"
   />
 
   <div
     class="flex flex-col gap-y-5 p-3 h-full"
-    [style.width]="widthRightSidebar + 'px'"
+    [style.width]="isShowSidebar ? widthRightSidebar + 'px' : '100%'"
   >
     @if (infoCollection && infoRequest) {
       <div class="flex flex-row justify-between items-center">
@@ -192,10 +194,7 @@
       <div class="flex flex-row items-center gap-x-3 w-full">
         <div class="flex flex-row gap-x-2 styleElem !w-full">
           <mat-form-field class="!w-[130px]">
-            <mat-select
-              (valueChange)="infoRequest.typeReq = $event"
-              [value]="infoRequest.typeReq"
-            >
+            <mat-select (valueChange)="infoRequest.typeReq = $event" [value]="infoRequest.typeReq">
               @for (type of listTypesRequest; track type) {
                 <mat-option [ngClass]="type.color" [value]="type.title">{{
                   type.title
@@ -223,29 +222,23 @@
           (selectedIndexChange)="selectedTabIndex = $event"
         >
           <mat-tab label="Params">
-            <ng-container
-              *ngTemplateOutlet="context; context: { type: 'params' }"
-            ></ng-container>
+            <ng-container *ngTemplateOutlet="context; context: { type: 'params' }"></ng-container>
           </mat-tab>
 
           <mat-tab label="Headers">
             <div class="flex flex-col gap-y-1">
-              @if (typeEditorData.headers == "table") {
+              @if (typeEditorData.headers == 'table') {
                 <div class="flex flex-row justify-end items-center">
-                  <span
-                    class="styleLinkRedir"
-                    (click)="typeEditorData.headers = 'json'"
+                  <span class="styleLinkRedir" (click)="typeEditorData.headers = 'json'"
                     >Json editor</span
                   >
                 </div>
                 <ng-container
                   *ngTemplateOutlet="context; context: { type: 'headers' }"
                 ></ng-container>
-              } @else if (typeEditorData.headers == "json") {
+              } @else if (typeEditorData.headers == 'json') {
                 <div class="flex flex-row justify-end items-center">
-                  <span
-                    class="styleLinkRedir"
-                    (click)="typeEditorData.headers = 'table'"
+                  <span class="styleLinkRedir" (click)="typeEditorData.headers = 'table'"
                     >Table editor</span
                   >
                 </div>
@@ -261,22 +254,16 @@
 
           <mat-tab label="Body">
             <div class="flex flex-col gap-y-1">
-              @if (typeEditorData.body == "table") {
+              @if (typeEditorData.body == 'table') {
                 <div class="flex flex-row justify-end items-center">
-                  <span
-                    class="styleLinkRedir"
-                    (click)="typeEditorData.body = 'json'"
+                  <span class="styleLinkRedir" (click)="typeEditorData.body = 'json'"
                     >Json Editor</span
                   >
                 </div>
-                <ng-container
-                  *ngTemplateOutlet="context; context: { type: 'body' }"
-                ></ng-container>
-              } @else if (typeEditorData.body == "json") {
+                <ng-container *ngTemplateOutlet="context; context: { type: 'body' }"></ng-container>
+              } @else if (typeEditorData.body == 'json') {
                 <div class="flex flex-row justify-end items-center">
-                  <span
-                    class="styleLinkRedir"
-                    (click)="typeEditorData.body = 'table'"
+                  <span class="styleLinkRedir" (click)="typeEditorData.body = 'table'"
                     >Table Editor</span
                   >
                 </div>
@@ -291,11 +278,23 @@
           </mat-tab>
 
           <mat-tab label="Response">
-            <pre class="!min-w-full">
-              @if (response) {
-                <code class="text-wrap">{{ response }}</code>
+            @if (response) {
+              @if (isJsonAsString(response)) {
+                <div class="flex flex-col p-5 styleBorderSolidLite border">
+                  <app-json-parser [jsonString]="response" />
+                </div>
+              } @else {
+                <div class="flex flex-col p-5 styleBorderSolidLite border">
+                  <pre>
+                    <code class="!text-wrap">{{ response }}</code>
+                  </pre>
+                </div>
               }
-            </pre>
+            } @else {
+              <div class="flex flex-col items-center p-5 styleBorderSolidLite border">
+                <span>Run the query to display the results.</span>
+              </div>
+            }
           </mat-tab>
         </mat-tab-group>
       </div>
@@ -309,11 +308,7 @@
       <thead>
         <tr>
           <td class="styleTD !w-[50px]">
-            <input
-              class="styleCheckbox"
-              type="checkbox"
-              (change)="selAll($event, type)"
-            />
+            <input class="styleCheckbox" type="checkbox" (change)="selAll($event, type)" />
           </td>
           <th class="styleTD">Key</th>
           <th class="styleTD">Value</th>
@@ -324,19 +319,12 @@
         @for (item of getList(type); track $index) {
           <tr>
             <td class="styleTD h-[35px]">
-              @if (item.key != "") {
-                <input
-                  class="styleCheckbox"
-                  type="checkbox"
-                  [checked]="item.isActive"
-                />
+              @if (item.key != '') {
+                <input class="styleCheckbox" type="checkbox" [checked]="item.isActive" />
               }
             </td>
-            <td
-              class="styleTD w-1/2 cursor-text"
-              (click)="editObj($index, 'key', item)"
-            >
-              @if (editingRow == $index && editingCol == "key") {
+            <td class="styleTD w-1/2 cursor-text" (click)="editObj($index, 'key', item)">
+              @if (editingRow == $index && editingCol == 'key') {
                 <input
                   class="styleField w-full"
                   type="text"
@@ -347,11 +335,8 @@
                 <span class="w-full cursor-text">{{ item.key }}</span>
               }
             </td>
-            <td
-              class="styleTD w-1/2 cursor-text"
-              (click)="editObj($index, 'value', item)"
-            >
-              @if (editingRow == $index && editingCol == "value") {
+            <td class="styleTD w-1/2 cursor-text" (click)="editObj($index, 'value', item)">
+              @if (editingRow == $index && editingCol == 'value') {
                 <textarea
                   class="styleField w-full"
                   rows="5"
@@ -359,19 +344,13 @@
                   (keyup)="inputChange($event, $index, type, 'value')"
                 ></textarea>
               } @else {
-                <span class="w-full cursor-text">{{
-                  getRawValue(type, item.value)
-                }}</span>
+                <span class="w-full cursor-text">{{ getRawValue(type, item.value) }}</span>
               }
             </td>
             <td class="styleTD">
-              @if (item.key != "") {
+              @if (item.key != '') {
                 <button (click)="deleteRec(getList(type), $index)">
-                  <mat-icon
-                    class="!text-xl"
-                    fontIcon="delete"
-                    matTooltip="Delete collection"
-                  />
+                  <mat-icon class="!text-xl" fontIcon="delete" matTooltip="Delete collection" />
                 </button>
               }
             </td>
