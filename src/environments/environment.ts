@@ -1,8 +1,8 @@
 export const environment = {
   production: false,
-  version: '0.3.2',
-  gitRepoName: 'MusicWave',
-  nameProduct: 'AllInOneToolkitV2',
+  version: '0.3.3',
+  gitRepoName: 'AllInOneToolkitV2',
+  nameProduct: 'All In One Toolkit v2',
   yearCreate: 2024,
   companyName: 'TechCraft Solutions',
   authors: [
