@@ -24,7 +24,7 @@ import { NotifyService } from "@services/notify.service";
 export class AboutComponent {
   constructor(
     private aboutService: AboutService,
-    private notifyService: NotifyService,
+    private notifyService: NotifyService
   ) {}
 
   version: string = environment.version;
@@ -50,11 +50,7 @@ export class AboutComponent {
     const v1Components = lastVer.split(".").map(Number);
     const v2Components = this.version.split(".").map(Number);
 
-    for (
-      let i = 0;
-      i < Math.max(v1Components.length, v2Components.length);
-      i++
-    ) {
+    for (let i = 0; i < Math.max(v1Components.length, v2Components.length); i++) {
       const v1Value = v1Components[i] || 0;
       const v2Value = v2Components[i] || 0;
 
@@ -92,9 +88,7 @@ export class AboutComponent {
     this.aboutService.getDate(this.version).subscribe({
       next: (res: any) => {
         if (res && res.published_at) {
-          localStorage["dateVersion"] = String(
-            this.formatDate(res.published_at),
-          );
+          localStorage["dateVersion"] = String(this.formatDate(res.published_at));
           this.dateVersion = String(this.formatDate(res.published_at));
         } else {
           throw Error("Invalid request");
@@ -109,9 +103,7 @@ export class AboutComponent {
   }
 
   checkUpdate() {
-    localStorage["dateCheck"] = String(
-      this.formatDate(new Date().toUTCString()),
-    );
+    localStorage["dateCheck"] = String(this.formatDate(new Date().toUTCString()));
     this.dateCheck = localStorage["dateCheck"];
 
     this.aboutService.checkUpdate().subscribe({
@@ -141,16 +133,14 @@ export class AboutComponent {
   downloadFile() {
     if (this.nameFile != "") {
       this.downloadProgress = true;
-      this.notifyService.showWarning(
-        "Wait until the program update is downloaded!",
-      );
+      this.notifyService.showWarning("Wait until the program update is downloaded!");
 
       this.aboutService
         .downloadUpdate(this.lastVersion, this.nameFile)
         .then((data: Response) => {
           if (data.status == ResponseStatus.SUCCESS) {
             this.notifyService.showSuccess(
-              "The new version of the program has been successfully downloaded!",
+              "The new version of the program has been successfully downloaded!"
             );
             this.pathUpdate = data.data;
           } else {
@@ -165,7 +155,7 @@ export class AboutComponent {
       this.windUpdates = false;
     } else {
       this.notifyService.showError(
-        "System definition error! It is impossible to find a file for this OS!",
+        "System definition error! It is impossible to find a file for this OS!"
       );
     }
   }
