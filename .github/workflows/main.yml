@@ -21,7 +21,7 @@ jobs:
             args: '--target x86_64-apple-darwin'
           - platform: 'ubuntu-22.04'
             args: ''
-          - platform: 'windows-2019'
+          - platform: 'windows-2022'
             args: ''
 
     runs-on: ${{ matrix.platform }}
