@@ -1,12 +1,12 @@
-<div class="relative flex flex-col gap-y-5 m-3"
-    [ngClass]="isShowKeyboard ? 'pb-[280px]' : ''">
-  <div class="fixed flex right-2 p-3 items-center justify-center rounded-2xl bg-cyan-400 dark:bg-purple-800 cursor-pointer"
+<div class="flex flex-col gap-y-5 m-3" [ngClass]="isShowKeyboard ? 'pb-[280px]' : ''">
+  <div class="relative flex flex-col items-center justify-center">
+    <div
+      class="fixed flex flex-col items-center justify-center right-5 p-3 rounded-2xl bg-cyan-400 dark:bg-purple-800 cursor-pointer"
       (click)="isShowKeyboard = !isShowKeyboard"
-      [ngClass]="isShowKeyboard ? 'bottom-[260px]' : 'bottom-3'">
-    <mat-icon
-      class="!w-[35px] !h-[35px] !text-3xl"
-      fontIcon="keyboard"
-    />
+      [ngClass]="isShowKeyboard ? 'bottom-[260px]' : 'bottom-20 min-[480px]:bottom-3'"
+    >
+      <mat-icon class="!w-[35px] !h-[35px] !text-3xl" fontIcon="keyboard" />
+    </div>
   </div>
 
   @if (!isShow) {
@@ -14,40 +14,49 @@
       <div class="flex flex-col items-center rounded-xl styleBorderSolid border-2 p-5 text-center">
         <span class="text-2xl">Press any key to get the</span>
         <span class="text-2xl">JavaScript event keycode info</span>
-        <span class="text-2xl">(If you are on a mobile device, you can open the keyboard by clicking on the button at the bottom)</span>
+        <span class="text-2xl"
+          >(If you are on a mobile device, you can open the keyboard by clicking on the button at
+          the bottom)</span
+        >
       </div>
     </div>
   } @else {
     <div class="flex flex-col gap-y-5 items-center">
       <span class="text-2xl">JavaScript Key Code</span>
-      <span class="text-6xl font-bold">{{keyCode}}</span>
+      <span class="text-6xl font-bold">{{ keyCode }}</span>
       <span class="text-xl mt-3">Key Code Information</span>
 
       <div class="flex flex-row flex-wrap items-center justify-center gap-5">
         <div class="styleBorderSolid border rounded-xl !border-blue-700 w-[200px] h-[200px]">
-          <div class="flex flex-col h-[40px] items-center p-2 text-white bg-blue-700 dark:bg-blue-700 rounded-t-xl">
+          <div
+            class="flex flex-col h-[40px] items-center p-2 text-white bg-blue-700 dark:bg-blue-700 rounded-t-xl"
+          >
             <span class="text-xl font-semibold">event.key</span>
           </div>
           <div class="flex flex-col h-[160px] justify-center items-center">
-            <span class="text-3xl font-bold">{{(key == " ") ? '(blank space)' : key}}</span>
+            <span class="text-3xl font-bold">{{ key == " " ? "(blank space)" : key }}</span>
           </div>
         </div>
 
         <div class="styleBorderSolid border rounded-xl !border-blue-700 w-[200px] h-[200px]">
-          <div class="flex flex-col h-[40px] items-center p-2 text-white bg-blue-700 dark:bg-blue-700 rounded-t-xl">
+          <div
+            class="flex flex-col h-[40px] items-center p-2 text-white bg-blue-700 dark:bg-blue-700 rounded-t-xl"
+          >
             <span class="text-xl font-semibold">event.code</span>
           </div>
           <div class="flex flex-col h-[160px] justify-center items-center">
-            <span class="text-3xl font-bold">{{code}}</span>
+            <span class="text-3xl font-bold">{{ code }}</span>
           </div>
         </div>
 
         <div class="styleBorderSolid border rounded-xl !border-blue-700 w-[200px] h-[200px]">
-          <div class="flex flex-col h-[40px] items-center p-2 text-white bg-blue-700 dark:bg-blue-700 rounded-t-xl">
+          <div
+            class="flex flex-col h-[40px] items-center p-2 text-white bg-blue-700 dark:bg-blue-700 rounded-t-xl"
+          >
             <span class="text-xl font-semibold">event.which</span>
           </div>
           <div class="flex flex-col h-[160px] justify-center items-center">
-            <span class="text-3xl font-bold">{{keyCode}}</span>
+            <span class="text-3xl font-bold">{{ keyCode }}</span>
           </div>
         </div>
       </div>
