@@ -281,7 +281,7 @@
             @if (response) {
               @if (isJsonAsString(response)) {
                 <div class="flex flex-col p-5 styleBorderSolidLite border">
-                  <app-json-parser [jsonString]="response" />
+                  <app-json-parser [parseData$]="parseData$" />
                 </div>
               } @else {
                 <div class="flex flex-col p-5 styleBorderSolidLite border">

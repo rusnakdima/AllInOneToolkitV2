@@ -1,11 +1,6 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
-import {
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  HostListener,
-  OnInit,
-} from "@angular/core";
+import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, Input, OnInit } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { v4 as UUID } from "uuid";
 
@@ -23,18 +18,13 @@ import { Common } from "@helpers/common";
 /* models */
 import { Response, ResponseStatus } from "@models/response";
 import { Collection } from "@models/collection";
-import {
-  BodyData,
-  BodyValue,
-  RecObj,
-  Request,
-  TypeRequest,
-} from "@models/request";
+import { BodyData, BodyValue, RecObj, Request, TypeRequest } from "@models/request";
 
 /* services */
 import { UrlRequestsService } from "@services/url-requests.service";
 import { NotifyService } from "@services/notify.service";
 import { JsonParserComponent } from "@shared/json-parser/json-parser.component";
+import { Subject } from "rxjs";
 
 @Component({
   selector: "app-url-requests",
@@ -51,15 +41,17 @@ import { JsonParserComponent } from "@shared/json-parser/json-parser.component";
     MatSelectModule,
     MatTabsModule,
     MatIconModule,
-    JsonParserComponent
-],
+    JsonParserComponent,
+  ],
   templateUrl: "./url-requests.component.html",
 })
 export class UrlRequestsComponent implements OnInit {
   constructor(
     private urlRequestsService: UrlRequestsService,
-    private notifyService: NotifyService,
+    private notifyService: NotifyService
   ) {}
+
+  @Input() parseData$: Subject<string> = new Subject<string>();
 
   widthLeftSidebar: number = 300;
   widthRightSidebar: number = 0;
@@ -195,9 +187,7 @@ export class UrlRequestsComponent implements OnInit {
       };
 
       if (savedRequest()) {
-        return (
-          JSON.stringify(savedRequest()) == JSON.stringify(this.infoRequest)
-        );
+        return JSON.stringify(savedRequest()) == JSON.stringify(this.infoRequest);
       }
     }
 
@@ -264,9 +254,7 @@ export class UrlRequestsComponent implements OnInit {
         },
         { key: "", value: "", isActive: false },
       ],
-      body: [
-        { key: "", value: { type: "String", value: "" }, isActive: false },
-      ],
+      body: [{ key: "", value: { type: "String", value: "" }, isActive: false }],
     };
     coll.requests.push(request);
 
@@ -354,9 +342,7 @@ export class UrlRequestsComponent implements OnInit {
 
   selAll(event: any, typeObj: "params" | "headers" | "body") {
     if (this.infoRequest) {
-      this.infoRequest[typeObj].forEach(
-        (rec) => (rec.isActive = event.target.checked),
-      );
+      this.infoRequest[typeObj].forEach((rec) => (rec.isActive = event.target.checked));
     }
   }
 
@@ -370,7 +356,7 @@ export class UrlRequestsComponent implements OnInit {
     event: any,
     row: number,
     typeObj: "params" | "headers" | "body",
-    field: "key" | "value",
+    field: "key" | "value"
   ) {
     if (this.editingObj) {
       if (field == "value" && typeObj == "body") {
@@ -399,11 +385,7 @@ export class UrlRequestsComponent implements OnInit {
         params.forEach((param: string) => {
           const [key, value] = param.split("=");
           if (this.infoRequest) {
-            if (
-              this.infoRequest.params.findIndex(
-                (param: RecObj) => param.key == key,
-              ) == -1
-            ) {
+            if (this.infoRequest.params.findIndex((param: RecObj) => param.key == key) == -1) {
               this.infoRequest.params.push({
                 key,
                 value,
@@ -418,7 +400,7 @@ export class UrlRequestsComponent implements OnInit {
     if (this.infoRequest?.params.findIndex((rec) => rec.key == "") != -1) {
       this.infoRequest?.params.splice(
         this.infoRequest?.params.findIndex((rec) => rec.key == ""),
-        1,
+        1
       );
       this.createObj("params");
     }
@@ -446,10 +428,7 @@ export class UrlRequestsComponent implements OnInit {
     return "";
   }
 
-  getRawValue(
-    type: "params" | "headers" | "body",
-    data: any | BodyValue,
-  ): string {
+  getRawValue(type: "params" | "headers" | "body", data: any | BodyValue): string {
     switch (type) {
       case "body":
         switch (data.type) {
@@ -530,10 +509,7 @@ export class UrlRequestsComponent implements OnInit {
           type: "Array",
           value: JSON.parse(data),
         } as BodyValue;
-      } else if (
-        !Array.isArray(JSON.parse(data)) &&
-        Common.isJsonAsString(data)
-      ) {
+      } else if (!Array.isArray(JSON.parse(data)) && Common.isJsonAsString(data)) {
         tempObj = {
           type: "Object",
           value: JSON.parse(data),
@@ -584,6 +560,9 @@ export class UrlRequestsComponent implements OnInit {
             } else {
               this.response = data.data;
             }
+            setTimeout(() => {
+              this.parseData$.next(this.response);
+            }, 500);
           }
         })
         .catch((err) => {
