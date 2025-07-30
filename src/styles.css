@@ -26,6 +26,10 @@
   @apply fixed min-[480px]:hidden grid grid-cols-4 bottom-0 m-0 p-3 theme w-full
 }
 
+.styleBottomNavItems {
+  @apply flex flex-col items-center text-center cursor-pointer
+}
+
 .styleBackWind {
   @apply fixed flex flex-col items-center left-0 top-0 m-0 z-30 bg-white/40 dark:bg-black/30 w-full h-[100vh] overflow-y-auto
 }
@@ -64,10 +68,6 @@
 
 .styleLinkRedir {
   @apply !text-blue-600 dark:!text-lime-500 !decoration-blue-600 dark:!decoration-lime-500 underline decoration-dashed decoration-1 underline-offset-4 cursor-pointer
-}
-
-.styleBottomNavItems {
-  @apply flex flex-col items-center text-center cursor-pointer
 }
 
 .styleBut {
