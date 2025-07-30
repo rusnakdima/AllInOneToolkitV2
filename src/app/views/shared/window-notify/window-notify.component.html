@@ -1,11 +1,10 @@
-<div
-  class="fixed flex flex-col-reverse gap-4 top-4 right-4 z-[9999] w-[320px] max-w-md"
->
+<div class="fixed flex flex-col-reverse gap-4 top-4 right-4 z-[9999] w-[320px] max-w-md">
   @for (notification of notifications; track notification.id) {
     <div
       class="flex flex-col rounded-lg w-full animate-slideInRight shadow-lg overflow-hidden notification-item"
       [ngClass]="[notification.color]"
       data-id="{{ notification.id }}"
+      (click)="closeNotification(notification.id)"
     >
       <div class="flex flex-row justify-between p-1">
         <div class="flex flex-row gap-x-1 items-center">
