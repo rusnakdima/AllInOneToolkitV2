@@ -41,9 +41,16 @@ export class FileInputComponent implements OnInit, OnDestroy {
   fileName: string = "";
   filePath: string = "";
 
+  private unlisten: (() => void) | null = null;
+
   ngOnInit() {
     listen("tauri://drag-drop", (event) => {
       this.checkFileExt(event);
+      const target = document.getElementById("fileInput") as HTMLElement;
+      if (target.id == "fileInput") {
+        target.classList.remove("!border-green-500");
+        target.classList.remove("!border-4");
+      }
     });
 
     this.getFilePath();
@@ -51,6 +58,33 @@ export class FileInputComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.typeFile = [];
+    if (this.unlisten) {
+      this.unlisten();
+    }
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const target = event.target as HTMLElement;
+    if (target.id == "fileInput") {
+      target.classList.add("!border-green-500");
+      target.classList.add("!border-4");
+    }
+  }
+
+  onDragEnter(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    if ((event.target as HTMLElement).id == "fileInput") {
+      (event.target as HTMLElement).classList.remove("!border-green-500");
+    }
   }
 
   checkFileExt(event: any) {
@@ -61,9 +95,7 @@ export class FileInputComponent implements OnInit, OnDestroy {
         this.filePath = event.payload;
       }
       let fileExt =
-        (this.filePath.replace(/\\/g, "/").split("/").pop() ?? "").split(
-          "."
-        )[1] ?? "";
+        (this.filePath.replace(/\\/g, "/").split("/").pop() ?? "").split(".").pop() ?? "";
       if (fileExt == "xlsx" || fileExt == "xlsm" || fileExt == "xls") {
         fileExt = "xls";
       }
@@ -78,7 +110,7 @@ export class FileInputComponent implements OnInit, OnDestroy {
   }
 
   async getFilePath() {
-    await listen("send_file_path", (event: any) => {
+    this.unlisten = await listen("send_file_path", (event: any) => {
       this.fileName = event.payload.split(/[\/\\]/g).pop();
       this.filePath = event.payload;
       this.reciveFileName.next(this.fileName);
