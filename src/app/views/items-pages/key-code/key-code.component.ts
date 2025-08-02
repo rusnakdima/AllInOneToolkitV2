@@ -6,7 +6,7 @@ import { Component } from "@angular/core";
 import { MatIconModule } from "@angular/material/icon";
 
 /* components */
-import { KeyboardComponent } from "../../components/keyboard/keyboard.component";
+import { KeyboardComponent } from "@components/keyboard/keyboard.component";
 
 interface KeyboardEvent {
   key: string;

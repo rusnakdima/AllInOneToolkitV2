@@ -187,18 +187,8 @@ export class KeyboardComponent {
   ];
 
   navLayout: KeyConfig[][] = [
-    [
-      { key: "Home" },
-      { key: "↑", label: "↑" },
-      { key: "End" },
-      { key: "PgUp" },
-    ],
-    [
-      { key: "←", label: "←" },
-      { key: "↓", label: "↓" },
-      { key: "→", label: "→" },
-      { key: "PgDn" },
-    ],
+    [{ key: "Home" }, { key: "↑", label: "↑" }, { key: "End" }, { key: "PgUp" }],
+    [{ key: "←", label: "←" }, { key: "↓", label: "↓" }, { key: "→", label: "→" }, { key: "PgDn" }],
     [{ key: "Ins" }, { key: "Del" }, { key: "PrtSc" }, { key: "Break" }],
     [{ key: "main", label: "Back to Main", size: "large" }],
   ];
@@ -230,7 +220,6 @@ export class KeyboardComponent {
       keyCode: this.getKeyCodeFromKey(key),
     };
 
-    console.log(`Key pressed: ${key}`);
     this.keyPress.emit(keyEvent);
   }
 

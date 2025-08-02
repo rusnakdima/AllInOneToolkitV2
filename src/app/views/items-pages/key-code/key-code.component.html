@@ -1,11 +1,11 @@
 <div class="flex flex-col gap-y-5 m-3" [ngClass]="isShowKeyboard ? 'pb-[280px]' : ''">
   <div class="relative flex flex-col items-center justify-center">
     <div
-      class="fixed flex flex-col items-center justify-center right-5 p-3 rounded-2xl bg-cyan-400 dark:bg-purple-800 cursor-pointer"
+      class="fixed flex flex-col items-center justify-center right-3 p-3 rounded-2xl bg-cyan-400 dark:bg-purple-800 cursor-pointer"
       (click)="isShowKeyboard = !isShowKeyboard"
-      [ngClass]="isShowKeyboard ? 'bottom-[260px]' : 'bottom-20 min-[480px]:bottom-3'"
+      [ngClass]="isShowKeyboard ? 'bottom-[315px] min-[480px]:bottom-[265px]' : 'bottom-16 min-[480px]:bottom-3'"
     >
-      <mat-icon class="!w-[35px] !h-[35px] !text-3xl" fontIcon="keyboard" />
+      <mat-icon class="!w-[30px] !h-[34px] !text-3xl" fontIcon="keyboard" />
     </div>
   </div>
 
@@ -65,7 +65,7 @@
 </div>
 
 @if (isShowKeyboard) {
-  <div class="fixed bottom-[67px] min-[480px]:bottom-0 px-1 pb-1 w-full">
+  <div class="fixed bottom-[50px] min-[480px]:bottom-0 px-1 pb-1 w-full">
     <app-keyboard (keyPress)="handleVirtualKeyPress($event)" />
   </div>
 }
