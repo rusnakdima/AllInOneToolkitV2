@@ -9,7 +9,7 @@
         [typeFile]="typeFile"
         (dataFile)="setDataFile($event)"
         (reciveFileName)="setFileName($event)"
-      ></app-file-input>
+      />
       <button class="styleButInfo w-max" (click)="convertData()">Convert a data</button>
     </div>
   </details>
@@ -25,13 +25,13 @@
     </div>
   </details>
 
-  @if (dataXml != '') {
+  @if (dataXml != "") {
     <div class="flex flex-row gap-x-3">
       <button class="styleButSuccess" (click)="saveData()">Save a data</button>
     </div>
   }
 
-  @if (pathNewFile != '') {
+  @if (pathNewFile != "") {
     <div class="flex flex-row gap-x-3">
       <button class="styleButWarn" (click)="openFile()">Open the last saved file</button>
     </div>

@@ -5,10 +5,7 @@
     </summary>
 
     <div class="flex flex-col gap-y-3 mt-2">
-      <app-file-input
-        [typeFile]="typeFile"
-        (dataFile)="setDataFile($event)"
-      ></app-file-input>
+      <app-file-input [typeFile]="typeFile" (dataFile)="setDataFile($event)" />
       <button class="styleButInfo w-max" (click)="createTable()">Create a table</button>
     </div>
   </details>
@@ -30,7 +27,7 @@
         @for (row of dataTable; track row) {
           <tr>
             @for (col of row; track col) {
-              <td class="styleTD">{{col}}</td>
+              <td class="styleTD">{{ col }}</td>
             }
           </tr>
         }

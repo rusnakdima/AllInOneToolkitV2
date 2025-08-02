@@ -23,13 +23,13 @@
   @if (typeViewList == "grid") {
     <div class="flex flex-row flex-wrap gap-3">
       @for (link of listLinks; track link) {
-        <app-card-item [link]="link"></app-card-item>
+        <app-card-item [link]="link" />
       }
     </div>
   } @else if (typeViewList == "list") {
     <div class="flex flex-col gap-y-3">
       @for (link of listLinks; track link) {
-        <app-tile-item [link]="link"></app-tile-item>
+        <app-tile-item [link]="link" />
       }
     </div>
   } @else {

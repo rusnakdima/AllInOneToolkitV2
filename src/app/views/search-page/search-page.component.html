@@ -1,24 +1,24 @@
 <div class="flex flex-col gap-y-3 m-3">
-  <div class="relative flex flex-row justify-between p-2 !rounded-none styleBorderSolidLite border-b">
-    <app-show-item
-      (perItemChanged)="onChangePerItem($event)"
-    ></app-show-item>
+  <div
+    class="relative flex flex-row justify-between p-2 !rounded-none styleBorderSolidLite border-b"
+  >
+    <app-show-item (perItemChanged)="onChangePerItem($event)" />
 
-    <app-search
-      [tempArray]="tempListLinks"
-      (array)="searchFunc($event)"
-    ></app-search>
+    <app-search [tempArray]="tempListLinks" (array)="searchFunc($event)" />
   </div>
 
   <div class="flex flex-col gap-y-3">
-    @for (link of listLinks | paginate : {
-      itemsPerPage: perItem,
-      currentPage: page,
-      totalItems: 0
-    }; track link) {
-      <app-tile-item
-        [link]="link"
-      ></app-tile-item>
+    @for (
+      link of listLinks
+        | paginate
+          : {
+              itemsPerPage: perItem,
+              currentPage: page,
+              totalItems: 0,
+            };
+      track link
+    ) {
+      <app-tile-item [link]="link" />
     }
   </div>
 
@@ -27,7 +27,7 @@
       [array]="listLinks"
       [page]="page"
       [perItem]="perItem"
-      (onChange)="onChangeCountPage($event)">
-    </app-pagination>
+      (onChange)="onChangeCountPage($event)"
+    />
   }
 </div>

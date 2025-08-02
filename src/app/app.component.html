@@ -1,13 +1,13 @@
 <div class="sticky h-screen">
-  <app-nav [isShowNavEvent]="isShowNav"></app-nav>
+  <app-nav [isShowNavEvent]="isShowNav" />
 
-  <app-header (isShowNavEvent)="showNav($event)"></app-header>
+  <app-header (isShowNavEvent)="showNav($event)" />
 
   <div class="pb-[70px] min-[480px]:pb-0">
-    <router-outlet></router-outlet>
+    <router-outlet />
   </div>
 
-  <app-bottom-nav></app-bottom-nav>
+  <app-bottom-nav />
 </div>
 
 <app-window-notify />

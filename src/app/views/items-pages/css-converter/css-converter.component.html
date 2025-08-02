@@ -3,21 +3,36 @@
   <div class="flex flex-row gap-x-5">
     <div class="flex flex-row gap-x-2 justify-center content-center">
       <label class="styleLabel !mt-0">
-        <input class="styleRadio mr-2" type="radio" name="typeStyle" (change)="setTypeStyle('css')" />
+        <input
+          class="styleRadio mr-2"
+          type="radio"
+          name="typeStyle"
+          (change)="setTypeStyle('css')"
+        />
         <span>CSS</span>
       </label>
     </div>
 
     <div class="flex flex-row gap-x-2 justify-center content-center">
       <label class="styleLabel !mt-0">
-        <input class="styleRadio mr-2" type="radio" name="typeStyle" (change)="setTypeStyle('bootstrap')" />
+        <input
+          class="styleRadio mr-2"
+          type="radio"
+          name="typeStyle"
+          (change)="setTypeStyle('bootstrap')"
+        />
         <span>Bootstrap 5</span>
       </label>
     </div>
 
     <div class="flex flex-row gap-x-2 justify-center content-center">
       <label class="styleLabel !mt-0">
-        <input class="styleRadio mr-2" type="radio" name="typeStyle" (change)="setTypeStyle('tailwind')" />
+        <input
+          class="styleRadio mr-2"
+          type="radio"
+          name="typeStyle"
+          (change)="setTypeStyle('tailwind')"
+        />
         <span>Tailwind CSS</span>
       </label>
     </div>
@@ -25,7 +40,10 @@
 
   <div class="flex flex-col gap-y-3">
     <mat-form-field>
-      <mat-label>Enter the style according to the selected type (you can enter several classes or properties separated by a space)</mat-label>
+      <mat-label
+        >Enter the style according to the selected type (you can enter several classes or properties
+        separated by a space)</mat-label
+      >
       <textarea matInput (change)="setData($event)" rows="2"></textarea>
     </mat-form-field>
 
@@ -34,9 +52,7 @@
 
   @if (blockTable) {
     <div class="overflow-x-auto">
-      <app-table
-        [dataTable]="dataTable"
-      ></app-table>
+      <app-table [dataTable]="dataTable" />
     </div>
   }
 </div>
