@@ -43,9 +43,6 @@ export class FileInputComponent implements OnInit, OnDestroy {
   fileName: string = "";
   filePath: string = "";
 
-  private unlisten: (() => void) | null = null;
-  private unlistenDragDrop: (() => void) | null = null;
-
   ngOnInit() {
     this.listenDragDrop();
     this.getFilePath();
@@ -53,16 +50,10 @@ export class FileInputComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.typeFile = [];
-    if (this.unlisten) {
-      this.unlisten();
-    }
-    if (this.unlistenDragDrop) {
-      this.unlistenDragDrop();
-    }
   }
 
   async listenDragDrop() {
-    this.unlistenDragDrop = await listen("tauri://drag-drop", (event: any) => {
+    await listen("tauri://drag-drop", (event: any) => {
       this.checkFileExt(event);
       const target = document.getElementById("fileInput") as HTMLElement;
       if (target?.id === "fileInput") {
@@ -132,7 +123,7 @@ export class FileInputComponent implements OnInit, OnDestroy {
   }
 
   async getFilePath() {
-    this.unlisten = await listen("send-file-path", (event: any) => {
+    await listen("send-file-path", (event: any) => {
       this.filePath = event.payload;
       this.fileName = event.payload.split(/[\/\\]/).pop() ?? "";
       this.notifyService.showInfo("File path received");
