@@ -12,7 +12,7 @@ import { MatInputModule } from "@angular/material/input";
 import { NotifyService } from "@services/notify.service";
 
 /* components */
-import { CopyFieldComponent } from "@shared/fields/copy-field/copy-field.component"; 
+import { CopyFieldComponent } from "@components/fields/copy-field/copy-field.component";
 
 @Component({
   selector: "app-md5-enc-dec",

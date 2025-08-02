@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 
 /* components */
-import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
+import { FileInputComponent } from "@components/fields/file-input/file-input.component";
 
 @Component({
   selector: "app-word-counter",

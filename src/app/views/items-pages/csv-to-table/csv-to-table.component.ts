@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 
 /* components */
-import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
+import { FileInputComponent } from "@components/fields/file-input/file-input.component";
 
 @Component({
   selector: "app-csv-to-table",
@@ -26,9 +26,7 @@ export class CsvToTableComponent {
 
   setData(event: any) {
     if (event.target.value != "") {
-      this.arrCSV = event.target.value
-        .split("\n")
-        .map((line: any) => line.split(","));
+      this.arrCSV = event.target.value.split("\n").map((line: any) => line.split(","));
     }
   }
 

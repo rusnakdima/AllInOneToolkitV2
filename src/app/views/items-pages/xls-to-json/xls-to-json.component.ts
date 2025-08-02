@@ -10,7 +10,7 @@ import { FileService } from "@services/file.service";
 import { NotifyService } from "@services/notify.service";
 
 /* components */
-import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
+import { FileInputComponent } from "@components/fields/file-input/file-input.component";
 
 @Component({
   selector: "app-xls-to-json",
@@ -40,9 +40,7 @@ export class XlsToJsonComponent {
 
   setData(event: any) {
     if (event.target.value != "") {
-      this.dataXls = event.target.value
-        .split("\n")
-        .map((elem: string) => elem.split("\t"));
+      this.dataXls = event.target.value.split("\n").map((elem: string) => elem.split("\t"));
     } else {
       this.notifyService.showError("The field is empty! Insert the data!");
     }
@@ -69,9 +67,7 @@ export class XlsToJsonComponent {
       this.parseData(this.dataXls);
 
       if (this.dataJson && Object.keys(this.dataJson).length > 0) {
-        this.notifyService.showSuccess(
-          "The data has been successfully converted!"
-        );
+        this.notifyService.showSuccess("The data has been successfully converted!");
       } else {
         this.notifyService.showError("No data was received from the file!");
       }
@@ -83,9 +79,7 @@ export class XlsToJsonComponent {
   async saveData() {
     if (this.dataJson) {
       const nameNewFile =
-        this.fileName != ""
-          ? /^(.+)\..+$/.exec(this.fileName)![1]
-          : "xls_to_json";
+        this.fileName != "" ? /^(.+)\..+$/.exec(this.fileName)![1] : "xls_to_json";
       await this.fileService
         .writeDataToFile(nameNewFile, JSON.stringify(this.dataJson), "json")
         .then((data: Response) => {
@@ -100,9 +94,7 @@ export class XlsToJsonComponent {
         })
         .catch((err) => {
           console.error(err);
-          this.notifyService.showError(
-            `An error occurred while saving the data to a file: ${err}`
-          );
+          this.notifyService.showError(`An error occurred while saving the data to a file: ${err}`);
         });
     } else if (this.dataJson == null) {
       this.notifyService.showError("No data was received from the file!");

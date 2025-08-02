@@ -22,10 +22,10 @@
     "lib": ["ES2022", "dom"],
     "paths": {
       "@helpers/*": ["./src/app/helpers/*"],
+      "@env/*": ["./src/environments/*"],
       "@models/*": ["./src/app/models/*"],
       "@services/*": ["./src/app/services/*"],
-      "@env/*": ["./src/environments/*"],
-      "@shared/*": ["./src/app/views/shared/*"],
+      "@components/*": ["./src/app/components/*"],
       "@views/*": ["./src/app/views/*"],
       "@app/*": ["./src/app/*"],
     }

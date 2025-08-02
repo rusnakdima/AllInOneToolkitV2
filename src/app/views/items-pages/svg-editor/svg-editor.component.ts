@@ -4,7 +4,7 @@ import { Component } from "@angular/core";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 
 /* components */
-import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
+import { FileInputComponent } from "@components/fields/file-input/file-input.component";
 
 @Component({
   selector: "app-svg-editor",

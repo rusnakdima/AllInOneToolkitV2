@@ -8,10 +8,10 @@ import { Subject } from "rxjs";
 import { MatIconModule } from "@angular/material/icon";
 
 /* components */
-import { HeaderComponent } from "./views/shared/header/header.component";
-import { NavComponent } from "./views/shared/nav/nav.component";
-import { BottomNavComponent } from "./views/shared/bottom-nav/bottom-nav.component";
-import { WindowNotifyComponent } from "./views/shared/window-notify/window-notify.component";
+import { HeaderComponent } from "@components/header/header.component";
+import { NavComponent } from "@components/nav/nav.component";
+import { BottomNavComponent } from "@components/bottom-nav/bottom-nav.component";
+import { WindowNotifyComponent } from "@components/window-notify/window-notify.component";
 
 @Component({
   selector: "app-root",

@@ -3,8 +3,8 @@ import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 
 /* components */
-import { DetailsComponent } from "@shared/details/details.component";
-import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
+import { DetailsComponent } from "@components/details/details.component";
+import { FileInputComponent } from "@components/fields/file-input/file-input.component";
 
 interface HeadData {
   key: string;
@@ -23,11 +23,7 @@ interface ItemData {
 
 interface DetailsData {
   head: HeadData;
-  list: (
-    | (HeadData & { head?: undefined })
-    | (ItemData & { head?: undefined })
-    | DetailsData
-  )[];
+  list: ((HeadData & { head?: undefined }) | (ItemData & { head?: undefined }) | DetailsData)[];
 }
 
 @Component({
@@ -66,17 +62,14 @@ export class PlistToTableComponent {
     padLeft += 20;
 
     let tempRow: Array<
-      | DetailsData
-      | { key: string; type: string; value: string; padLeft: number }
+      DetailsData | { key: string; type: string; value: string; padLeft: number }
     > = [];
 
     for (let i = 0; i <= array.length - 1; i = i + 2) {
       const element = array[i];
       const element1 = array[i + 1];
       if (element1.nodeName == "dict") {
-        tempRow.push(
-          this.parseData([...element1.children], element.textContent, padLeft)
-        );
+        tempRow.push(this.parseData([...element1.children], element.textContent, padLeft));
       } else if (element1.nodeName == "array") {
         const tempDetails1: DetailsData = {
           head: {
@@ -96,13 +89,7 @@ export class PlistToTableComponent {
 
         if (element1.children[0].nodeName == "dict") {
           for (let j = 0; j < [...element1.children].length; j++) {
-            tempRow1.push(
-              this.parseData(
-                [...element1.children][j].children,
-                "" + j,
-                padLeft + 20
-              )
-            );
+            tempRow1.push(this.parseData([...element1.children][j].children, "" + j, padLeft + 20));
           }
         } else {
           for (let j = 0; j < [...element1.children].length; j++) {

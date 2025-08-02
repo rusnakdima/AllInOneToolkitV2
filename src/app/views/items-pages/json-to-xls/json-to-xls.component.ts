@@ -10,7 +10,7 @@ import { FileService } from "@services/file.service";
 import { NotifyService } from "@services/notify.service";
 
 /* components */
-import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
+import { FileInputComponent } from "@components/fields/file-input/file-input.component";
 
 @Component({
   selector: "app-json-to-xls",
@@ -193,9 +193,7 @@ export class JsonToXlsComponent {
       this.dataXls = this.parseObj(this.dataJson);
 
       if (this.dataXls.length > 0) {
-        this.notifyService.showSuccess(
-          "The data has been successfully converted!"
-        );
+        this.notifyService.showSuccess("The data has been successfully converted!");
       } else {
         this.notifyService.showError("No data was received from the file!");
       }
@@ -207,9 +205,7 @@ export class JsonToXlsComponent {
   async saveData() {
     if (this.dataXls.length > 0) {
       const nameNewFile =
-        this.fileName != ""
-          ? /^(.+)\..+$/.exec(this.fileName)![1]
-          : "json_to_xls";
+        this.fileName != "" ? /^(.+)\..+$/.exec(this.fileName)![1] : "json_to_xls";
       await this.fileService
         .writeDataToFileXls(nameNewFile, this.dataXls)
         .then((data: Response) => {
@@ -224,9 +220,7 @@ export class JsonToXlsComponent {
         })
         .catch((err) => {
           console.error(err);
-          this.notifyService.showError(
-            `An error occurred while saving the data to a file: ${err}`
-          );
+          this.notifyService.showError(`An error occurred while saving the data to a file: ${err}`);
         });
     } else if (this.dataXls.length == 0) {
       this.notifyService.showError("No data was received from the file!");

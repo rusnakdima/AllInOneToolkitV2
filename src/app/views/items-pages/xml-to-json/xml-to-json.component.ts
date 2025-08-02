@@ -10,7 +10,7 @@ import { FileService } from "@services/file.service";
 import { NotifyService } from "@services/notify.service";
 
 /* components */
-import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
+import { FileInputComponent } from "@components/fields/file-input/file-input.component";
 
 @Component({
   selector: "app-xml-to-json",
@@ -64,9 +64,7 @@ export class XmlToJsonComponent {
       this.dataJson = this.parseData(Array.from(xmlDoc.children[0].children));
 
       if (this.dataJson && Object.keys(this.dataJson).length > 0) {
-        this.notifyService.showSuccess(
-          "The data has been successfully converted!"
-        );
+        this.notifyService.showSuccess("The data has been successfully converted!");
       } else {
         this.notifyService.showError("No data was received from the file!");
       }
@@ -78,9 +76,7 @@ export class XmlToJsonComponent {
   async saveData() {
     if (this.dataJson) {
       const nameNewFile =
-        this.fileName != ""
-          ? /^(.+)\..+$/.exec(this.fileName)![1]
-          : "xml_to_json";
+        this.fileName != "" ? /^(.+)\..+$/.exec(this.fileName)![1] : "xml_to_json";
       await this.fileService
         .writeDataToFile(nameNewFile, JSON.stringify(this.dataJson), "json")
         .then((data: Response) => {
@@ -95,9 +91,7 @@ export class XmlToJsonComponent {
         })
         .catch((err) => {
           console.error(err);
-          this.notifyService.showError(
-            `An error occurred while saving the data to a file: ${err}`
-          );
+          this.notifyService.showError(`An error occurred while saving the data to a file: ${err}`);
         });
     } else if (this.dataJson == null) {
       this.notifyService.showError("No data was received from the file!");

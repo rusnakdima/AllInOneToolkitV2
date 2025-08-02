@@ -12,7 +12,7 @@ import { NotifyService } from "@services/notify.service";
 /* components */
 import { XmlToJsonComponent } from "../xml-to-json/xml-to-json.component";
 import { JsonToXlsComponent } from "../json-to-xls/json-to-xls.component";
-import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
+import { FileInputComponent } from "@components/fields/file-input/file-input.component";
 
 @Component({
   selector: "app-xml-to-xls",
@@ -59,9 +59,7 @@ export class XmlToXlsComponent {
       this.dataXls = JsonToXlsComponent.prototype.parseObj(dataJson);
 
       if (this.dataXls.length > 0) {
-        this.notifyService.showSuccess(
-          "The data has been successfully converted!"
-        );
+        this.notifyService.showSuccess("The data has been successfully converted!");
       } else {
         this.notifyService.showError("No data was received from the file!");
       }
@@ -72,10 +70,7 @@ export class XmlToXlsComponent {
 
   async saveData() {
     if (this.dataXls.length > 0) {
-      const nameNewFile =
-        this.fileName != ""
-          ? /^(.+)\..+$/.exec(this.fileName)![1]
-          : "xml_to_xls";
+      const nameNewFile = this.fileName != "" ? /^(.+)\..+$/.exec(this.fileName)![1] : "xml_to_xls";
       await this.fileService
         .writeDataToFileXls(nameNewFile, this.dataXls)
         .then((data: Response) => {
@@ -90,9 +85,7 @@ export class XmlToXlsComponent {
         })
         .catch((err) => {
           console.error(err);
-          this.notifyService.showError(
-            `An error occurred while saving the data to a file: ${err}`
-          );
+          this.notifyService.showError(`An error occurred while saving the data to a file: ${err}`);
         });
     } else if (this.dataXls.length == 0) {
       this.notifyService.showError("No data was received from the file!");

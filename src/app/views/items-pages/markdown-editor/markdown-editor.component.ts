@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 
 /* components */
-import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
+import { FileInputComponent } from "@components/fields/file-input/file-input.component";
 
 @Component({
   selector: "app-markdown-editor",
@@ -117,10 +117,7 @@ export class MarkdownEditorComponent {
       code.forEach((val: string) => {
         const dataReg = codeReg.exec(val);
         if (dataReg) {
-          tempText = tempText.replace(
-            dataReg[0],
-            `<pre><code>${dataReg[1]}</code></pre>`
-          );
+          tempText = tempText.replace(dataReg[0], `<pre><code>${dataReg[1]}</code></pre>`);
         }
       });
     }
@@ -138,9 +135,7 @@ export class MarkdownEditorComponent {
             list.forEach((val: string) => {
               const dataReg = listReg.exec(val);
               if (dataReg) {
-                li += `<li class='${dataReg[1].length >= 2 ? "ml-4" : ""}'>${
-                  dataReg[3]
-                }</li>`;
+                li += `<li class='${dataReg[1].length >= 2 ? "ml-4" : ""}'>${dataReg[3]}</li>`;
               }
             });
           }
@@ -151,25 +146,19 @@ export class MarkdownEditorComponent {
     }
 
     const listNumericBlockReg = new RegExp(`^((\\ *\\d\\.)\\ *.+\\n?)+\\n?$`);
-    const listNumericBlocks = tempText.match(
-      new RegExp(listNumericBlockReg.source, "gm")
-    );
+    const listNumericBlocks = tempText.match(new RegExp(listNumericBlockReg.source, "gm"));
     if (listNumericBlocks && listNumericBlocks.length > 0) {
       listNumericBlocks.forEach((block: string) => {
         const dataRegBlock = listNumericBlockReg.exec(block);
         if (dataRegBlock) {
           const listNumericReg = new RegExp(`^(\\ *)(\\d\\.)\\ *(.+)$`);
-          const listNumeric = block.match(
-            new RegExp(listNumericReg.source, "gm")
-          );
+          const listNumeric = block.match(new RegExp(listNumericReg.source, "gm"));
           let li = "";
           if (listNumeric && listNumeric.length > 0) {
             listNumeric.forEach((val: string) => {
               const dataReg = listNumericReg.exec(val);
               if (dataReg) {
-                li += `<li class='${dataReg[1].length >= 2 ? "ml-4" : ""}'>${
-                  dataReg[3]
-                }</li>`;
+                li += `<li class='${dataReg[1].length >= 2 ? "ml-4" : ""}'>${dataReg[3]}</li>`;
               }
             });
           }
