@@ -1,0 +1,31 @@
+<mat-expansion-panel [expanded]="index == 0 ? true : false" [ngClass]="index > 0 ? getColorBackground(index) : ''">
+  <mat-expansion-panel-header>
+    <mat-panel-title>Nested Table</mat-panel-title>
+  </mat-expansion-panel-header>
+  <div [ngClass]="index > 0 ? getColorBackground(index) : ''">
+    <table class="styleBorderSolid border w-full m-1">
+      <thead>
+        <tr>
+          @for (cell of dataTable.thead; track cell) {
+            <th class="styleTD">{{ cell }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of dataTable.tbody; track row; let i = $index) {
+          <tr>
+            @for (cell of row; track cell) {
+              <td class="styleTD">
+                @if (isString(cell)) {
+                  {{ cell }}
+                } @else if (isTable(cell)) {
+                  <app-table [dataTable]="cell" [index]="i + 1" />
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</mat-expansion-panel>

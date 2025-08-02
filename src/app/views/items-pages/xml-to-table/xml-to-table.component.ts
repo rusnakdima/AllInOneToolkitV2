@@ -2,17 +2,15 @@
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 
+/* models */
+import { TableData } from "@models/table-data";
+
 /* services */
 import { NotifyService } from "@services/notify.service";
 
 /* components */
-import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
-import { TableComponent } from "@shared/table/table.component";
-
-interface TableData {
-  thead: string[];
-  tbody: (string | TableData)[][];
-}
+import { FileInputComponent } from "@components/fields/file-input/file-input.component";
+import { TableComponent } from "@components/table/table.component";
 
 @Component({
   selector: "app-xml-to-table",
@@ -26,7 +24,10 @@ export class XmlToTableComponent {
   typeFile: Array<string> = ["xml"];
   xmlData: string = "";
 
-  dataTable: TableData = { thead: [], tbody: [] };
+  dataTable: TableData = {
+    thead: [],
+    tbody: [],
+  };
   blockTable: boolean = false;
 
   setDataFile(dataFile: any) {
@@ -65,9 +66,7 @@ export class XmlToTableComponent {
     arr.forEach((elem: any) => {
       let tempRow: (string | TableData)[] = [];
       keys.forEach((key: any) => {
-        const element = [...elem.children].find(
-          (child) => child.nodeName == key
-        );
+        const element = [...elem.children].find((child) => child.nodeName == key);
         if (!element && element == null) {
           tempRow.push("");
         } else if ([...element.children].length > 0) {
@@ -95,11 +94,7 @@ export class XmlToTableComponent {
       let tempRow: (string | TableData)[] = [];
       tempRow.push(elem.nodeName);
       if ([...elem.children].length > 0) {
-        if (
-          [...elem.children].every(
-            (value: any) => value.nodeName == elem.children[0].nodeName
-          )
-        ) {
+        if ([...elem.children].every((value: any) => value.nodeName == elem.children[0].nodeName)) {
           tempRow.push(this.parseArr([...elem.children]));
         } else {
           tempRow.push(this.parseData([...elem.children]));

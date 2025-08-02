@@ -23,12 +23,15 @@ import {
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 
+/* models */
+import { TableData } from "@models/table-data";
+
 /* services */
 import { NotifyService } from "@services/notify.service";
 
 /* components */
-import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
-import { TableComponent } from "@shared/table/table.component";
+import { FileInputComponent } from "@components/fields/file-input/file-input.component";
+import { TableComponent } from "@components/table/table.component";
 
 Chart.register(
   BarController,
@@ -49,13 +52,7 @@ Chart.register(
 @Component({
   selector: "app-visual-data-on-chart",
   standalone: true,
-  imports: [
-    CommonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FileInputComponent,
-    TableComponent,
-  ],
+  imports: [CommonModule, MatFormFieldModule, MatInputModule, FileInputComponent, TableComponent],
   templateUrl: "./visual-data-on-chart.component.html",
 })
 export class VisualDataOnChartComponent {
@@ -70,7 +67,7 @@ export class VisualDataOnChartComponent {
   myChart: Chart | null = null;
 
   myChartType: Array<string> = ["bar", "line", "pie", "doughnut"];
-  dataTable: { thead: Array<any>; tbody: Array<any> } = {
+  dataTable: TableData = {
     thead: [],
     tbody: [],
   };
@@ -86,9 +83,7 @@ export class VisualDataOnChartComponent {
 
   setData(event: any) {
     if (event.target.value != "") {
-      this.dataXls = event.target.value
-        .split("\n")
-        .map((elem: string) => elem.split("\t"));
+      this.dataXls = event.target.value.split("\n").map((elem: string) => elem.split("\t"));
     } else {
       this.notifyService.showError("The field is empty! Insert the data!");
     }
@@ -142,8 +137,8 @@ export class VisualDataOnChartComponent {
       });
       tempBody.push(tempRow);
     });
-    this.dataTable["thead"] = tempHead;
-    this.dataTable["tbody"] = tempBody;
+    this.dataTable.thead = tempHead;
+    this.dataTable.tbody = tempBody;
   }
 
   isValidChartType(type: string) {
@@ -168,12 +163,8 @@ export class VisualDataOnChartComponent {
         const data: Array<any> = this.dataTable.tbody.map((item: any) =>
           item.slice(1).map((item1: any) => item1)
         );
-        const rowLab: Array<any> = this.dataTable.tbody.map(
-          (item: any) => item[0]
-        );
-        const colLab: Array<any> = this.dataTable.thead
-          .map((item: any) => item)
-          .slice(1);
+        const rowLab: Array<any> = this.dataTable.tbody.map((item: any) => item[0]);
+        const colLab: Array<any> = this.dataTable.thead.map((item: any) => item).slice(1);
 
         this.myChart = new Chart(ctx, {
           type: this.chartType as ChartType,
@@ -185,9 +176,7 @@ export class VisualDataOnChartComponent {
                 data: rowData,
                 backgroundColor: `rgb(${Math.floor(
                   Math.random() * 256
-                )}, ${Math.floor(Math.random() * 256)}, ${Math.floor(
-                  Math.random() * 256
-                )})`,
+                )}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)})`,
               };
             }),
           },

@@ -294,12 +294,14 @@ pre {
 .mat-calendar,
 .mat-mdc-select-panel,
 .mat-mdc-menu-panel,
-.mat-expansion-panel,
-.mat-expansion-panel:hover,
 .mat-datepicker-actions,
 .mat-datepicker-content,
 .mat-mdc-dialog-container .mdc-dialog__surface {
   @apply !bg-slate-100 dark:!bg-neutral-800;
+}
+
+.mat-expansion-panel {
+  @apply !bg-transparent;
 }
 
 .mat-calendar-table-header > tr > *,
@@ -321,7 +323,7 @@ pre {
 .mat-expansion-indicator::after,
 .mat-expansion-panel-header-title,
 .mdc-tab__text-label {
-  @apply !text-black dark:!text-white;
+  @apply !text-black dark:!text-white stroke-black dark:stroke-white;
 }
 
 .mat-expansion-indicator::after {

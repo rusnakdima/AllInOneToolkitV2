@@ -2,17 +2,15 @@
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 
+/* models */
+import { TableData } from "@models/table-data";
+
 /* services */
 import { NotifyService } from "@services/notify.service";
 
 /* components */
-import { FileInputComponent } from "@shared/fields/file-input/file-input.component";
-import { TableComponent } from "@shared/table/table.component";
-
-interface TableData {
-  thead: string[];
-  tbody: (string | TableData)[][];
-}
+import { FileInputComponent } from "@components/fields/file-input/file-input.component";
+import { TableComponent } from "@components/table/table.component";
 
 @Component({
   selector: "app-json-to-table",
@@ -26,7 +24,10 @@ export class JsonToTableComponent {
   typeFile: Array<string> = ["json"];
   jsonData: { [key: string]: any } = {};
 
-  dataTable: TableData = { thead: [], tbody: [] };
+  dataTable: TableData = {
+    thead: [],
+    tbody: [],
+  };
   blockTable: boolean = false;
 
   setDataFile(dataFile: any) {

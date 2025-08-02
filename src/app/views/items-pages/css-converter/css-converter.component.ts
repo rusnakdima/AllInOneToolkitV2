@@ -7,28 +7,20 @@ import { HttpClientModule } from "@angular/common/http";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 
+/* models */
+import { TableData } from "@models/table-data";
+
 /* services */
 import { FileService } from "@services/file.service";
 import { NotifyService } from "@services/notify.service";
 
 /* components */
-import { TableComponent } from "@shared/table/table.component";
-
-interface TableData {
-  thead: Array<any>;
-  tbody: Array<any>;
-}
+import { TableComponent } from "@components/table/table.component";
 
 @Component({
   selector: "app-css-converter",
   standalone: true,
-  imports: [
-    CommonModule,
-    HttpClientModule,
-    MatFormFieldModule,
-    MatInputModule,
-    TableComponent,
-  ],
+  imports: [CommonModule, HttpClientModule, MatFormFieldModule, MatInputModule, TableComponent],
   templateUrl: "./css-converter.component.html",
 })
 export class CssConverterComponent {
@@ -92,32 +84,22 @@ export class CssConverterComponent {
           item = item.replace(/\,\s*/, " ");
         }
       }
-      let propTailwind =
-        /^(\w+)(?:-([\w\/\[\]]+))?(?:-([\w\/\[\]]+))?(?:-([\w\/\[\]]+))?$/.exec(
-          item
-        );
+      let propTailwind = /^(\w+)(?:-([\w\/\[\]]+))?(?:-([\w\/\[\]]+))?(?:-([\w\/\[\]]+))?$/.exec(
+        item
+      );
       if (propTailwind && propTailwind![3] && propTailwind![4]) {
-        if (
-          Object.values(tempObj).includes(
-            propTailwind![1] + "-" + propTailwind![2]
-          )
-        ) {
+        if (Object.values(tempObj).includes(propTailwind![1] + "-" + propTailwind![2])) {
           propTailwind![1] = propTailwind![1] + "-" + propTailwind![2];
           propTailwind![2] = propTailwind![3] + "-" + propTailwind![4];
           propTailwind![3] = "";
           propTailwind![4] = "";
         } else {
-          propTailwind![2] =
-            propTailwind![2] + "-" + propTailwind![3] + "-" + propTailwind![4];
+          propTailwind![2] = propTailwind![2] + "-" + propTailwind![3] + "-" + propTailwind![4];
           propTailwind![3] = "";
           propTailwind![4] = "";
         }
       } else if (propTailwind && propTailwind![3]) {
-        if (
-          Object.values(tempObj).includes(
-            propTailwind![1] + "-" + propTailwind![2]
-          )
-        ) {
+        if (Object.values(tempObj).includes(propTailwind![1] + "-" + propTailwind![2])) {
           propTailwind![1] = propTailwind![1] + "-" + propTailwind![2];
           propTailwind![2] = propTailwind![3];
           propTailwind![3] = "";
@@ -129,13 +111,9 @@ export class CssConverterComponent {
       let objItem;
       if (this.typeStyle == style) {
         textElem = item;
-      } else if (
-        (objItem = this.dataArr.find((obj: any) => obj[this.typeStyle] == item))
-      ) {
+      } else if ((objItem = this.dataArr.find((obj: any) => obj[this.typeStyle] == item))) {
         if (propCSS && Object.keys(tempObj).includes(propCSS![1])) {
-          textElem = objItem[style]
-            ? `${tempObj[String(propCSS![1])]}-${objItem[style]}`
-            : "";
+          textElem = objItem[style] ? `${tempObj[String(propCSS![1])]}-${objItem[style]}` : "";
         } else {
           textElem = objItem[style] ? objItem[style] : "";
         }
@@ -145,23 +123,17 @@ export class CssConverterComponent {
       ) {
         if (
           this.typeStyle == "css" &&
-          (objItem = this.dataArr.find(
-            (obj: any) => obj["css"] == `color: ${propCSS![2]};`
-          ))
+          (objItem = this.dataArr.find((obj: any) => obj["css"] == `color: ${propCSS![2]};`))
         ) {
           if (objItem) {
-            textElem = objItem[style]
-              ? `${tempObj[String(propCSS![1])]}-${objItem[style]}`
-              : "";
+            textElem = objItem[style] ? `${tempObj[String(propCSS![1])]}-${objItem[style]}` : "";
           } else {
             textElem = "";
           }
         } else if (
           this.typeStyle != "css" &&
           style == "css" &&
-          (objItem = this.dataArr.find(
-            (obj: any) => obj[this.typeStyle] == propTailwind![2]
-          ))
+          (objItem = this.dataArr.find((obj: any) => obj[this.typeStyle] == propTailwind![2]))
         ) {
           if (objItem) {
             textElem = objItem[style]
@@ -175,30 +147,26 @@ export class CssConverterComponent {
         } else if (
           this.typeStyle != "css" &&
           style != "css" &&
-          (objItem = this.dataArr.find(
-            (obj: any) => obj[this.typeStyle] == propTailwind![2]
-          ))
+          (objItem = this.dataArr.find((obj: any) => obj[this.typeStyle] == propTailwind![2]))
         ) {
           if (objItem) {
-            textElem = objItem[style]
-              ? `${propTailwind![1]}-${objItem[style]}`
-              : "";
+            textElem = objItem[style] ? `${propTailwind![1]}-${objItem[style]}` : "";
           } else {
             textElem = "";
           }
         } else if (this.typeStyle == "css" && style == "tailwind" && propCSS) {
-          let key = this.dataArr.find((obj: any) =>
-            obj[style].indexOf(propCSS![1])
-          )!["tailwind_custom"];
+          let key = this.dataArr.find((obj: any) => obj[style].indexOf(propCSS![1]))![
+            "tailwind_custom"
+          ];
           if (Object.keys(tempObj).includes(propCSS![1])) {
             key = tempObj[propCSS![1]];
           }
           textElem = key + "-[" + propCSS![2] + "]";
         }
       } else if (this.typeStyle == "css" && style == "tailwind" && propCSS) {
-        let key = this.dataArr.find((obj: any) =>
-          obj[style].indexOf(propCSS![1])
-        )!["tailwind_custom"];
+        let key = this.dataArr.find((obj: any) => obj[style].indexOf(propCSS![1]))![
+          "tailwind_custom"
+        ];
         if (Object.keys(tempObj).includes(propCSS![1])) {
           key = tempObj[propCSS![1]];
         }
@@ -212,11 +180,7 @@ export class CssConverterComponent {
   }
 
   async convertData() {
-    if (
-      this.dataArr.length > 0 &&
-      this.dataField != "" &&
-      this.typeStyle != ""
-    ) {
+    if (this.dataArr.length > 0 && this.dataField != "" && this.typeStyle != "") {
       this.blockTable = true;
 
       let listField =
@@ -262,9 +226,7 @@ export class CssConverterComponent {
         "You don't have a style library! Download it from the git repository from this program!"
       );
     } else if (this.typeStyle == "") {
-      this.notifyService.showError(
-        "You have not selected the type of source styles!"
-      );
+      this.notifyService.showError("You have not selected the type of source styles!");
     } else if (this.dataField == "") {
       this.notifyService.showError("The field is empty! Insert the data!");
     }
