@@ -71,13 +71,13 @@ export class AboutComponent {
   getDate() {
     this.aboutService
       .getBinaryNameFile()
-      .then((data: Response) => {
-        if (data.status == ResponseStatus.SUCCESS) {
-          if (data.data != "Unknown") {
-            this.nameFile = data.data;
+      .then((response: Response) => {
+        if (response.status == ResponseStatus.SUCCESS) {
+          if (response.data != "Unknown") {
+            this.nameFile = response.data;
           }
         } else {
-          this.notifyService.showNotify(data.status, data.message);
+          this.notifyService.showNotify(response.status, response.message);
         }
       })
       .catch((err: any) => {
@@ -137,14 +137,14 @@ export class AboutComponent {
 
       this.aboutService
         .downloadUpdate(this.lastVersion, this.nameFile)
-        .then((data: Response) => {
-          if (data.status == ResponseStatus.SUCCESS) {
+        .then((response: Response) => {
+          if (response.status == ResponseStatus.SUCCESS) {
             this.notifyService.showSuccess(
               "The new version of the program has been successfully downloaded!"
             );
-            this.pathUpdate = data.data;
+            this.pathUpdate = response.data;
           } else {
-            this.notifyService.showNotify(data.status, data.message);
+            this.notifyService.showNotify(response.status, response.message);
           }
         })
         .catch((err: any) => {

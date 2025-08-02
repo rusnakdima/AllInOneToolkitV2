@@ -50,41 +50,27 @@ export class VirusTotalComponent {
       this.notifyService.showWarning("Checking...");
 
       const url = btoa(this.urlInput).replace(/=/g, "");
-      const apiUrl = `https://www.virustotal.com/api/v3/urls/${encodeURIComponent(
-        url
-      )}`;
+      const apiUrl = `https://www.virustotal.com/api/v3/urls/${encodeURIComponent(url)}`;
 
       this.virusTotalService
         .checkOnViruses(apiUrl)
-        .then((data: Response) => {
-          if (data.status == ResponseStatus.SUCCESS) {
-            if (data.data && data.data != "") {
-              if (Common.isJsonAsString(data.data)) {
-                const json = JSON.parse(data.data);
+        .then((response: Response) => {
+          if (response.status == ResponseStatus.SUCCESS) {
+            if (response.data && response.data != "") {
+              if (Common.isJsonAsString(response.data)) {
+                const json = JSON.parse(response.data);
                 if (!json.error) {
-                  const colors = [
-                    "green-600",
-                    "yellow-300",
-                    "orange-500",
-                    "red-600",
-                  ];
+                  const colors = ["green-600", "yellow-300", "orange-500", "red-600"];
 
-                  this.milicious =
-                    json.data.attributes.last_analysis_stats.malicious || 0;
+                  this.milicious = json.data.attributes.last_analysis_stats.malicious || 0;
                   this.allAntivirus = Object.keys(
                     json.data.attributes.last_analysis_results
                   ).length;
                   this.circleBlockColor =
-                    colors[
-                      Math.floor(
-                        (this.milicious / this.allAntivirus) *
-                          (colors.length - 1)
-                      )
-                    ];
+                    colors[Math.floor((this.milicious / this.allAntivirus) * (colors.length - 1))];
 
                   this.listAntiviruses = [];
-                  const sites_analysis =
-                    json.data.attributes.last_analysis_results;
+                  const sites_analysis = json.data.attributes.last_analysis_results;
                   Object.values(sites_analysis).forEach((elem: any) => {
                     this.listAntiviruses.push({
                       status: elem.result,
@@ -96,9 +82,7 @@ export class VirusTotalComponent {
                   this.isChecked = true;
                   this.notifyService.showSuccess("Checked ended successfully!");
                 } else {
-                  this.notifyService.showError(
-                    "VirusTotal API returned an error!"
-                  );
+                  this.notifyService.showError("VirusTotal API returned an error!");
                   this.milicious = 0;
                   this.allAntivirus = 0;
                   this.circleBlockColor = "";

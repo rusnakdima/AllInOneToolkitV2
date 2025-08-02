@@ -48,15 +48,15 @@ export class UnicodeConverterComponent {
         .map((symbol: string) => {
           this.unicodeConverterService
             .getInfoSymbol(this.typeCoding, symbol)
-            .then((data: Response) => {
-              if (data.status === "success") {
+            .then((response: Response) => {
+              if (response.status === "success") {
                 this.listResult.push({
-                  symbol: data.data.symbol,
-                  dec: data.data.dec,
-                  hex: data.data.hex,
+                  symbol: response.data.symbol,
+                  dec: response.data.dec,
+                  hex: response.data.hex,
                 });
               } else {
-                this.notifyService.showError(data.message);
+                this.notifyService.showError(response.message);
               }
             })
             .catch((err) => {
