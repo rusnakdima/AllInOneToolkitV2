@@ -8,7 +8,7 @@ use crate::models::{
 };
 
 pub fn get_info_symbol(type_coding: String, content: String) -> Response {
-  let mut unicode_data: UnicodeData;
+  let unicode_data: UnicodeData;
 
   match type_coding.as_str() {
     "symbol" => {
