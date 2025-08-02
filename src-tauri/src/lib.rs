@@ -7,7 +7,7 @@ mod services;
 use controllers::about::{download_update, get_binary_name_file};
 
 use controllers::manage_file::{
-  choose_file, get_data_file_by_path, open_file_in_app, write_data_to_file,
+  choose_file, get_data_file_by_path, open_folder_with_file, open_file_in_app, write_data_to_file,
 };
 
 use controllers::manage_xls::{get_data_file_by_path_xls, write_data_to_file_xls};
@@ -30,6 +30,7 @@ pub fn run() {
       choose_file,
       get_data_file_by_path,
       write_data_to_file,
+      open_folder_with_file,
       open_file_in_app,
       get_data_file_by_path_xls,
       write_data_to_file_xls,

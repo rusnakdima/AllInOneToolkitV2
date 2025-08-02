@@ -2,8 +2,8 @@
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 
-/* models */
-import { Response, ResponseStatus } from "@models/response";
+/* helpers */
+import { Common } from "@helpers/common";
 
 /* services */
 import { FileService } from "@services/file.service";
@@ -69,47 +69,55 @@ export class XmlToXlsComponent {
   }
 
   async saveData() {
-    if (this.dataXls.length > 0) {
+    if (this.dataXls.length == 0) {
+      this.notifyService.showError("There is no data to save!");
+      return;
+    }
+
+    try {
       const nameNewFile = this.fileName != "" ? /^(.+)\..+$/.exec(this.fileName)![1] : "xml_to_xls";
-      await this.fileService
-        .writeDataToFileXls(nameNewFile, this.dataXls)
-        .then((data: Response) => {
-          if (data.status == ResponseStatus.SUCCESS) {
-            this.pathNewFile = data.data;
-            this.notifyService.showSuccess(
-              `The data has been successfully saved to a file "${this.pathNewFile}"!`
-            );
-          } else {
-            this.notifyService.showNotify(data.status, data.message);
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-          this.notifyService.showError(`An error occurred while saving the data to a file: ${err}`);
-        });
-    } else if (this.dataXls.length == 0) {
+      this.pathNewFile = await Common.saveData(
+        this.notifyService,
+        this.fileService,
+        nameNewFile,
+        this.dataXls,
+        "xls"
+      );
+    } catch (error) {
       this.notifyService.showError("No data was received from the file!");
     }
   }
 
+  async openFolder() {
+    if (this.pathNewFile == "") {
+      this.notifyService.showError("You didn't save the file!");
+      return;
+    }
+
+    try {
+      const pathFolder = this.pathNewFile
+        .split(/[\/\\]/)
+        .slice(0, -1)
+        .join("/");
+      Common.openFolder(this.notifyService, this.fileService, pathFolder);
+    } catch (error) {
+      console.error(error);
+      this.notifyService.showError(
+        "You didn't save the file to open the folder where it is stored!"
+      );
+    }
+  }
+
   async openFile() {
-    if (this.pathNewFile != "") {
-      await this.fileService
-        .openFileInApp(this.pathNewFile)
-        .then((data: Response) => {
-          if (data.status == ResponseStatus.SUCCESS) {
-            this.notifyService.showWarning(
-              "Wait a bit until the program starts to read this file format!"
-            );
-          } else {
-            this.notifyService.showNotify(data.status, data.message);
-          }
-        })
-        .catch((err: any) => {
-          console.error(err);
-          this.notifyService.showError(err);
-        });
-    } else {
+    if (this.pathNewFile == "") {
+      this.notifyService.showError("You didn't save the file!");
+      return;
+    }
+
+    try {
+      Common.openFile(this.notifyService, this.fileService, this.pathNewFile);
+    } catch (error) {
+      console.error(error);
       this.notifyService.showError("You didn't save the file to open it!");
     }
   }

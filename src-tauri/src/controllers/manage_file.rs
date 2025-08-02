@@ -25,6 +25,11 @@ pub fn write_data_to_file(
 }
 
 #[tauri::command]
+pub fn open_folder_with_file(path: String) -> Response {
+  return manage_file::open_folder_with_file(path);
+}
+
+#[tauri::command]
 pub fn open_file_in_app(path: String) -> Response {
   return manage_file::open_file(path);
 }

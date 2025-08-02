@@ -1,7 +1,25 @@
+/* models */
+import { Response, ResponseStatus } from "@models/response";
+
+/* services */
+import { FileService } from "@services/file.service";
+import { NotifyService } from "@services/notify.service";
+
 export class Common {
+  static isHTML(str: string): boolean {
+    const parser = new DOMParser();
+    try {
+      parser.parseFromString(str, "text/html");
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
   static isJson(data: Object): boolean {
     return typeof data === "object";
   }
+
   static isJsonAsString(data: string): boolean {
     try {
       const parsed = JSON.parse(data);
@@ -90,9 +108,7 @@ export class Common {
       }
 
       const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
-      const days = Math.floor(
-        (diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24),
-      );
+      const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
       if (months >= 1) {
         return `${months} month${months > 1 ? "s" : ""}${
           days > 0 ? ` ${days} day${days > 1 ? "s" : ""}` : ""
@@ -100,9 +116,7 @@ export class Common {
       }
 
       const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor(
-        (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-      );
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
       if (totalDays >= 1) {
@@ -134,9 +148,7 @@ export class Common {
       }
 
       const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
-      const days = Math.floor(
-        (diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24),
-      );
+      const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
       if (months >= 1) {
         return `in ${months} month${months > 1 ? "s" : ""}${
           days > 0 ? ` ${days} day${days > 1 ? "s" : ""}` : ""
@@ -144,9 +156,7 @@ export class Common {
       }
 
       const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor(
-        (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-      );
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
       if (totalDays >= 1) {
@@ -178,9 +188,7 @@ export class Common {
       }
 
       const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
-      const days = Math.floor(
-        (diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24),
-      );
+      const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
       if (months >= 1) {
         return `${months} month${months > 1 ? "s" : ""}${
           days > 0 ? ` ${days} day${days > 1 ? "s" : ""}` : ""
@@ -188,9 +196,7 @@ export class Common {
       }
 
       const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor(
-        (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-      );
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
       if (totalDays >= 1) {
@@ -207,5 +213,84 @@ export class Common {
     }
 
     return "";
+  }
+
+  static async saveData(
+    notifyService: NotifyService,
+    fileService: FileService,
+    nameNewFile: string,
+    data: any,
+    typeFile: string
+  ): Promise<string> {
+    try {
+      let response: Response;
+      let pathNewFile = "";
+
+      if (typeFile == "xls") {
+        response = await fileService.writeDataToFileXls(nameNewFile, data);
+      } else {
+        response = await fileService.writeDataToFile(nameNewFile, data, typeFile);
+      }
+
+      if (response.status == ResponseStatus.SUCCESS) {
+        pathNewFile = response.data;
+        notifyService.showSuccess(
+          `The data has been successfully saved to a file "${pathNewFile}"!`
+        );
+      } else if (response.status == ResponseStatus.ERROR) {
+        console.error(response.message);
+        notifyService.showError(`An error occurred while saving the data to a file!`);
+      } else {
+        notifyService.showNotify(response.status, response.message);
+      }
+
+      return pathNewFile;
+    } catch (error) {
+      console.error(error);
+      notifyService.showError("An error occurred while saving the data to a file!");
+    }
+    return "";
+  }
+
+  static async openFolder(
+    notifyService: NotifyService,
+    fileService: FileService,
+    pathFolder: string
+  ) {
+    await fileService
+      .openFolderWithFile(pathFolder)
+      .then((data: Response) => {
+        if (data.status == ResponseStatus.SUCCESS) {
+          notifyService.showWarning("Wait a bit until the explorer opens!");
+        } else {
+          notifyService.showNotify(data.status, data.message);
+        }
+      })
+      .catch((err: any) => {
+        console.error(err);
+        notifyService.showError(err);
+      });
+  }
+
+  static async openFile(
+    notifyService: NotifyService,
+    fileService: FileService,
+    pathNewFile: string
+  ) {
+    await fileService
+      .openFileInApp(pathNewFile)
+      .then((data: Response) => {
+        if (data.status == ResponseStatus.SUCCESS) {
+          notifyService.showWarning(
+            "Wait a bit until the program starts to read this file format!"
+          );
+        } else {
+          notifyService.showNotify(data.status, data.message);
+        }
+      })
+      .catch((err: any) => {
+        console.error(err);
+        notifyService.showError(err);
+      });
   }
 }

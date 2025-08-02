@@ -127,6 +127,22 @@ pub fn write_data_to_file(
   };
 }
 
+pub fn open_folder_with_file(path: String) -> Response {
+  if let Err(err) = opener::open(path) {
+    return Response {
+      status: "error".to_string(),
+      message: format!("Failed to open folder:: {}", err),
+      data: DataValue::String("".to_string()),
+    };
+  }
+
+  return Response {
+    status: "success".to_string(),
+    message: "".to_string(),
+    data: DataValue::String("".to_string()),
+  };
+}
+
 pub fn open_file(path: String) -> Response {
   if let Err(err) = opener::open(path) {
     return Response {

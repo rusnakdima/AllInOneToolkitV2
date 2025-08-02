@@ -35,6 +35,10 @@ export class FileService {
     return await invoke<Response>("write_data_to_file_xls", { nameFile, content });
   }
 
+  async openFolderWithFile(pathFile: string): Promise<any> {
+    return await invoke<Response>("open_folder_with_file", { path: pathFile });
+  }
+
   async openFileInApp(pathFile: string): Promise<any> {
     return await invoke<Response>("open_file_in_app", { path: pathFile });
   }
