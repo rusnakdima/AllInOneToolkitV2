@@ -1,6 +1,7 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
 import {
+  ChangeDetectorRef,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   EventEmitter,
@@ -30,6 +31,7 @@ import { NotifyService } from "@services/notify.service";
 })
 export class FileInputComponent implements OnInit, OnDestroy {
   constructor(
+    private cdr: ChangeDetectorRef,
     private fileService: FileService,
     private notifyService: NotifyService
   ) {}
@@ -42,17 +44,10 @@ export class FileInputComponent implements OnInit, OnDestroy {
   filePath: string = "";
 
   private unlisten: (() => void) | null = null;
+  private unlistenDragDrop: (() => void) | null = null;
 
   ngOnInit() {
-    listen("tauri://drag-drop", (event) => {
-      this.checkFileExt(event);
-      const target = document.getElementById("fileInput") as HTMLElement;
-      if (target.id == "fileInput") {
-        target.classList.remove("!border-green-500");
-        target.classList.remove("!border-4");
-      }
-    });
-
+    this.listenDragDrop();
     this.getFilePath();
   }
 
@@ -61,6 +56,20 @@ export class FileInputComponent implements OnInit, OnDestroy {
     if (this.unlisten) {
       this.unlisten();
     }
+    if (this.unlistenDragDrop) {
+      this.unlistenDragDrop();
+    }
+  }
+
+  async listenDragDrop() {
+    this.unlistenDragDrop = await listen("tauri://drag-drop", (event: any) => {
+      this.checkFileExt(event);
+      const target = document.getElementById("fileInput") as HTMLElement;
+      if (target?.id === "fileInput") {
+        target.classList.remove("!border-green-500", "!border-4");
+      }
+      this.cdr.detectChanges();
+    });
   }
 
   onDragOver(event: DragEvent): void {
@@ -69,8 +78,7 @@ export class FileInputComponent implements OnInit, OnDestroy {
 
     const target = event.target as HTMLElement;
     if (target.id == "fileInput") {
-      target.classList.add("!border-green-500");
-      target.classList.add("!border-4");
+      target.classList.add("!border-green-500", "!border-4");
     }
   }
 
@@ -83,78 +91,101 @@ export class FileInputComponent implements OnInit, OnDestroy {
     event.preventDefault();
     event.stopPropagation();
     if ((event.target as HTMLElement).id == "fileInput") {
-      (event.target as HTMLElement).classList.remove("!border-green-500");
+      (event.target as HTMLElement).classList.remove("!border-green-500", "!border-4");
     }
   }
 
   checkFileExt(event: any) {
-    if (event) {
-      if (typeof event.payload == "object") {
-        this.filePath = (event.payload as { [key: string]: any })["paths"][0];
-      } else if (typeof event.payload == "string") {
-        this.filePath = event.payload;
-      }
-      let fileExt =
-        (this.filePath.replace(/\\/g, "/").split("/").pop() ?? "").split(".").pop() ?? "";
-      if (fileExt == "xlsx" || fileExt == "xlsm" || fileExt == "xls") {
-        fileExt = "xls";
-      }
-      if (this.typeFile.includes(fileExt)) {
-        this.fileName = this.filePath.split(/[\/\\]/g).pop() ?? "";
-        this.reciveFileName.next(this.fileName);
-        this.getDataFile();
-      } else {
-        this.notifyService.showError("Invalid file type");
-      }
+    if (!event?.payload) {
+      this.notifyService.showError("No file dropped");
+      return;
+    }
+
+    let filePath: string;
+    if (typeof event.payload === "object" && event.payload.paths?.length > 0) {
+      filePath = event.payload.paths[0];
+    } else if (typeof event.payload === "string") {
+      filePath = event.payload;
+    } else {
+      this.notifyService.showError("Invalid drop event payload");
+      return;
+    }
+
+    const fileExt = (
+      filePath
+        .split(/[\/\\]/)
+        .pop()
+        ?.split(".")
+        .pop() ?? ""
+    ).toLowerCase();
+    const normalizedExt = ["xlsx", "xlsm", "xls"].includes(fileExt) ? "xls" : fileExt;
+
+    if (this.typeFile.includes(normalizedExt)) {
+      this.filePath = filePath;
+      this.fileName = filePath.split(/[\/\\]/).pop() ?? "";
+      this.reciveFileName.emit(this.fileName);
+      this.getDataFile();
+      this.cdr.detectChanges();
+    } else {
+      this.notifyService.showError(`Invalid file type. Expected: ${this.typeFile.join(", ")}`);
     }
   }
 
   async getFilePath() {
-    this.unlisten = await listen("send_file_path", (event: any) => {
-      this.fileName = event.payload.split(/[\/\\]/g).pop();
+    this.unlisten = await listen("send-file-path", (event: any) => {
       this.filePath = event.payload;
-      this.reciveFileName.next(this.fileName);
+      this.fileName = event.payload.split(/[\/\\]/).pop() ?? "";
+      this.notifyService.showInfo("File path received");
+      this.reciveFileName.emit(this.fileName);
       this.getDataFile();
+      this.cdr.detectChanges();
     });
   }
 
   async getDataFile() {
-    if (this.typeFile.includes("xls")) {
-      await this.fileService
-        .getDataFromXLS(this.filePath)
-        .then((data: Response) => {
-          if (data.status == ResponseStatus.SUCCESS) {
-            this.dataFile.next(data.data);
-          }
-        })
-        .catch((err: any) => {
-          console.error(err);
-          this.notifyService.showError(err);
-        });
-    } else if (this.typeFile.length > 0) {
-      await this.fileService
-        .getDataFromAnyFile(this.filePath)
-        .then((data: Response) => {
-          if (data.status == ResponseStatus.SUCCESS) {
-            this.dataFile.next(data.data);
-          }
-        })
-        .catch((err: any) => {
-          console.error(err);
-          this.notifyService.showError(err);
-        });
+    if (!this.filePath) {
+      this.notifyService.showError("No file path available");
+      return;
+    }
+
+    try {
+      let response: Response;
+      if (this.typeFile.includes("xls")) {
+        response = await this.fileService.getDataFromXLS(this.filePath);
+      } else if (this.typeFile.length > 0) {
+        response = await this.fileService.getDataFromAnyFile(this.filePath);
+      } else {
+        this.notifyService.showError("No valid file type specified");
+        return;
+      }
+
+      if (response.status === ResponseStatus.SUCCESS) {
+        this.dataFile.emit(response.data);
+      } else {
+        this.notifyService.showError(response.message || "Failed to read file");
+      }
+    } catch (err) {
+      console.error(err);
+      this.notifyService.showError("Error reading file");
     }
   }
 
   async chooseFile() {
-    await this.fileService
-      .chooseFile(this.typeFile)
-      .then((data: Response) => {
-        this.notifyService.showNotify(data.status, data.message);
-      })
-      .catch((err) => {
-        console.error(err);
-        this.notifyService.showError(err);
-      });
+    try {
+      this.fileName = "";
+      this.filePath = "";
+      this.cdr.detectChanges();
+
+      const response: Response = await this.fileService.chooseFile(this.typeFile);
+      if (response.status == ResponseStatus.ERROR) {
+        this.notifyService.showError(response.message || "Failed to open file dialog");
+        return;
+      }
+
+      this.notifyService.showInfo("Please select a file");
+    } catch (error) {
+      console.error(error);
+      this.notifyService.showError(String(error));
+    }
   }
 }
