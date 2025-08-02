@@ -2,12 +2,14 @@
   <div
     class="flex flex-col gap-y-5 p-3"
     style="height: calc(100vh - 72px)"
-    [style.width]="isShowSidebar ? widthLeftSidebar + 'px' : '100px'"
+    [style.width]="isShowSidebar ? widthLeftSidebar + 'px' : '70px'"
   >
     <div class="flex flex-row justify-between !rounded-none styleBorderSolidLite border-b">
-      <button (click)="createCollection()">
-        <mat-icon fontIcon="add" matTooltip="Create new collection" />
-      </button>
+      @if (isShowSidebar) {
+        <button (click)="createCollection()">
+          <mat-icon fontIcon="add" matTooltip="Create new collection" />
+        </button>
+      }
 
       @if (isShowSidebar) {
         <button (click)="isShowSidebar = false">
@@ -22,9 +24,13 @@
 
     @if (isShowSidebar) {
       <div class="overflow-y-auto" style="height: calc(100vh - 150px)">
-        <div class="flex flex-col gap-y-3">
+        <div
+          class="flex flex-col gap-y-3"
+          cdkDropList
+          (cdkDropListDropped)="dropCollections($event)"
+        >
           @for (coll of listCollections; track coll; let i = $index) {
-            <mat-expansion-panel [togglePosition]="'before'">
+            <mat-expansion-panel [togglePosition]="'before'" cdkDrag>
               <mat-expansion-panel-header>
                 <div
                   class="relative flex flex-row justify-between items-center gap-x-3 w-full h-auto overflow-x-auto"
@@ -78,11 +84,16 @@
                   </button>
                 </div>
 
-                <div class="flex flex-col gap-y-2 w-full">
+                <div
+                  class="flex flex-col gap-y-2 w-full"
+                  cdkDropList
+                  (cdkDropListDropped)="dropRequests($event, i)"
+                >
                   @for (req of coll.requests; track req; let j = $index) {
                     <div
                       class="flex flex-row justify-between items-center gap-x-3 px-1 rounded-xl hover:bg-slate-300 dark:hover:bg-gray-700 w-full overflow-x-auto cursor-pointer"
                       (click)="getInfo(coll, req)"
+                      cdkDrag
                     >
                       <div class="grid grid-cols-12 items-center gap-x-2 w-full">
                         <span class="col-span-3" [ngClass]="colorTypeRequest[req.typeReq]">{{
@@ -169,7 +180,7 @@
 
   <hr
     class="fixed flex flex-col !rounded-none styleBorderSolidLite border-r-2 min-h-full cursor-ew-resize"
-    [style.left]="isShowSidebar ? widthLeftSidebar + 'px' : '100px'"
+    [style.left]="isShowSidebar ? widthLeftSidebar + 'px' : '70px'"
     (mousedown)="onMouseDown($event)"
   />
 
@@ -227,7 +238,7 @@
 
           <mat-tab label="Headers">
             <div class="flex flex-col gap-y-1">
-              @if (typeEditorData.headers == 'table') {
+              @if (typeEditorData.headers == "table") {
                 <div class="flex flex-row justify-end items-center">
                   <span class="styleLinkRedir" (click)="typeEditorData.headers = 'json'"
                     >Json editor</span
@@ -236,7 +247,7 @@
                 <ng-container
                   *ngTemplateOutlet="context; context: { type: 'headers' }"
                 ></ng-container>
-              } @else if (typeEditorData.headers == 'json') {
+              } @else if (typeEditorData.headers == "json") {
                 <div class="flex flex-row justify-end items-center">
                   <span class="styleLinkRedir" (click)="typeEditorData.headers = 'table'"
                     >Table editor</span
@@ -254,14 +265,14 @@
 
           <mat-tab label="Body">
             <div class="flex flex-col gap-y-1">
-              @if (typeEditorData.body == 'table') {
+              @if (typeEditorData.body == "table") {
                 <div class="flex flex-row justify-end items-center">
                   <span class="styleLinkRedir" (click)="typeEditorData.body = 'json'"
                     >Json Editor</span
                   >
                 </div>
                 <ng-container *ngTemplateOutlet="context; context: { type: 'body' }"></ng-container>
-              } @else if (typeEditorData.body == 'json') {
+              } @else if (typeEditorData.body == "json") {
                 <div class="flex flex-row justify-end items-center">
                   <span class="styleLinkRedir" (click)="typeEditorData.body = 'table'"
                     >Table Editor</span
@@ -282,6 +293,10 @@
               @if (isJsonAsString(response)) {
                 <div class="flex flex-col p-5 styleBorderSolidLite border">
                   <app-json-parser [parseData$]="parseData$" />
+                </div>
+              } @else if (isHTML(response)) {
+                <div class="flex flex-col p-5 styleBorderSolidLite border">
+                  <div [innerHTML]="response"></div>
                 </div>
               } @else {
                 <div class="flex flex-col p-5 styleBorderSolidLite border">
@@ -319,12 +334,12 @@
         @for (item of getList(type); track $index) {
           <tr>
             <td class="styleTD h-[35px]">
-              @if (item.key != '') {
+              @if (item.key != "") {
                 <input class="styleCheckbox" type="checkbox" [checked]="item.isActive" />
               }
             </td>
             <td class="styleTD w-1/2 cursor-text" (click)="editObj($index, 'key', item)">
-              @if (editingRow == $index && editingCol == 'key') {
+              @if (editingRow == $index && editingCol == "key") {
                 <input
                   class="styleField w-full"
                   type="text"
@@ -336,7 +351,7 @@
               }
             </td>
             <td class="styleTD w-1/2 cursor-text" (click)="editObj($index, 'value', item)">
-              @if (editingRow == $index && editingCol == 'value') {
+              @if (editingRow == $index && editingCol == "value") {
                 <textarea
                   class="styleField w-full"
                   rows="5"
@@ -348,7 +363,7 @@
               }
             </td>
             <td class="styleTD">
-              @if (item.key != '') {
+              @if (item.key != "") {
                 <button (click)="deleteRec(getList(type), $index)">
                   <mat-icon class="!text-xl" fontIcon="delete" matTooltip="Delete collection" />
                 </button>

@@ -3,6 +3,8 @@ import { CommonModule } from "@angular/common";
 import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, Input, OnInit } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { v4 as UUID } from "uuid";
+import { CdkDragDrop, CdkDropList, DragDropModule } from "@angular/cdk/drag-drop";
+import { Subject } from "rxjs";
 
 /* material */
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -23,8 +25,7 @@ import { BodyData, BodyValue, RecObj, Request, TypeRequest } from "@models/reque
 /* services */
 import { UrlRequestsService } from "@services/url-requests.service";
 import { NotifyService } from "@services/notify.service";
-import { JsonParserComponent } from "@shared/json-parser/json-parser.component";
-import { Subject } from "rxjs";
+import { JsonParserComponent } from "@components/json-parser/json-parser.component";
 
 @Component({
   selector: "app-url-requests",
@@ -41,6 +42,8 @@ import { Subject } from "rxjs";
     MatSelectModule,
     MatTabsModule,
     MatIconModule,
+    DragDropModule,
+    CdkDropList,
     JsonParserComponent,
   ],
   templateUrl: "./url-requests.component.html",
@@ -87,6 +90,7 @@ export class UrlRequestsComponent implements OnInit {
   isShowSidebar: boolean = false;
 
   isJsonAsString = Common.isJsonAsString;
+  isHTML = Common.isHTML;
 
   ngOnInit(): void {
     document.addEventListener("mousedown", (e: any) => {
@@ -117,9 +121,9 @@ export class UrlRequestsComponent implements OnInit {
 
     this.urlRequestsService
       .getData()
-      .then((data: Response) => {
-        if (data.status == ResponseStatus.SUCCESS) {
-          this.savedListCollections = data.data;
+      .then((response: Response) => {
+        if (response.status == ResponseStatus.SUCCESS) {
+          this.savedListCollections = response.data;
           this.listCollections = this.savedListCollections;
         } else {
           this.notifyService.showError("Failed to load data");
@@ -149,6 +153,20 @@ export class UrlRequestsComponent implements OnInit {
   @HostListener("document:mouseup")
   onMouseUp(): void {
     this.isResizing = false;
+  }
+
+  dropCollections(event: CdkDragDrop<string[]>) {
+    const prevElement = this.listCollections[event.previousIndex];
+    this.listCollections.splice(event.previousIndex, 1);
+    this.listCollections.splice(event.currentIndex, 0, prevElement);
+    this.saveData();
+  }
+
+  dropRequests(event: CdkDragDrop<string[]>, indexCollection: number) {
+    const prevElement = this.listCollections[indexCollection].requests[event.previousIndex];
+    this.listCollections[indexCollection].requests.splice(event.previousIndex, 1);
+    this.listCollections[indexCollection].requests.splice(event.currentIndex, 0, prevElement);
+    this.saveData();
   }
 
   setTitle(event: any, typeData: "collection" | "request", data: any) {
@@ -379,6 +397,9 @@ export class UrlRequestsComponent implements OnInit {
 
   parseUrl() {
     if (this.infoRequest && this.infoRequest.url != "") {
+      if (this.infoRequest.url.indexOf("http") == -1) {
+        this.infoRequest.url = "http://" + this.infoRequest.url;
+      }
       const url = new URL(this.infoRequest.url);
       if (url.search != "" && url.search.indexOf("?") == 0) {
         const params = url.search.slice(url.search.indexOf("?") + 1).split("&");
@@ -551,15 +572,11 @@ export class UrlRequestsComponent implements OnInit {
     if (this.infoRequest) {
       this.urlRequestsService
         .sendRequest(this.infoRequest)
-        .then((data: Response) => {
+        .then((response: Response) => {
           this.selectedTabIndex = 3;
-          this.notifyService.showNotify(data.status, data.message);
-          if (data.status == ResponseStatus.SUCCESS) {
-            if (Common.isJson(data.data)) {
-              this.response = JSON.stringify(data.data);
-            } else {
-              this.response = data.data;
-            }
+          this.notifyService.showNotify(response.status, response.message);
+          if (response.status == ResponseStatus.SUCCESS) {
+            this.response = response.data;
             setTimeout(() => {
               this.parseData$.next(this.response);
             }, 500);
