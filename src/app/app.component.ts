@@ -4,9 +4,6 @@ import { CommonModule } from "@angular/common";
 import { RouterModule, RouterOutlet } from "@angular/router";
 import { Subject } from "rxjs";
 
-/* materials */
-import { MatIconModule } from "@angular/material/icon";
-
 /* components */
 import { HeaderComponent } from "@components/header/header.component";
 import { NavComponent } from "@components/nav/nav.component";
@@ -20,7 +17,6 @@ import { WindowNotifyComponent } from "@components/window-notify/window-notify.c
     CommonModule,
     RouterModule,
     RouterOutlet,
-    MatIconModule,
     HeaderComponent,
     NavComponent,
     BottomNavComponent,
