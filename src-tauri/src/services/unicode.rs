@@ -1,6 +1,7 @@
 /* helpers */
 use crate::helpers::common::convert_data_to_object;
 
+use crate::models::response::ResponseStatus;
 /* models */
 use crate::models::{
   response::{DataValue, Response},
@@ -23,7 +24,7 @@ pub fn get_info_symbol(type_coding: String, content: String) -> Response {
       };
 
       return Response {
-        status: "success".to_string(),
+        status: ResponseStatus::Success,
         message: "".to_string(),
         data: convert_data_to_object::<UnicodeData>(&unicode_data),
       };
@@ -40,7 +41,7 @@ pub fn get_info_symbol(type_coding: String, content: String) -> Response {
       };
 
       return Response {
-        status: "success".to_string(),
+        status: ResponseStatus::Success,
         message: "".to_string(),
         data: convert_data_to_object::<UnicodeData>(&unicode_data),
       };
@@ -57,14 +58,14 @@ pub fn get_info_symbol(type_coding: String, content: String) -> Response {
       };
 
       return Response {
-        status: "success".to_string(),
+        status: ResponseStatus::Success,
         message: "".to_string(),
         data: convert_data_to_object::<UnicodeData>(&unicode_data),
       };
     }
     _ => {
       return Response {
-        status: "error".to_string(),
+        status: ResponseStatus::Error,
         message: format!("Error: Unknown type!"),
         data: DataValue::String("".to_string()),
       };

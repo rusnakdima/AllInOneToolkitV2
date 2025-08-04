@@ -10,6 +10,7 @@ use tauri_plugin_dialog::DialogExt;
 /* helpers */
 use crate::helpers::common;
 
+use crate::models::response::ResponseStatus;
 /* models */
 use crate::models::response::{DataValue, Response};
 
@@ -43,7 +44,7 @@ pub fn open_dialog_window(app_handle: tauri::AppHandle, type_file: Vec<&str>) ->
     });
 
   return Response {
-    status: "success".to_string(),
+    status: ResponseStatus::Success,
     message: "".to_string(),
     data: DataValue::String("".to_string()),
   };
@@ -57,14 +58,14 @@ pub fn get_data_file_by_path(file_path: String) -> Response {
   match result {
     Ok(_) => {
       return Response {
-        status: "success".to_string(),
+        status: ResponseStatus::Success,
         message: "".to_string(),
         data: DataValue::String(content),
       };
     }
     Err(err) => {
       return Response {
-        status: "error".to_string(),
+        status: ResponseStatus::Error,
         message: format!("Error: {:?}!", err),
         data: DataValue::String("".to_string()),
       };
@@ -83,7 +84,7 @@ pub fn write_data_to_file(
   let document_folder = app_handle.path().document_dir();
   if document_folder.is_err() {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: "Error! Failed to get document folder.".to_string(),
       data: DataValue::String("".to_string()),
     };
@@ -94,7 +95,7 @@ pub fn write_data_to_file(
     let res_create = std::fs::create_dir_all(&app_folder);
     if res_create.is_err() {
       return Response {
-        status: "error".to_string(),
+        status: ResponseStatus::Error,
         message: format!("Error! Failed to create app folder: {:?}", res_create),
         data: DataValue::String("".to_string()),
       };
@@ -105,7 +106,7 @@ pub fn write_data_to_file(
   let data_file = File::create(&file_path);
   if data_file.is_err() {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: format!("Error! Failed to create file!"),
       data: DataValue::String("".to_string()),
     };
@@ -114,14 +115,14 @@ pub fn write_data_to_file(
   let result_write = data_file.unwrap().write(content.as_bytes());
   if result_write.is_err() {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: format!("Error! Failed to write data to file!"),
       data: DataValue::String("".to_string()),
     };
   }
 
   return Response {
-    status: "success".to_string(),
+    status: ResponseStatus::Success,
     message: "".to_string(),
     data: DataValue::String(file_path.display().to_string()),
   };
@@ -130,14 +131,14 @@ pub fn write_data_to_file(
 pub fn open_folder_with_file(path: String) -> Response {
   if let Err(err) = opener::open(path) {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: format!("Failed to open folder:: {}", err),
       data: DataValue::String("".to_string()),
     };
   }
 
   return Response {
-    status: "success".to_string(),
+    status: ResponseStatus::Success,
     message: "".to_string(),
     data: DataValue::String("".to_string()),
   };
@@ -146,14 +147,14 @@ pub fn open_folder_with_file(path: String) -> Response {
 pub fn open_file(path: String) -> Response {
   if let Err(err) = opener::open(path) {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: format!("Failed to open file:: {}", err),
       data: DataValue::String("".to_string()),
     };
   }
 
   return Response {
-    status: "success".to_string(),
+    status: ResponseStatus::Success,
     message: "".to_string(),
     data: DataValue::String("".to_string()),
   };

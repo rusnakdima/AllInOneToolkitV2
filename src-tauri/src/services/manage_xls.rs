@@ -8,7 +8,7 @@ use tauri::Manager;
 use crate::helpers::common::{convert_data_to_array, get_current_date};
 
 /* models */
-use crate::models::response::{DataValue, Response};
+use crate::models::response::{DataValue, Response, ResponseStatus};
 
 /* struct */
 struct ExcelData {
@@ -20,7 +20,7 @@ pub fn get_data_file_by_path_xls(file_path: String) -> Response {
     open_workbook::<Xlsx<_>, &Path>(Path::new(&file_path));
   if workbook.is_err() {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: "Error! Failed to open file xls!".to_string(),
       data: DataValue::String("".to_string()),
     };
@@ -36,13 +36,13 @@ pub fn get_data_file_by_path_xls(file_path: String) -> Response {
     }
 
     return Response {
-      status: "success".to_string(),
+      status: ResponseStatus::Success,
       message: "".to_string(),
       data: convert_data_to_array::<Vec<String>>(&excel_data.rows),
     };
   } else {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: "Failed read file xls!".to_string(),
       data: DataValue::String("".to_string()),
     };
@@ -59,7 +59,7 @@ pub fn write_data_to_file_xls(
   let document_folder = app_handle.path().document_dir();
   if document_folder.is_err() {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: "Error! Failed to get document folder.".to_string(),
       data: DataValue::String("".to_string()),
     };
@@ -70,7 +70,7 @@ pub fn write_data_to_file_xls(
     let res_create = std::fs::create_dir_all(&app_folder);
     if res_create.is_err() {
       return Response {
-        status: "error".to_string(),
+        status: ResponseStatus::Error,
         message: format!("Error! Failed to create app folder: {:?}", res_create),
         data: DataValue::String("".to_string()),
       };
@@ -92,7 +92,7 @@ pub fn write_data_to_file_xls(
   match workbook.save(file_path.clone().to_str().unwrap()) {
     Ok(_) => {
       return Response {
-        status: "success".to_string(),
+        status: ResponseStatus::Success,
         message: "".to_string(),
         data: DataValue::String(file_path.display().to_string()),
       };
@@ -100,7 +100,7 @@ pub fn write_data_to_file_xls(
     Err(error) => {
       println!("Error: {}", error);
       return Response {
-        status: "error".to_string(),
+        status: ResponseStatus::Error,
         message: format!("Error! Failed to write data to file!"),
         data: DataValue::String("".to_string()),
       };

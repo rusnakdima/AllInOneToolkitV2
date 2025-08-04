@@ -11,8 +11,16 @@ pub enum DataValue {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub enum ResponseStatus {
+  Success,
+  Info,
+  Warning,
+  Error,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Response {
-  pub status: String,
+  pub status: ResponseStatus,
   pub message: String,
   pub data: DataValue,
 }

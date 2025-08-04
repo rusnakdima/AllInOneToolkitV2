@@ -1,8 +1,8 @@
 export enum ResponseStatus {
-  SUCCESS = 'success',
-  INFO = 'info',
-  WARNING = 'warning',
-  ERROR = 'error',
+  SUCCESS = 'Success',
+  INFO = 'Info',
+  WARNING = 'Warning',
+  ERROR = 'Error',
 }
 
 export enum ResponseStatusIcon {

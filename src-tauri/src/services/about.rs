@@ -8,7 +8,7 @@ use tauri::Manager;
 use tauri_plugin_http::reqwest;
 
 /* models */
-use crate::models::response::{DataValue, Response};
+use crate::models::response::{DataValue, Response, ResponseStatus};
 
 pub async fn download_file(
   app_handle: tauri::AppHandle,
@@ -19,7 +19,7 @@ pub async fn download_file(
 
   if response.is_err() {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: format!("Error: {:?}", response.unwrap_err()),
       data: DataValue::String("".to_string()),
     };
@@ -29,7 +29,7 @@ pub async fn download_file(
 
   if download_folder.is_err() {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: format!(
         "Error! Failed to get download folder: {}",
         download_folder.unwrap_err()
@@ -43,7 +43,7 @@ pub async fn download_file(
 
   if file.is_err() {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: format!("Error! Failed to create file: {}", file.unwrap_err()),
       data: DataValue::String("".to_string()),
     };
@@ -53,7 +53,7 @@ pub async fn download_file(
   let _ = file.unwrap().write_all(&bytes);
 
   return Response {
-    status: "success".to_string(),
+    status: ResponseStatus::Success,
     message: "".to_string(),
     data: DataValue::String(file_path.display().to_string()),
   };
@@ -73,14 +73,14 @@ pub async fn get_binary_name_file() -> Response {
     _name_app = format!("{}.apk", _name_app);
   } else {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: "Unknown target platform".to_string(),
       data: DataValue::String("".to_string()),
     };
   }
 
   return Response {
-    status: "success".to_string(),
+    status: ResponseStatus::Success,
     message: "".to_string(),
     data: DataValue::String(_name_app),
   };
