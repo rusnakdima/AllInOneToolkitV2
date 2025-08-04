@@ -150,7 +150,7 @@ export class FileInputComponent implements OnInit, OnDestroy {
         return;
       }
 
-      if (response.status === ResponseStatus.SUCCESS) {
+      if (response.status == ResponseStatus.SUCCESS) {
         this.dataFile.emit(response.data);
       } else {
         this.notifyService.showError(response.message || "Failed to read file");

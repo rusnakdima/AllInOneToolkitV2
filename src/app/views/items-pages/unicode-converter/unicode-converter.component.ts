@@ -7,7 +7,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 
 /* models */
-import { Response } from "@models/response";
+import { Response, ResponseStatus } from "@models/response";
 
 /* services */
 import { UnicodeConverterService } from "@services/unicode-converter.service";
@@ -49,7 +49,7 @@ export class UnicodeConverterComponent {
           this.unicodeConverterService
             .getInfoSymbol(this.typeCoding, symbol)
             .then((response: Response) => {
-              if (response.status === "success") {
+              if (response.status == ResponseStatus.SUCCESS) {
                 this.listResult.push({
                   symbol: response.data.symbol,
                   dec: response.data.dec,
