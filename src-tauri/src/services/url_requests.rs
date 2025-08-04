@@ -1,5 +1,7 @@
 /* sys lib */
-use std::collections::HashMap;
+use encoding_rs::{ISO_8859_10, WINDOWS_1252};
+use reqwest::header::CONTENT_TYPE;
+use serde_json::{from_str, Value};
 use std::io::{Read, Write};
 use std::str::FromStr;
 use std::{fs::File, path::Path};
@@ -10,12 +12,69 @@ use tauri_plugin_http::reqwest;
 /* helpers */
 use crate::helpers::common::convert_data_to_array;
 
+use crate::models::response::ResponseStatus;
 /* models */
 use crate::models::{
   collection_data::CollectionData,
   request_data::{BodyValue, RequestData, TypeRequest},
   response::{DataValue, Response},
 };
+
+async fn process_response(response: reqwest::Response) -> Response {
+  let content_type = response
+    .headers()
+    .get(CONTENT_TYPE)
+    .and_then(|v| v.to_str().ok())
+    .unwrap_or("text/plain")
+    .to_string();
+
+  let bytes = match response.bytes().await {
+    Ok(bytes) => bytes,
+    Err(e) => {
+      return Response {
+        status: ResponseStatus::Error,
+        message: format!("Failed to read response bytes: {}", e),
+        data: DataValue::String("".to_string()),
+      }
+    }
+  };
+
+  if content_type.contains("charset=utf-8") || content_type.contains("text/html") {
+    match String::from_utf8(bytes.to_vec()) {
+      Ok(text) => Response {
+        status: ResponseStatus::Success,
+        message: "".to_string(),
+        data: DataValue::String(text),
+      },
+      Err(e) => Response {
+        status: ResponseStatus::Error,
+        message: format!("Invalid UTF-8: {}", e),
+        data: DataValue::String("".to_string()),
+      },
+    }
+  } else if content_type.contains("charset=iso-8859-1") {
+    let (decoded, _, had_errors) = ISO_8859_10.decode(&bytes);
+    if had_errors {
+      Response {
+        status: ResponseStatus::Error,
+        message: "Decoding errors in ISO-8859-1".to_string(),
+        data: DataValue::String("".to_string()),
+      }
+    } else {
+      Response {
+        status: ResponseStatus::Success,
+        message: "".to_string(),
+        data: DataValue::String(decoded.into_owned()),
+      }
+    }
+  } else {
+    Response {
+      status: ResponseStatus::Error,
+      message: format!("Unsupported content type: {}", content_type),
+      data: DataValue::String("".to_string()),
+    }
+  }
+}
 
 pub async fn send_request(info_request: RequestData) -> Response {
   let client = reqwest::Client::new();
@@ -27,44 +86,38 @@ pub async fn send_request(info_request: RequestData) -> Response {
     url.push('?');
 
     for param in info_request.params.iter() {
-      if param.isActive {
-        if param.key != "" {
-          url = format!(
-            "{}{}{}={}",
-            url,
-            if url.ends_with('?') { "" } else { "&" },
-            param.key,
-            param.value.clone()
-          );
-        }
+      if param.isActive && !param.key.is_empty() {
+        url = format!(
+          "{}{}{}={}",
+          url,
+          if url.ends_with('?') { "" } else { "&" },
+          param.key,
+          param.value.clone()
+        );
       }
     }
   }
 
   let mut headers: HeaderMap = HeaderMap::new();
-
   for item in info_request.headers.iter() {
-    if item.isActive {
-      if item.key != "" {
-        let key = HeaderName::from_str(item.key.clone().as_str()).unwrap();
-        let value = item.value.clone();
-
-        headers.insert(key, value.parse().unwrap());
+    if item.isActive && !item.key.is_empty() {
+      if let Ok(key) = HeaderName::from_str(item.key.clone().as_str()) {
+        if let Ok(value) = item.value.parse() {
+          headers.insert(key, value);
+        }
       }
     }
   }
 
-  let mut body: HashMap<String, serde_json::Value> = HashMap::new();
-
-  for rec in info_request.body.iter() {
-    if rec.isActive {
-      if rec.key != "" {
-        let mut value: serde_json::Value;
-
-        match &rec.value {
-          BodyValue::String(s) => value = serde_json::to_value::<String>(s.to_string()).unwrap(),
-          BodyValue::Number(n) => value = serde_json::to_value::<f64>(n.clone()).unwrap(),
-          BodyValue::Bool(b) => value = serde_json::to_value::<bool>(b.clone()).unwrap(),
+  let body: serde_json::Value = serde_json::json!({});
+  if info_request.typeReq == TypeRequest::POST || info_request.typeReq == TypeRequest::PUT {
+    let mut body_map: serde_json::Map<String, Value> = serde_json::Map::new();
+    for rec in info_request.body.iter() {
+      if rec.isActive && !rec.key.is_empty() {
+        let value = match &rec.value {
+          BodyValue::String(s) => serde_json::to_value::<String>(s.to_string()).unwrap(),
+          BodyValue::Number(n) => serde_json::to_value::<f64>(n.clone()).unwrap(),
+          BodyValue::Bool(b) => serde_json::to_value::<bool>(b.clone()).unwrap(),
           BodyValue::Array(arr) => {
             let mut json_arr = String::new();
             json_arr.push_str("[");
@@ -72,196 +125,47 @@ pub async fn send_request(info_request: RequestData) -> Response {
               json_arr.push_str(&format!("{}{}", if i > 0 { "," } else { "" }, v));
             }
             json_arr.push_str("]");
-            value = serde_json::to_value::<Vec<serde_json::Value>>(arr.clone()).unwrap();
+            serde_json::to_value::<Vec<serde_json::Value>>(arr.clone()).unwrap()
           }
-          BodyValue::Object(obj) => {
-            value = serde_json::to_value::<serde_json::Value>(obj.clone()).unwrap();
-          }
-        }
-
-        body.insert(rec.key.clone(), value.clone());
+          BodyValue::Object(obj) => serde_json::to_value::<serde_json::Value>(obj.clone()).unwrap(),
+        };
+        body_map.insert(rec.key.clone(), value);
       }
     }
   }
 
-  match info_request.typeReq {
-    TypeRequest::GET => {
-      let response_result = client.get(url).headers(headers).send().await;
-
-      match response_result {
-        Ok(response) => {
-          let bytes_result = response.bytes().await;
-          match bytes_result {
-            Ok(bytes) => {
-              let json_result = serde_json::from_slice::<serde_json::Value>(&bytes);
-              if let Ok(json) = json_result {
-                return Response {
-                  status: "success".to_string(),
-                  message: "".to_string(),
-                  data: DataValue::Object(json),
-                };
-              }
-
-              let text = String::from_utf8_lossy(&bytes).to_string();
-              return Response {
-                status: "success".to_string(),
-                message: "".to_string(),
-                data: DataValue::String(text),
-              };
-            }
-            Err(err) => {
-              return Response {
-                status: "error".to_string(),
-                message: format!("Error: {:?}", err),
-                data: DataValue::String("".to_string()),
-              };
-            }
-          }
-        }
-        Err(err) => {
-          return Response {
-            status: "error".to_string(),
-            message: format!("Error: {}", err),
-            data: DataValue::String("".to_string()),
-          }
-        }
-      }
-    }
-    TypeRequest::POST => {
-      let response_result: Result<reqwest::Response, reqwest::Error> =
-        client.post(url).headers(headers).json(&body).send().await;
-
-      match response_result {
-        Ok(response) => {
-          let bytes_result = response.bytes().await;
-          match bytes_result {
-            Ok(bytes) => {
-              let json_result = serde_json::from_slice::<serde_json::Value>(&bytes);
-              if let Ok(json) = json_result {
-                return Response {
-                  status: "success".to_string(),
-                  message: "".to_string(),
-                  data: DataValue::Object(json),
-                };
-              }
-
-              let text = String::from_utf8_lossy(&bytes).to_string();
-              return Response {
-                status: "success".to_string(),
-                message: "".to_string(),
-                data: DataValue::String(text),
-              };
-            }
-            Err(err) => {
-              return Response {
-                status: "error".to_string(),
-                message: format!("Error: {:?}", err),
-                data: DataValue::String("".to_string()),
-              };
-            }
-          }
-        }
-        Err(err) => {
-          return Response {
-            status: "error".to_string(),
-            message: format!("Error: {:?}", err),
-            data: DataValue::String("".to_string()),
-          };
-        }
-      }
-    }
-    TypeRequest::PUT => {
-      let response_result = client.put(url).headers(headers).json(&body).send().await;
-
-      match response_result {
-        Ok(response) => {
-          let bytes_result = response.bytes().await;
-          match bytes_result {
-            Ok(bytes) => {
-              let json_result = serde_json::from_slice::<serde_json::Value>(&bytes);
-              if let Ok(json) = json_result {
-                return Response {
-                  status: "success".to_string(),
-                  message: "".to_string(),
-                  data: DataValue::Object(json),
-                };
-              }
-
-              let text = String::from_utf8_lossy(&bytes).to_string();
-              return Response {
-                status: "success".to_string(),
-                message: "".to_string(),
-                data: DataValue::String(text),
-              };
-            }
-            Err(err) => {
-              return Response {
-                status: "error".to_string(),
-                message: format!("Error: {:?}", err),
-                data: DataValue::String("".to_string()),
-              };
-            }
-          }
-        }
-        Err(err) => {
-          return Response {
-            status: "error".to_string(),
-            message: format!("Error: {}", err),
-            data: DataValue::String("".to_string()),
-          }
-        }
-      }
-    }
-    TypeRequest::DEL => {
-      let response_result = client.delete(url).headers(headers).send().await;
-
-      match response_result {
-        Ok(response) => {
-          let bytes_result = response.bytes().await;
-          match bytes_result {
-            Ok(bytes) => {
-              let json_result = serde_json::from_slice::<serde_json::Value>(&bytes);
-              if let Ok(json) = json_result {
-                return Response {
-                  status: "success".to_string(),
-                  message: "".to_string(),
-                  data: DataValue::Object(json),
-                };
-              }
-
-              let text = String::from_utf8_lossy(&bytes).to_string();
-              return Response {
-                status: "success".to_string(),
-                message: "".to_string(),
-                data: DataValue::String(text),
-              };
-            }
-            Err(err) => {
-              return Response {
-                status: "error".to_string(),
-                message: format!("Error: {:?}", err),
-                data: DataValue::String("".to_string()),
-              };
-            }
-          }
-        }
-        Err(err) => {
-          return Response {
-            status: "error".to_string(),
-            message: format!("Error: {:?}", err),
-            data: DataValue::String("".to_string()),
-          };
-        }
-      }
-    }
+  let response_result = match info_request.typeReq {
+    TypeRequest::GET => client.get(&url).headers(headers).send().await,
+    TypeRequest::POST => client.post(&url).headers(headers).json(&body).send().await,
+    TypeRequest::PUT => client.put(&url).headers(headers).json(&body).send().await,
+    TypeRequest::DEL => client.delete(&url).headers(headers).send().await,
   };
+
+  match response_result {
+    Ok(response) => {
+      if response.status().is_success() {
+        process_response(response).await
+      } else {
+        Response {
+          status: ResponseStatus::Error,
+          message: format!("Request failed with status: {}", response.status()),
+          data: DataValue::String("".to_string()),
+        }
+      }
+    }
+    Err(err) => Response {
+      status: ResponseStatus::Error,
+      message: format!("Request error: {:?}", err),
+      data: DataValue::String("".to_string()),
+    },
+  }
 }
 
 pub fn save_data(app_handle: tauri::AppHandle, list_collections: Vec<CollectionData>) -> Response {
   let document_folder = app_handle.path().document_dir();
   if document_folder.is_err() {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: "Error! Failed to get document folder.".to_string(),
       data: DataValue::String("".to_string()),
     };
@@ -272,7 +176,7 @@ pub fn save_data(app_handle: tauri::AppHandle, list_collections: Vec<CollectionD
     let res_create = std::fs::create_dir(&app_folder);
     if res_create.is_err() {
       return Response {
-        status: "error".to_string(),
+        status: ResponseStatus::Error,
         message: format!(
           "Error! Failed to create app folder: {:?}",
           res_create.unwrap_err()
@@ -287,7 +191,7 @@ pub fn save_data(app_handle: tauri::AppHandle, list_collections: Vec<CollectionD
   let serialized_data = serde_json::to_vec(&list_collections);
   if serialized_data.is_err() {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: "Error! Failed to serialize data.".to_string(),
       data: DataValue::String("".to_string()),
     };
@@ -304,14 +208,14 @@ pub fn save_data(app_handle: tauri::AppHandle, list_collections: Vec<CollectionD
 
   if write_result.is_err() {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: "Error! Failed to write to file.".to_string(),
       data: DataValue::String("".to_string()),
     };
   }
 
   return Response {
-    status: "success".to_string(),
+    status: ResponseStatus::Success,
     message: "Save successfully!".to_string(),
     data: DataValue::String("".to_string()),
   };
@@ -321,7 +225,7 @@ pub fn get_data(app_handle: tauri::AppHandle) -> Response {
   let document_folder = app_handle.path().document_dir();
   if document_folder.is_err() {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: "Error! Failed to get document folder.".to_string(),
       data: DataValue::String("".to_string()),
     };
@@ -330,7 +234,7 @@ pub fn get_data(app_handle: tauri::AppHandle) -> Response {
   let app_folder = document_folder.unwrap().join("AllInOneToolkit");
   if !Path::new(&app_folder).exists() {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: "Error! App folder not found.".to_string(),
       data: DataValue::String("".to_string()),
     };
@@ -340,7 +244,7 @@ pub fn get_data(app_handle: tauri::AppHandle) -> Response {
 
   if !Path::new(&file_path).exists() {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: "".to_string(),
       data: DataValue::String("".to_string()),
     };
@@ -352,7 +256,7 @@ pub fn get_data(app_handle: tauri::AppHandle) -> Response {
 
   if res.is_err() {
     return Response {
-      status: "error".to_string(),
+      status: ResponseStatus::Error,
       message: "Error! Failed to read from file.".to_string(),
       data: DataValue::String("".to_string()),
     };
@@ -364,14 +268,14 @@ pub fn get_data(app_handle: tauri::AppHandle) -> Response {
   match deserialized_data {
     Ok(data) => {
       return Response {
-        status: "success".to_string(),
+        status: ResponseStatus::Success,
         message: "".to_string(),
         data: convert_data_to_array::<CollectionData>(&data),
       };
     }
     Err(_) => {
       return Response {
-        status: "error".to_string(),
+        status: ResponseStatus::Error,
         message: "Error parsing data".to_string(),
         data: DataValue::String("".to_string()),
       };
