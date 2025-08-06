@@ -1,7 +1,8 @@
 /* sys lib */
 use encoding_rs::{ISO_8859_10, WINDOWS_1252};
 use reqwest::header::CONTENT_TYPE;
-use serde_json::{from_str, Value};
+use roxmltree::Document;
+use serde_json::Value;
 use std::io::{Read, Write};
 use std::str::FromStr;
 use std::{fs::File, path::Path};
@@ -39,40 +40,141 @@ async fn process_response(response: reqwest::Response) -> Response {
     }
   };
 
-  if content_type.contains("charset=utf-8") || content_type.contains("text/html") {
-    match String::from_utf8(bytes.to_vec()) {
+  match content_type.as_str() {
+    ct if ct.contains("application/json") => match String::from_utf8(bytes.to_vec()) {
       Ok(text) => Response {
         status: ResponseStatus::Success,
-        message: "".to_string(),
+        message: "Valid JSON response".to_string(),
         data: DataValue::String(text),
       },
       Err(e) => Response {
         status: ResponseStatus::Error,
-        message: format!("Invalid UTF-8: {}", e),
+        message: format!("Invalid UTF-8 in JSON: {}", e),
         data: DataValue::String("".to_string()),
       },
-    }
-  } else if content_type.contains("charset=iso-8859-1") {
-    let (decoded, _, had_errors) = ISO_8859_10.decode(&bytes);
-    if had_errors {
-      Response {
-        status: ResponseStatus::Error,
-        message: "Decoding errors in ISO-8859-1".to_string(),
-        data: DataValue::String("".to_string()),
+    },
+    ct if ct.contains("application/xml") || ct.contains("text/xml") => {
+      match String::from_utf8(bytes.to_vec()) {
+        Ok(xml_text) => match Document::parse(&xml_text) {
+          Ok(_) => Response {
+            status: ResponseStatus::Success,
+            message: "Valid XML response".to_string(),
+            data: DataValue::String(xml_text),
+          },
+          Err(e) => Response {
+            status: ResponseStatus::Error,
+            message: format!("Invalid XML: {}", e),
+            data: DataValue::String("".to_string()),
+          },
+        },
+        Err(utf8_err) => {
+          return Response {
+            status: ResponseStatus::Error,
+            message: format!("Invalid UTF-8 in XML: {}", utf8_err),
+            data: DataValue::String("".to_string()),
+          };
+          // Fallback to ISO-8859-1 decoding
+          // let (iso_decoded, _, iso_had_errors) = ISO_8859_10.decode(&bytes);
+          // if !iso_had_errors {
+          //   let xml_text = iso_decoded.into_owned();
+          //   match Document::parse(&xml_text) {
+          //     Ok(_) => Response {
+          //       status: ResponseStatus::Success,
+          //       message: "Valid XML response (ISO-8859-1 decoded)".to_string(),
+          //       data: DataValue::String(xml_text),
+          //     },
+          //     Err(e) => {
+          //       // Fallback to Windows-1252 decoding
+          //       let (win_decoded, _, win_had_errors) = WINDOWS_1252.decode(&bytes);
+          //       if !win_had_errors {
+          //         let xml_text = win_decoded.into_owned();
+          //         match Document::parse(&xml_text) {
+          //           Ok(_) => Response {
+          //             status: ResponseStatus::Success,
+          //             message: "Valid XML response (Windows-1252 decoded)".to_string(),
+          //             data: DataValue::String(xml_text),
+          //           },
+          //           Err(e) => Response {
+          //             status: ResponseStatus::Error,
+          //             message: format!(
+          //               "Invalid XML structure after Windows-1252 decoding: {}. Raw response: {:?}",
+          //               e,
+          //               String::from_utf8_lossy(&bytes)
+          //             ),
+          //             data: DataValue::String("".to_string()),
+          //           },
+          //         }
+          //       } else {
+          //         Response {
+          //           status: ResponseStatus::Error,
+          //           message: format!(
+          //             "Failed to decode as ISO-8859-1: {}. Invalid XML after decoding: {}. Raw response: {:?}",
+          //             utf8_err, e, String::from_utf8_lossy(&bytes)
+          //           ),
+          //           data: DataValue::String("".to_string()),
+          //         }
+          //       }
+          //     }
+          //   }
+          // } else {
+          //   Response {
+          //     status: ResponseStatus::Error,
+          //     message: format!(
+          //       "Failed to decode as ISO-8859-1 after UTF-8 error: {}. Raw response: {:?}",
+          //       utf8_err, String::from_utf8_lossy(&bytes)
+          //     ),
+          //     data: DataValue::String("".to_string()),
+          //   }
+          // }
+        }
       }
-    } else {
-      Response {
-        status: ResponseStatus::Success,
-        message: "".to_string(),
-        data: DataValue::String(decoded.into_owned()),
+    }
+    ct if ct.contains("charset=utf-8") || ct.contains("text/html") => {
+      match String::from_utf8(bytes.to_vec()) {
+        Ok(text) => {
+          // Basic HTML validation
+          if text.contains("<html") || text.contains("<!DOCTYPE html") {
+            Response {
+              status: ResponseStatus::Success,
+              message: "Valid HTML response".to_string(),
+              data: DataValue::String(text),
+            }
+          } else {
+            Response {
+              status: ResponseStatus::Error,
+              message: "Invalid HTML structure".to_string(),
+              data: DataValue::String("".to_string()),
+            }
+          }
+        }
+        Err(e) => Response {
+          status: ResponseStatus::Error,
+          message: format!("Invalid UTF-8 in HTML: {}", e),
+          data: DataValue::String("".to_string()),
+        },
       }
     }
-  } else {
-    Response {
+    ct if ct.contains("charset=iso-8859-1") => {
+      let (decoded, _, had_errors) = ISO_8859_10.decode(&bytes);
+      if had_errors {
+        Response {
+          status: ResponseStatus::Error,
+          message: "Decoding errors in ISO-8859-1".to_string(),
+          data: DataValue::String("".to_string()),
+        }
+      } else {
+        Response {
+          status: ResponseStatus::Success,
+          message: "".to_string(),
+          data: DataValue::String(decoded.into_owned()),
+        }
+      }
+    }
+    _ => Response {
       status: ResponseStatus::Error,
       message: format!("Unsupported content type: {}", content_type),
       data: DataValue::String("".to_string()),
-    }
+    },
   }
 }
 
