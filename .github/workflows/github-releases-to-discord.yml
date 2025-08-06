@@ -11,11 +11,10 @@ jobs:
       - name: GitHub Releases to Discord
         uses: SethCohen/github-releases-to-discord@v1
         with:
-          webhook_url: ${{ secrets.WEBHOOK_URL }}
-          color: "2105893"
-          username: "GitHub Release Bot"
-          avatar_url: "https://cdn-icons-png.flaticon.com/512/733/733553.png"
-          content: "Attention! The [program update](${{ github.event.release.html_url }}) has been released! Information about the changes is shown in the picture.\n\n`Russian translation`\nВнимание! Вышло [обновление программы](${{ github.event.release.html_url }})! Информация об изменениях изображена на картинке."
-          footer_title: "Changelog"
-          reduce_headings: true
+          webhook: ${{ secrets.WEBHOOK_URL }}
+          message: |
+            Attention! The [program update](${{ github.event.release.html_url }}) has been released! Information about the changes is shown in the picture.
+
+            `Russian translation`
+            Внимание! Вышло [обновление программы](${{ github.event.release.html_url }})! Информация об изменениях изображена на картинке.
           thread_name: "All In One Toolkit V2 (Beta release ${{ github.event.release.tag_name }})"
