@@ -1,6 +1,6 @@
 [package]
 name = "allinonetoolkitv2"
-version = "0.3.5"
+version = "0.3.6"
 description = "All In One Toolkit v2.0"
 authors = ["Dmitriy303"]
 license = "MIT License"
@@ -32,4 +32,5 @@ opener = "0.7.2"
 rust_xlsxwriter = "0.79.0"
 calamine = "0.26.1"
 dotenv = "0.15.0"
-
+encoding_rs = "0.8.35"
+roxmltree = "0.20.0"
