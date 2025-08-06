@@ -18,3 +18,4 @@ jobs:
           content: "Attention! The [program update](${{ github.event.release.html_url }}) has been released! Information about the changes is shown in the picture.\n\n`Russian translation`\nВнимание! Вышло [обновление программы](${{ github.event.release.html_url }})! Информация об изменениях изображена на картинке."
           footer_title: "Changelog"
           reduce_headings: true
+          thread_name: "All In One Toolkit V2 (Beta release ${{ github.event.release.tag_name }})"
