@@ -1,7 +1,6 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
-import { HttpClientModule } from "@angular/common/http";
 
 /* env */
 import { environment } from "@env/environment";
@@ -18,7 +17,7 @@ import { NotifyService } from "@services/notify.service";
   selector: "app-about",
   standalone: true,
   providers: [AboutService],
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule],
   templateUrl: "./about.component.html",
 })
 export class AboutComponent {
@@ -70,8 +69,8 @@ export class AboutComponent {
 
   getDate() {
     this.aboutService
-      .getBinaryNameFile()
-      .then((response: Response) => {
+      .getBinaryNameFile<string>()
+      .then((response: Response<string>) => {
         if (response.status == ResponseStatus.SUCCESS) {
           if (response.data != "Unknown") {
             this.nameFile = response.data;
@@ -80,9 +79,8 @@ export class AboutComponent {
           this.notifyService.showNotify(response.status, response.message);
         }
       })
-      .catch((err: any) => {
-        console.error(err);
-        this.notifyService.showError(err);
+      .catch((err: Response<string>) => {
+        this.notifyService.showError(err.message ?? err.toString());
       });
 
     this.aboutService.getDate(this.version).subscribe({
@@ -95,9 +93,8 @@ export class AboutComponent {
         }
       },
       error: (err: any) => {
-        console.error(err);
         this.downloadProgress = false;
-        this.notifyService.showError(err.status + " — " + err.error.message);
+        this.notifyService.showError(err.message ?? err.toString());
       },
     });
   }
@@ -125,7 +122,7 @@ export class AboutComponent {
       },
       error: (err: any) => {
         console.error(err);
-        this.notifyService.showError(err.status + " — " + err.error.message);
+        this.notifyService.showError(err.message ?? err.toString());
       },
     });
   }
@@ -136,8 +133,8 @@ export class AboutComponent {
       this.notifyService.showWarning("Wait until the program update is downloaded!");
 
       this.aboutService
-        .downloadUpdate(this.lastVersion, this.nameFile)
-        .then((response: Response) => {
+        .downloadUpdate<string>(this.lastVersion, this.nameFile)
+        .then((response: Response<string>) => {
           if (response.status == ResponseStatus.SUCCESS) {
             this.notifyService.showSuccess(
               "The new version of the program has been successfully downloaded!"
@@ -147,9 +144,9 @@ export class AboutComponent {
             this.notifyService.showNotify(response.status, response.message);
           }
         })
-        .catch((err: any) => {
+        .catch((err: Response<string>) => {
           console.error(err);
-          this.notifyService.showError(err);
+          this.notifyService.showError(err.message ?? err.toString());
         });
       this.downloadProgress = false;
       this.windUpdates = false;
@@ -162,13 +159,12 @@ export class AboutComponent {
 
   openFile() {
     this.aboutService
-      .openFile(this.pathUpdate)
-      .then((data: Response) => {
+      .openFile<string>(this.pathUpdate)
+      .then((data: Response<string>) => {
         this.notifyService.showNotify(data.status, data.message);
       })
-      .catch((err: any) => {
-        console.error(err);
-        this.notifyService.showError(err);
+      .catch((err: Response<string>) => {
+        this.notifyService.showError(err.message ?? err.toString());
       });
   }
 }
