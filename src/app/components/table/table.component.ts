@@ -6,7 +6,7 @@ import { Component, Input } from "@angular/core";
 import { MatExpansionModule } from "@angular/material/expansion";
 
 /* models */
-import { listColorsTable, TableData } from "@models/table-data";
+import { TableData } from "@models/table-data";
 
 @Component({
   selector: "app-table",
@@ -24,8 +24,6 @@ export class TableComponent {
 
   @Input() index: number = 0;
 
-  listColorsTable: Array<string> = listColorsTable;
-
   isString(cell: any) {
     return typeof cell === "string";
   }
@@ -34,7 +32,5 @@ export class TableComponent {
     return typeof cell == "object" && cell !== null;
   }
 
-  getColorBackground(index: number) {
-    return this.listColorsTable[index % this.listColorsTable.length];
-  }
+  getColorBackground(index: number) {}
 }
