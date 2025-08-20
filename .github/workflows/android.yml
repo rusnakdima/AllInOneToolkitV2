@@ -13,22 +13,20 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: 'ubuntu-22.04'
-            args: ''
+          - platform: "ubuntu-22.04"
+            args: ""
 
     runs-on: ${{ matrix.platform }}
 
     steps:
       - uses: actions/checkout@v4
+
       - name: set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: "17"
+          distribution: "temurin"
           cache: gradle
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./src-tauri/gen/android/gradlew
 
       - name: Install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
@@ -38,29 +36,22 @@ jobs:
 
       - name: Install Android SDK
         run: |
-          mkdir -p "$HOME/Android/Sdk"
+          export ANDROID_HOME=$HOME/Android/Sdk
+          export ANDROID_SDK_ROOT=$ANDROID_HOME
+          mkdir -p "$ANDROID_HOME"
           wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-          unzip commandlinetools-linux-11076708_latest.zip -d $HOME/Android/Sdk/cmdline-tools
-          mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/latest
-          export ANDROID_SDK_ROOT=$HOME/Android/Sdk
-          export ANDROID_HOME=$ANDROID_SDK_ROOT
+          unzip commandlinetools-linux-11076708_latest.zip -d $ANDROID_HOME/cmdline-tools
+          mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "$ANDROID_HOME/platform-tools" >> $GITHUB_PATH
 
-      - name: Install Android SDK
+      - name: Accept Android SDK licenses and install components
         run: |
-          sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses
-          sdkmanager --sdk_root=$ANDROID_SDK_ROOT "platform-tools" "build-tools;33.0.0" "platforms;android-33" "ndk;27.0.11902837"
-          export NDK_HOME=$ANDROID_HOME/ndk/27.0.11902837
-
-      - name: Set up environment variables
-        run: |
-          echo "export ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
-          echo "export NDK_HOME=$NDK_HOME" >> $GITHUB_ENV
-          echo "export ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
-          echo "export PATH=$ANDROID_HOME/platform-tools:$PATH" >> $GITHUB_ENV
-          echo "export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
-          echo "export PATH=$ANDROID_SDK_ROOT/platform-tools:$PATH" >> $GITHUB_ENV
-          echo "export PATH=$ANDROID_SDK_ROOT/tools:$PATH" >> $GITHUB_ENV
-          echo "export PATH=$ANDROID_SDK_ROOT/emulators:$PATH" >> $GITHUB_ENV
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34" "ndk;25.1.8937393"
+          echo "NDK_HOME=$ANDROID_HOME/ndk/25.1.8937393" >> $GITHUB_ENV
 
       - name: Install pnpm
         run: |
@@ -70,31 +61,59 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Add Android Rust targets
+        run: |
+          rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
-          workspaces: './src-tauri -> target'
+          workspaces: "./src-tauri -> target"
 
       - name: Install frontend dependencies
         run: pnpm install
 
-      - name: Build app
-        run: pnpm tauri android build
+      - name: Initialize Tauri Android (if needed)
+        run: |
+          if [ ! -d "src-tauri/gen/android" ]; then
+            pnpm tauri android init
+          fi
 
-      - uses: tauri-apps/tauri-action@v0
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./src-tauri/gen/android/gradlew
+
+      - name: Build Android APK
+        run: |
+          pnpm tauri android build --apk
+
+      - name: Build Android AAB
+        run: |
+          pnpm tauri android build --aab
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: src-tauri/gen/android/app/build/outputs/apk/universal/release/*.apk
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-aab
+          path: src-tauri/gen/android/app/build/outputs/bundle/universalRelease/*.aab
+
+      - name: Upload to Existing Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: |
+            src-tauri/gen/android/app/build/outputs/apk/universal/release/*.apk
+            src-tauri/gen/android/app/build/outputs/bundle/universalRelease/*.aab
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tagName: v__VERSION__
-          releaseName: 'All In One Toolkit'
-          releaseBody: '🚀 Beta release v__VERSION__'
-          releaseDraft: true
-          prerelease: false
-          args: ${{ matrix.args }}
