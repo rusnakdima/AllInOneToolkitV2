@@ -39,6 +39,9 @@ import { CssConverterComponent } from "@views/items-pages/css-converter/css-conv
 import { MarkdownEditorComponent } from "@views/items-pages/markdown-editor/markdown-editor.component";
 import { SvgEditorComponent } from "@views/items-pages/svg-editor/svg-editor.component";
 
+/* Maths */
+import { PrimeNumberComponent } from "@views/items-pages/prime-number/prime-number.component";
+
 /* Other */
 import { WordCounterComponent } from "@views/items-pages/word-counter/word-counter.component";
 import { VirusTotalComponent } from "@views/items-pages/virus-total/virus-total.component";
@@ -77,6 +80,9 @@ const routesLinks: Routes = [
   /* Editors */
   { path: "md_editor", component: MarkdownEditorComponent, title: 'Markdown Editor', data: { breadcrumbs: "Markdown Editor" } },
   { path: "svg_editor", component: SvgEditorComponent, title: 'SVG Editor', data: { breadcrumbs: "SVG Editor" } },
+
+  /* Maths */
+  { path: "prime_number", component: PrimeNumberComponent, title: "Prime Number", data: { breadcrumbs: "Prime Number" }, },
 
   /* Other */
   { path: "word_counter", component: WordCounterComponent, title: "Word Counter", data: { breadcrumbs: "Word Counter" }, },
