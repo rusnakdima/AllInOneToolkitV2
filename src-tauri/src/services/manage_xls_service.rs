@@ -1,6 +1,8 @@
 /* sys lib */
 use calamine::{open_workbook, Reader, Xlsx};
+use dotenv::dotenv;
 use rust_xlsxwriter::Workbook;
+use std::env;
 use std::path::Path;
 use tauri::Manager;
 
@@ -18,12 +20,15 @@ struct ExcelData {
 #[allow(non_snake_case)]
 pub struct ManageXlsService {
   pub commonHelper: CommonHelper,
+  pub homeAppFolder: String,
 }
 
 impl ManageXlsService {
   pub fn new() -> Self {
+    dotenv().ok();
     Self {
       commonHelper: CommonHelper::new(),
+      homeAppFolder: env::var("HOME_APP_FOLDER").expect("HOME_APP_FOLDER not set"),
     }
   }
 
@@ -85,7 +90,7 @@ impl ManageXlsService {
       });
     }
 
-    let appFolder = documentFolder.unwrap().join("AllInOneToolkit");
+    let appFolder = documentFolder.unwrap().join(self.homeAppFolder.clone());
     if !Path::new(&appFolder).exists() {
       let responseCreate = std::fs::create_dir_all(&appFolder);
       if responseCreate.is_err() {

@@ -1,4 +1,6 @@
 /* sys lib */
+use dotenv::dotenv;
+use std::env;
 use std::fs::File;
 use std::io::Read;
 use std::io::Write;
@@ -16,12 +18,15 @@ use crate::models::response::{DataValue, ResponseModel, ResponseStatus};
 #[allow(non_snake_case)]
 pub struct ManageFileService {
   pub commonHelper: CommonHelper,
+  pub homeAppFolder: String,
 }
 
 impl ManageFileService {
   pub fn new() -> Self {
+    dotenv().ok();
     Self {
       commonHelper: CommonHelper::new(),
+      homeAppFolder: env::var("HOME_APP_FOLDER").expect("HOME_APP_FOLDER not set"),
     }
   }
 
@@ -54,7 +59,9 @@ impl ManageFileService {
           if let Some(path_str) = path.as_path().unwrap().to_str() {
             let filePathString = path_str.to_string();
 
-            let _ = appHandleClone.emit("send-file-path", filePathString.clone()).unwrap();
+            let _ = appHandleClone
+              .emit("send-file-path", filePathString.clone())
+              .unwrap();
 
             let _ = tx.send(Ok(ResponseModel {
               status: ResponseStatus::Success,
@@ -136,7 +143,7 @@ impl ManageFileService {
       });
     }
 
-    let appFolder = documentFolder.unwrap().join("AllInOneToolkit");
+    let appFolder = documentFolder.unwrap().join(self.homeAppFolder.clone());
     if !Path::new(&appFolder).exists() {
       let responseCreate = std::fs::create_dir_all(&appFolder);
       if responseCreate.is_err() {
