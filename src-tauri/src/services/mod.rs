@@ -8,3 +8,5 @@ pub mod virus_total_service;
 pub mod unicode_service;
 
 pub mod url_requests_service;
+
+pub mod math_service;

@@ -1,0 +1,22 @@
+<div class="flex flex-col gap-y-5 m-3">
+  <div class="flex flex-col gap-y-2">
+    <span class="text-xl font-bold">Enter a number</span>
+    <div class="flex flex-col gap-y-3 mt-2">
+      <input class="styleField" (change)="setData($event)" />
+      <button class="styleButInfo w-max" (click)="calculate()">Calculate</button>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-y-2 styleBorderSolidLite border p-3">
+    <span class="font-semibold text-xl">Results</span>
+    @if (isEnteredNumber) {
+      @if (isPrime) {
+        <span class="text-2xl">The number is prime!</span>
+      } @else {
+        <span class="text-2xl">The number is not prime!</span>
+      }
+    } @else {
+      <span>There are no results! Enter the text first!</span>
+    }
+  </div>
+</div>
