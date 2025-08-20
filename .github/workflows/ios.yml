@@ -62,9 +62,81 @@ jobs:
             pnpm tauri ios init
           fi
 
-      - name: Build iOS app
+      - name: Configure iOS Code Signing
+        run: |
+          # Check if we have signing credentials
+          if [ -n "${{ secrets.IOS_CERTIFICATE_BASE64 }}" ] && [ -n "${{ secrets.IOS_CERTIFICATE_PASSWORD }}" ]; then
+            echo "Setting up production code signing..."
+            
+            # Create certificates directory
+            mkdir -p ~/certificates
+            
+            # Decode and install certificate
+            echo "${{ secrets.IOS_CERTIFICATE_BASE64 }}" | base64 -d > ~/certificates/certificate.p12
+            
+            # Create keychain
+            security create-keychain -p "temppass" build.keychain
+            security default-keychain -s build.keychain
+            security unlock-keychain -p "temppass" build.keychain
+            security set-keychain-settings -t 3600 -u build.keychain
+            
+            # Import certificate
+            security import ~/certificates/certificate.p12 -k build.keychain -P "${{ secrets.IOS_CERTIFICATE_PASSWORD }}" -T /usr/bin/codesign
+            security set-key-partition-list -S apple-tool:,apple: -s -k "temppass" build.keychain
+            
+            # Install provisioning profile if provided
+            if [ -n "${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}" ]; then
+              mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+              echo "${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}" | base64 -d > ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+            fi
+            
+            echo "ENABLE_CODE_SIGNING=true" >> $GITHUB_ENV
+          else
+            echo "No signing credentials provided, will build without signing..."
+            echo "ENABLE_CODE_SIGNING=false" >> $GITHUB_ENV
+          fi
+
+      - name: Update Tauri iOS Configuration
+        run: |
+          # Update tauri.conf.json to set development team if provided
+          if [ -n "${{ secrets.IOS_DEVELOPMENT_TEAM }}" ]; then
+            if [ -f "src-tauri/tauri.conf.json" ]; then
+              # Use jq to update the development team
+              jq '.bundle.iOS.developmentTeam = "${{ secrets.IOS_DEVELOPMENT_TEAM }}"' src-tauri/tauri.conf.json > temp.json && mv temp.json src-tauri/tauri.conf.json
+            fi
+          fi
+
+      - name: Build iOS app (with signing)
+        if: env.ENABLE_CODE_SIGNING == 'true'
         run: |
           pnpm tauri ios build
+
+      - name: Build iOS app (without signing - for testing)
+        if: env.ENABLE_CODE_SIGNING == 'false'
+        run: |
+          # Build without code signing for CI testing
+          cd src-tauri/gen/apple
+          xcodebuild -allowProvisioningUpdates \
+            -scheme allinonetoolkitv2_iOS \
+            -workspace allinonetoolkitv2.xcodeproj/project.xcworkspace/ \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Alternative - Build for iOS Simulator
+        if: failure()
+        run: |
+          echo "Trying iOS Simulator build..."
+          cd src-tauri/gen/apple
+          xcodebuild -allowProvisioningUpdates \
+            -scheme allinonetoolkitv2_iOS \
+            -workspace allinonetoolkitv2.xcodeproj/project.xcworkspace/ \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=iPhone 15" \
+            build
 
       - name: Create IPA (if xcarchive exists)
         run: |
