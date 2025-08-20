@@ -36,15 +36,15 @@ impl ManageFileService {
     appHandle: tauri::AppHandle,
     typeFile: Vec<&str>,
   ) -> Result<ResponseModel, ResponseModel> {
-    let mut nameFilter: String = String::new();
-    let mut listExt: Vec<&str> = Vec::new();
+    let mut _nameFilter: String = String::new();
+    let mut _listExt: Vec<&str> = Vec::new();
 
     if typeFile.contains(&"xls") || typeFile.contains(&"xlsx") {
-      nameFilter = "Excel Files".to_string();
-      listExt = vec![&"xls", &"xlsx", &"xlsm"];
+      _nameFilter = "Excel Files".to_string();
+      _listExt = vec![&"xls", &"xlsx", &"xlsm"];
     } else {
-      nameFilter = format!("{} file", typeFile.join(",").to_uppercase());
-      listExt = typeFile;
+      _nameFilter = format!("{} file", typeFile.join(",").to_uppercase());
+      _listExt = typeFile;
     }
 
     let (tx, rx) = std::sync::mpsc::channel();
@@ -53,7 +53,7 @@ impl ManageFileService {
     appHandle
       .dialog()
       .file()
-      .add_filter(nameFilter, &listExt)
+      .add_filter(_nameFilter, &_listExt)
       .pick_file(move |filePath| match filePath {
         Some(path) => {
           if let Some(path_str) = path.as_path().unwrap().to_str() {
