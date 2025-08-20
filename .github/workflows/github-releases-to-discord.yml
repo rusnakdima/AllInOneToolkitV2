@@ -1,20 +1,63 @@
-name: GitHub Releases to Discord
+name: GitHub Releases to Discord Forum
 on:
   release:
     types: [published]
+
 jobs:
-  github-releases-to-discord:
+  github-releases-to-discord-forum:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - name: GitHub Releases to Discord
-        uses: appleboy/discord-action@master
-        with:
-          webhook: ${{ secrets.WEBHOOK_URL }}
-          message: |
-            Attention! The [program update](${{ github.event.release.html_url }}) has been released! Information about the changes is shown in the picture.
+        uses: actions/checkout@v4
 
-            `Russian translation`
-            Внимание! Вышло [обновление программы](${{ github.event.release.html_url }})! Информация об изменениях изображена на картинке.
-          thread_name: "All In One Toolkit V2 (Beta release ${{ github.event.release.tag_name }})"
+      - name: Create Discord Forum Post
+        run: |
+          curl -X POST "${{ secrets.DISCORD_FORUM_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "thread_name": "🚀 All In One Toolkit V2 - Release ${{ github.event.release.tag_name }}",
+              "content": "**Attention! New program update released!** 📢\n\n🔗 **Download:** [${{ github.event.release.tag_name }}](${{ github.event.release.html_url }})\n\n📝 **Release Notes:**\n${{ github.event.release.body }}\n\n---\n\n**Russian translation** 🇷🇺\n**Внимание! Вышло обновление программы!** 📢\n\n🔗 **Скачать:** [${{ github.event.release.tag_name }}](${{ github.event.release.html_url }})\n\n📝 **Примечания к выпуску:**\n${{ github.event.release.body }}",
+              "username": "Release Bot",
+              "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+            }'
+
+      - name: Alternative - Create Forum Post with Embeds
+        if: failure()
+        run: |
+          curl -X POST "${{ secrets.DISCORD_FORUM_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "thread_name": "🚀 All In One Toolkit V2 - Release ${{ github.event.release.tag_name }}",
+              "embeds": [
+                {
+                  "title": "🚀 New Release: ${{ github.event.release.tag_name }}",
+                  "description": "All In One Toolkit V2 has been updated!",
+                  "url": "${{ github.event.release.html_url }}",
+                  "color": 5814783,
+                  "fields": [
+                    {
+                      "name": "📥 Download",
+                      "value": "[Release Page](${{ github.event.release.html_url }})",
+                      "inline": true
+                    },
+                    {
+                      "name": "🏷️ Version",
+                      "value": "${{ github.event.release.tag_name }}",
+                      "inline": true
+                    },
+                    {
+                      "name": "📝 Release Notes",
+                      "value": "${{ github.event.release.body || 'No release notes provided.' }}",
+                      "inline": false
+                    }
+                  ],
+                  "timestamp": "${{ github.event.release.published_at }}",
+                  "footer": {
+                    "text": "GitHub Release",
+                    "icon_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+                  }
+                }
+              ],
+              "username": "Release Bot",
+              "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+            }'
