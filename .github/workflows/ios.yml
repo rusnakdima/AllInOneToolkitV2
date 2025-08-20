@@ -1,4 +1,4 @@
-name: iOS starter workflow
+name: Builder for iOS
 
 on:
   push:
@@ -6,38 +6,153 @@ on:
       - "v*"
 
 jobs:
-  build:
-    name: Build and Test default scheme using any available iPhone simulator
-    runs-on: macos-latest
+  publish-tauri:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: 'macos-latest'
+            args: ''
+
+    runs-on: ${{ matrix.platform }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set Default Scheme
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies (macOS only)
+        if: matrix.platform == 'macos-latest'
         run: |
-          scheme_list=$(xcodebuild -list -json | tr -d "\n")
-          default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['targets'][0]")
-          echo $default | cat >default
-          echo Using default scheme: $default
-      - name: Build
+          # Install any additional dependencies if needed
+          echo "Installing macOS dependencies..."
+
+      - name: Install pnpm
+        run: |
+          npm i -g pnpm
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'pnpm'
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios,x86_64-apple-ios,aarch64-apple-ios-sim
+
+      - name: Add iOS Rust targets
+        run: |
+          rustup target add aarch64-apple-ios
+          rustup target add x86_64-apple-ios
+          rustup target add aarch64-apple-ios-sim
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Install frontend dependencies
+        run: pnpm install
+
+      - name: Initialize Tauri iOS (if needed)
+        run: |
+          if [ ! -d "src-tauri/gen/apple" ]; then
+            pnpm tauri ios init
+          fi
+
+      - name: Build iOS app
+        run: |
+          pnpm tauri ios build
+
+      - name: Create IPA (if xcarchive exists)
+        run: |
+          XCARCHIVE_PATH=$(find src-tauri/gen/apple -name "*.xcarchive" | head -1)
+          if [ -n "$XCARCHIVE_PATH" ] && [ -f "$XCARCHIVE_PATH" ]; then
+            echo "Found xcarchive at: $XCARCHIVE_PATH"
+            # Export IPA from xcarchive
+            xcodebuild -exportArchive \
+              -archivePath "$XCARCHIVE_PATH" \
+              -exportPath src-tauri/gen/apple/build \
+              -exportOptionsPlist src-tauri/gen/apple/ExportOptions.plist
+          else
+            echo "No xcarchive found, checking for app bundle..."
+            # Look for .app bundle and create a simple directory structure for IPA
+            APP_PATH=$(find src-tauri/gen/apple -name "*.app" | head -1)
+            if [ -n "$APP_PATH" ]; then
+              echo "Found app bundle at: $APP_PATH"
+              IPA_DIR="src-tauri/gen/apple/build"
+              mkdir -p "$IPA_DIR/Payload"
+              cp -r "$APP_PATH" "$IPA_DIR/Payload/"
+              cd "$IPA_DIR"
+              zip -r "../$(basename "$APP_PATH" .app).ipa" Payload/
+              cd - > /dev/null
+            fi
+          fi
+
+      - name: Create ExportOptions.plist (if not exists)
+        run: |
+          if [ ! -f "src-tauri/gen/apple/ExportOptions.plist" ]; then
+            cat > src-tauri/gen/apple/ExportOptions.plist << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>development</string>
+              <key>teamID</key>
+              <string>\$DEVELOPMENT_TEAM</string>
+              <key>compileBitcode</key>
+              <false/>
+              <key>destination</key>
+              <string>export</string>
+              <key>signingStyle</key>
+              <string>automatic</string>
+              <key>stripSwiftSymbols</key>
+              <true/>
+              <key>thinning</key>
+              <string>&lt;none&gt;</string>
+          </dict>
+          </plist>
+          EOF
+          fi
+
+      - name: Upload APP bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-app-bundle
+          path: src-tauri/gen/apple/**/*.app
+          if-no-files-found: warn
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: |
+            src-tauri/gen/apple/build/*.ipa
+            src-tauri/gen/apple/*.ipa
+          if-no-files-found: warn
+
+      - name: Upload XCARCHIVE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-xcarchive
+          path: src-tauri/gen/apple/**/*.xcarchive
+          if-no-files-found: warn
+
+      - name: Find and list build outputs
+        run: |
+          echo "=== Build outputs ==="
+          find src-tauri/gen/apple -type f -name "*.app" -o -name "*.ipa" -o -name "*.xcarchive" | head -20
+
+      - name: Upload to Existing Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: |
+            src-tauri/gen/apple/build/*.ipa
+            src-tauri/gen/apple/*.ipa
         env:
-          scheme: ${{ 'default' }}
-          platform: ${{ 'iOS Simulator' }}
-        run: |
-          # xcrun xctrace returns via stderr, not the expected stdout (see https://developer.apple.com/forums/thread/663959)
-          device=`xcrun xctrace list devices 2>&1 | grep -oE 'iPhone.*?[^\(]+' | head -1 | awk '{$1=$1;print}' | sed -e "s/ Simulator$//"`
-          if [ $scheme = default ]; then scheme=$(cat default); fi
-          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
-          file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
-          xcodebuild build-for-testing -scheme "$scheme" -"$filetype_parameter" "$file_to_build" -destination "platform=$platform,name=$device"
-      - name: Test
-        env:
-          scheme: ${{ 'default' }}
-          platform: ${{ 'iOS Simulator' }}
-        run: |
-          # xcrun xctrace returns via stderr, not the expected stdout (see https://developer.apple.com/forums/thread/663959)
-          device=`xcrun xctrace list devices 2>&1 | grep -oE 'iPhone.*?[^\(]+' | head -1 | awk '{$1=$1;print}' | sed -e "s/ Simulator$//"`
-          if [ $scheme = default ]; then scheme=$(cat default); fi
-          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
-          file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
-          xcodebuild test-without-building -scheme "$scheme" -"$filetype_parameter" "$file_to_build" -destination "platform=$platform,name=$device"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
