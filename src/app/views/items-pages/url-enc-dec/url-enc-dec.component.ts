@@ -1,6 +1,6 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
+import { Component } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 /* materials */
@@ -16,7 +16,6 @@ import { CopyFieldComponent } from "@components/fields/copy-field/copy-field.com
 @Component({
   selector: "app-url-enc-dec",
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     CommonModule,
     MatFormFieldModule,

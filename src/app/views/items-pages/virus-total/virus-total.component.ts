@@ -1,6 +1,6 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
+import { Component } from "@angular/core";
 
 /* materials */
 import { MatIconModule } from "@angular/material/icon";
@@ -18,7 +18,6 @@ import { Response, ResponseStatus } from "@models/response";
 @Component({
   selector: "app-virus-total",
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, MatIconModule],
   templateUrl: "./virus-total.component.html",
 })

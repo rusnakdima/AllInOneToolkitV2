@@ -1,6 +1,6 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 
 /* materials */
@@ -19,14 +19,7 @@ import { TileItemComponent } from "@views/items/tile-item/tile-item.component";
 @Component({
   selector: "app-home",
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatIconModule,
-    CardItemComponent,
-    TileItemComponent,
-  ],
+  imports: [CommonModule, RouterModule, MatIconModule, CardItemComponent, TileItemComponent],
   templateUrl: "./home.component.html",
 })
 export class HomeComponent implements OnInit {

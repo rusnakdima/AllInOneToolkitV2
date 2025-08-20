@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 import {
   ChangeDetectorRef,
   Component,
-  CUSTOM_ELEMENTS_SCHEMA,
   EventEmitter,
   Input,
   OnDestroy,
@@ -25,7 +24,6 @@ import { NotifyService } from "@services/notify.service";
 @Component({
   selector: "app-file-input",
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, MatIconModule],
   templateUrl: "./file-input.component.html",
 })

@@ -1,6 +1,6 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 
 /* materials */
 import { MatIconModule } from "@angular/material/icon";
@@ -8,22 +8,13 @@ import { MatIconModule } from "@angular/material/icon";
 @Component({
   selector: "app-wheel-fortune",
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, MatIconModule],
   templateUrl: "./wheel-fortune.component.html",
 })
 export class WheelFortuneComponent implements OnInit {
   constructor() {}
 
-  listColorsEntries: Array<string> = [
-    "red",
-    "orange",
-    "yellow",
-    "green",
-    "cyan",
-    "blue",
-    "purple",
-  ];
+  listColorsEntries: Array<string> = ["red", "orange", "yellow", "green", "cyan", "blue", "purple"];
   listEntries: Array<string> = [
     "Fortune 1",
     "Fortune 2",
@@ -85,7 +76,7 @@ export class WheelFortuneComponent implements OnInit {
   changeFieldEntries(event: any) {
     event.preventDefault();
     this.listEntries = event.target.value.split("\n");
-    this.listEntries = this.listEntries.filter(entry => entry != "");
+    this.listEntries = this.listEntries.filter((entry) => entry != "");
     if (this.listEntries.length == 0) {
       this.listEntries.push(" ");
     }
@@ -94,7 +85,9 @@ export class WheelFortuneComponent implements OnInit {
     if (wheel) {
       const ctx = wheel.getContext("2d");
       if (ctx) {
-        this.segmentAngle = (Math.PI * 2) / ((this.listEntries.length > 0) ? this.listEntries.length : 1) /* this.listEntries.length */;
+        this.segmentAngle =
+          (Math.PI * 2) /
+          (this.listEntries.length > 0 ? this.listEntries.length : 1) /* this.listEntries.length */;
         this.wheelRadius = wheel.width / 2;
         ctx.clearRect(0, 0, this.wheelRadius, this.wheelRadius);
 
@@ -129,8 +122,7 @@ export class WheelFortuneComponent implements OnInit {
     ctx.rotate(this.currentAngle + this.segmentAngle / 2);
 
     let tempI = i % this.listColorsEntries.length;
-    ctx.fillStyle =
-      tempI == 0 || tempI == 3 || tempI == 5 || tempI == 6 ? "white" : "black";
+    ctx.fillStyle = tempI == 0 || tempI == 3 || tempI == 5 || tempI == 6 ? "white" : "black";
 
     ctx.font = "bold 1rem Arial";
     ctx.textBaseline = "middle";
@@ -140,8 +132,7 @@ export class WheelFortuneComponent implements OnInit {
   }
 
   getWinningSegment() {
-    const normalizedAngle =
-      (2 * Math.PI - (this.currentAngle % (2 * Math.PI))) % (2 * Math.PI);
+    const normalizedAngle = (2 * Math.PI - (this.currentAngle % (2 * Math.PI))) % (2 * Math.PI);
     const winningIndex = Math.floor(normalizedAngle / this.segmentAngle);
     return this.listEntries[winningIndex];
   }
@@ -158,10 +149,7 @@ export class WheelFortuneComponent implements OnInit {
         this.spinWheel();
         await new Promise((resolve) => setTimeout(resolve, 4200));
         if (this.winningEntry != "") {
-          this.listEntries.splice(
-            this.listEntries.indexOf(this.winningEntry),
-            1
-          );
+          this.listEntries.splice(this.listEntries.indexOf(this.winningEntry), 1);
           this.winningEntry = "";
           if (this.typeWinner == "last" && this.listEntries.length == 1) {
             this.winningEntry = this.listEntries[0];
@@ -193,8 +181,7 @@ export class WheelFortuneComponent implements OnInit {
         const totalDuration = 4000;
         const accelerationDuration = 700;
         const decelerationDuration = 2000;
-        const steadyDuration =
-          totalDuration - accelerationDuration - decelerationDuration;
+        const steadyDuration = totalDuration - accelerationDuration - decelerationDuration;
 
         let initialSpinAngle: number = Math.random() * 300 + 50;
         let start: any | null = null;
@@ -205,15 +192,11 @@ export class WheelFortuneComponent implements OnInit {
 
           if (elapsed < accelerationDuration) {
             let t = elapsed / accelerationDuration;
-            this.currentAngle +=
-              (initialSpinAngle * this.easeOutQuad(t)) / accelerationDuration;
+            this.currentAngle += (initialSpinAngle * this.easeOutQuad(t)) / accelerationDuration;
           } else if (elapsed < totalDuration) {
-            let t =
-              (elapsed - accelerationDuration - steadyDuration) /
-              decelerationDuration;
+            let t = (elapsed - accelerationDuration - steadyDuration) / decelerationDuration;
             this.currentAngle +=
-              (initialSpinAngle * (1 - this.easeOutQuad(t))) /
-              decelerationDuration;
+              (initialSpinAngle * (1 - this.easeOutQuad(t))) / decelerationDuration;
           } else {
             this.currentAngle = this.currentAngle % (2 * Math.PI);
             this.isSpinning = false;

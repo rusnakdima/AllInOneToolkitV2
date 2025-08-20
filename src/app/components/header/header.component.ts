@@ -1,17 +1,7 @@
 /* sys lib */
 import { CommonModule, Location } from "@angular/common";
-import {
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  EventEmitter,
-  Output,
-} from "@angular/core";
-import {
-  ActivatedRoute,
-  NavigationEnd,
-  Router,
-  RouterModule,
-} from "@angular/router";
+import { Component, EventEmitter, Output } from "@angular/core";
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from "@angular/router";
 import { filter, map } from "rxjs";
 
 /* materials */
@@ -27,7 +17,6 @@ import { LinksService } from "@services/links.service";
 @Component({
   selector: "app-header",
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, RouterModule, MatIconModule],
   templateUrl: "./header.component.html",
 })
@@ -58,9 +47,7 @@ export class HeaderComponent {
 
     this.router.events
       .pipe(
-        filter(
-          (event): event is NavigationEnd => event instanceof NavigationEnd
-        ),
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         map(() => {
           let route: ActivatedRoute = this.router.routerState.root;
           let prevRouteTitle: string = "";
@@ -72,15 +59,10 @@ export class HeaderComponent {
             route = route.firstChild;
           }
 
-          if (
-            route.snapshot.data["dynamic"] &&
-            route.snapshot.routeConfig?.path == ""
-          ) {
+          if (route.snapshot.data["dynamic"] && route.snapshot.routeConfig?.path == "") {
             const id = route.snapshot.params["id"];
             if (id) {
-              const catalog = this.listCatalogs.find(
-                (catalog) => catalog.id === id
-              );
+              const catalog = this.listCatalogs.find((catalog) => catalog.id === id);
               routeTitle = catalog?.name ?? "";
               routeId = catalog?.id ?? "";
               typeId = "catalog";
@@ -97,14 +79,11 @@ export class HeaderComponent {
 
           if (route.parent!.routeConfig?.path?.startsWith(":")) {
             if (route.snapshot.routeConfig?.path == "") {
-              prevRouteTitle =
-                route.parent!.parent?.snapshot.data["breadcrumbs"];
+              prevRouteTitle = route.parent!.parent?.snapshot.data["breadcrumbs"];
             } else {
               const id = route.parent!.snapshot.params["id"];
               if (id) {
-                const catalog = this.listCatalogs.find(
-                  (catalog) => catalog.id === id
-                );
+                const catalog = this.listCatalogs.find((catalog) => catalog.id === id);
                 prevRouteTitle = catalog?.name ?? "";
               }
             }
@@ -116,24 +95,15 @@ export class HeaderComponent {
         })
       )
       .subscribe(
-        (data: {
-          prevRouteTitle: string;
-          routeTitle: string;
-          routeId: string;
-          typeId: string;
-        }) => {
+        (data: { prevRouteTitle: string; routeTitle: string; routeId: string; typeId: string }) => {
           if (data.routeId != "") {
             switch (data.typeId) {
               case "catalog":
-                const catalog = this.listCatalogs.find(
-                  (catalog) => catalog.id === data.routeId
-                );
+                const catalog = this.listCatalogs.find((catalog) => catalog.id === data.routeId);
                 this.iconUrl = catalog?.icon ?? "";
                 break;
               case "link":
-                const link = this.listLinks.find(
-                  (link) => link.id === data.routeId
-                );
+                const link = this.listLinks.find((link) => link.id === data.routeId);
                 this.iconUrl = link?.icon[0] ?? "";
                 break;
               default:

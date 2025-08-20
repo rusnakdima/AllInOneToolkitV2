@@ -1,11 +1,6 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
-import {
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  Input,
-  OnInit,
-} from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { Subject } from "rxjs";
 
@@ -15,7 +10,6 @@ import { MatIconModule } from "@angular/material/icon";
 @Component({
   selector: "app-nav",
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, RouterModule, MatIconModule],
   templateUrl: "./nav.component.html",
 })

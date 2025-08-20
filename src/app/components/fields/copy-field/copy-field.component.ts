@@ -1,6 +1,6 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from "@angular/core";
+import { Component, Input } from "@angular/core";
 
 /* materials */
 import { MatIconModule } from "@angular/material/icon";
@@ -11,7 +11,6 @@ import { NotifyService } from "@services/notify.service";
 @Component({
   selector: "app-copy-field",
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [CommonModule, MatIconModule],
   templateUrl: "./copy-field.component.html",
 })

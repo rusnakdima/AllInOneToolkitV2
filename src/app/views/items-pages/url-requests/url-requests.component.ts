@@ -1,6 +1,6 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
-import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, Input, OnInit } from "@angular/core";
+import { Component, HostListener, Input, OnInit } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { v4 as UUID } from "uuid";
 import { CdkDragDrop, CdkDropList, DragDropModule } from "@angular/cdk/drag-drop";
@@ -30,7 +30,6 @@ import { JsonParserComponent } from "@components/json-parser/json-parser.compone
 @Component({
   selector: "app-url-requests",
   standalone: true,
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [UrlRequestsService],
   imports: [
     CommonModule,
