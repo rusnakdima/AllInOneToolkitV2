@@ -12,7 +12,7 @@ jobs:
 
       - name: Create Discord Forum Post
         run: |
-          curl -X POST "${{ secrets.DISCORD_FORUM_WEBHOOK_URL }}" \
+          curl -X POST "${{ secrets.WEBHOOK_URL }}" \
             -H "Content-Type: application/json" \
             -d '{
               "thread_name": "🚀 All In One Toolkit V2 - Release ${{ github.event.release.tag_name }}",
@@ -24,7 +24,7 @@ jobs:
       - name: Alternative - Create Forum Post with Embeds
         if: failure()
         run: |
-          curl -X POST "${{ secrets.DISCORD_FORUM_WEBHOOK_URL }}" \
+          curl -X POST "${{ secrets.WEBHOOK_URL }}" \
             -H "Content-Type: application/json" \
             -d '{
               "thread_name": "🚀 All In One Toolkit V2 - Release ${{ github.event.release.tag_name }}",
