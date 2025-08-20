@@ -9,6 +9,7 @@ pub enum TypeRequest {
   DEL,
 }
 
+#[allow(non_snake_case)]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RecObj {
   pub key: String,
@@ -26,6 +27,7 @@ pub enum BodyValue {
   Object(serde_json::Value),
 }
 
+#[allow(non_snake_case)]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BodyData {
   pub key: String,
@@ -33,6 +35,7 @@ pub struct BodyData {
   pub isActive: bool,
 }
 
+#[allow(non_snake_case)]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RequestData {
   pub id: String,

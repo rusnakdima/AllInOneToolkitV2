@@ -5,22 +5,33 @@ use serde::Serialize;
 /* models */
 use crate::models::response::DataValue;
 
-pub fn get_current_date() -> String {
-  let current_datetime = Local::now();
-  format!("{}", current_datetime.format("%Y_%m_%d_%H_%M_%S"))
-}
+pub struct CommonHelper;
 
-pub fn convert_data_to_array<T: Serialize>(data: &Vec<T>) -> DataValue {
-  let serialized_array: Vec<serde_json::Value> = data
-    .into_iter()
-    .map(|item| serde_json::to_value(item).unwrap())
-    .collect();
+impl CommonHelper {
+  pub fn new() -> Self {
+    Self
+  }
 
-  DataValue::Array(serialized_array)
-}
+  #[allow(non_snake_case)]
+  pub fn getCurrentDate(&self) -> String {
+    let currentDatetime = Local::now();
+    format!("{}", currentDatetime.format("%Y_%m_%d_%H_%M_%S"))
+  }
 
-pub fn convert_data_to_object<T: Serialize>(data: &T) -> DataValue {
-  let serialized_object: serde_json::Value = serde_json::to_value(data).unwrap();
+  #[allow(non_snake_case)]
+  pub fn convertDataToArray<T: Serialize>(&self, data: &Vec<T>) -> DataValue {
+    let serializedArray: Vec<serde_json::Value> = data
+      .into_iter()
+      .map(|item| serde_json::to_value(item).unwrap())
+      .collect();
 
-  DataValue::Object(serialized_object)
+    DataValue::Array(serializedArray)
+  }
+
+  #[allow(non_snake_case)]
+  pub fn convertDataToObject<T: Serialize>(&self, data: &T) -> DataValue {
+    let serializedObject: serde_json::Value = serde_json::to_value(data).unwrap();
+
+    DataValue::Object(serializedObject)
+  }
 }

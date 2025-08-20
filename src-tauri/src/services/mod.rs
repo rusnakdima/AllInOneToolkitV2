@@ -1,10 +1,10 @@
-pub mod about;
+pub mod about_service;
 
-pub mod manage_file;
-pub mod manage_xls;
+pub mod manage_file_service;
+pub mod manage_xls_service;
 
-pub mod virus_total;
+pub mod virus_total_service;
 
-pub mod unicode;
+pub mod unicode_service;
 
-pub mod url_requests;
+pub mod url_requests_service;

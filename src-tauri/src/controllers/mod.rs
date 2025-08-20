@@ -1,10 +1,10 @@
-pub mod about;
+pub mod about_controller;
 
-pub mod manage_file;
-pub mod manage_xls;
+pub mod manage_file_controller;
+pub mod manage_xls_controller;
 
-pub mod virus_total;
+pub mod virus_total_controller;
 
-pub mod unicode;
+pub mod unicode_controller;
 
-pub mod url_requests;
+pub mod url_requests_controller;

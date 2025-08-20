@@ -2,21 +2,40 @@
 mod controllers;
 mod helpers;
 mod models;
+mod routes;
 mod services;
 
-use controllers::about::{download_update, get_binary_name_file};
+/* sys lib */
+use std::sync::Arc;
 
-use controllers::manage_file::{
-  choose_file, get_data_file_by_path, open_folder_with_file, open_file_in_app, write_data_to_file,
+/* routes */
+use routes::{
+  about_route::{downloadUpdate, getBinaryNameFile},
+  manage_file_route::{
+    chooseFile, getDataFileByPath, openFileInApp, openFolderWithFile, writeDataToFile,
+  },
+  manage_xls_route::{getDataFileByPathXls, writeDataToFileXls},
+  unicode_route::getInfoSymbol,
+  url_requests_route::{getData, saveData, sendRequest},
+  virus_total_route::virusTotal,
 };
 
-use controllers::manage_xls::{get_data_file_by_path_xls, write_data_to_file_xls};
+/* controllers */
+use crate::controllers::{
+  about_controller::AboutController, manage_file_controller::ManageFileController,
+  manage_xls_controller::ManageXlsController, unicode_controller::UnicodeController,
+  url_requests_controller::UrlRequestsController, virus_total_controller::VirusTotalController,
+};
 
-use controllers::virus_total::virus_total;
-
-use controllers::unicode::get_info_symbol;
-
-use controllers::url_requests::{get_data, save_data, send_request};
+#[allow(non_snake_case)]
+pub struct AppState {
+  aboutController: Arc<AboutController>,
+  manageFileController: Arc<ManageFileController>,
+  manageXlsController: Arc<ManageXlsController>,
+  virusTotalController: Arc<VirusTotalController>,
+  unicodeController: Arc<UnicodeController>,
+  urlRequestsController: Arc<UrlRequestsController>,
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -24,21 +43,29 @@ pub fn run() {
     .plugin(tauri_plugin_dialog::init())
     .plugin(tauri_plugin_shell::init())
     .plugin(tauri_plugin_http::init())
+    .manage(AppState {
+      aboutController: Arc::new(AboutController::new()),
+      manageFileController: Arc::new(ManageFileController::new()),
+      manageXlsController: Arc::new(ManageXlsController::new()),
+      virusTotalController: Arc::new(VirusTotalController::new()),
+      unicodeController: Arc::new(UnicodeController::new()),
+      urlRequestsController: Arc::new(UrlRequestsController::new()),
+    })
     .invoke_handler(tauri::generate_handler![
-      get_binary_name_file,
-      download_update,
-      choose_file,
-      get_data_file_by_path,
-      write_data_to_file,
-      open_folder_with_file,
-      open_file_in_app,
-      get_data_file_by_path_xls,
-      write_data_to_file_xls,
-      virus_total,
-      get_info_symbol,
-      send_request,
-      save_data,
-      get_data,
+      getBinaryNameFile,
+      downloadUpdate,
+      chooseFile,
+      getDataFileByPath,
+      writeDataToFile,
+      openFolderWithFile,
+      openFileInApp,
+      getDataFileByPathXls,
+      writeDataToFileXls,
+      virusTotal,
+      getInfoSymbol,
+      getData,
+      saveData,
+      sendRequest,
     ])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
