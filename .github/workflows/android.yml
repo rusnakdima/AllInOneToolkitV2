@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: set up JDK 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: "17"
@@ -78,14 +78,32 @@ jobs:
       - name: Install frontend dependencies
         run: pnpm install
 
-      - name: Initialize Tauri Android (if needed)
-        run: |
-          if [ ! -d "src-tauri/gen/android" ]; then
-            pnpm tauri android init
-          fi
-
       - name: Grant execute permission for gradlew
         run: chmod +x ./src-tauri/gen/android/gradlew
+
+      - name: Setup Android Keystore
+        run: |
+          # Create keystore directory
+          mkdir -p $HOME/android-keystore
+
+          # Create keystore from GitHub secrets (if provided)
+          if [ -n "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" ]; then
+            echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > $HOME/android-keystore/upload-keystore.jks
+            echo "Using provided keystore"
+          else
+            # Generate a debug keystore for CI builds
+            echo "Generating debug keystore for CI"
+            keytool -genkey -v -keystore $HOME/android-keystore/upload-keystore.jks \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass android -keypass android \
+              -alias upload -dname "CN=CI Build, OU=Development, O=AllInOneToolkit, L=City, S=State, C=US"
+          fi
+
+      - name: Build Debug APK (fallback)
+        if: failure()
+        run: |
+          echo "Building debug APK as fallback..."
+          pnpm tauri android build --apk --debug
 
       - name: Build Android APK
         run: |
@@ -95,11 +113,15 @@ jobs:
         run: |
           pnpm tauri android build --aab
 
-      - name: Upload APK artifact
+      - name: Build Debug APK (for testing)
+        run: |
+          pnpm tauri android build --apk --debug
+
+      - name: Upload Debug APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: android-apk
-          path: src-tauri/gen/android/app/build/outputs/apk/universal/release/*.apk
+          name: android-debug-apk
+          path: src-tauri/gen/android/app/build/outputs/apk/universal/debug/*.apk
 
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
