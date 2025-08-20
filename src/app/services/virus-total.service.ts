@@ -1,17 +1,17 @@
 /* sys lib */
-import { Injectable } from '@angular/core';
-import { invoke } from '@tauri-apps/api/core';
+import { Injectable } from "@angular/core";
+import { invoke } from "@tauri-apps/api/core";
 
 /* models */
-import { Response } from '@models/response';
+import { Response } from "@models/response";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class VirusTotalService {
-  constructor() { }
+  constructor() {}
 
-  async checkOnViruses(url: string): Promise<Response> {
-    return await invoke<Response>("virus_total", { url });
+  async checkOnViruses<R>(url: string): Promise<Response<R>> {
+    return await invoke<Response<R>>("virusTotal", { url });
   }
 }

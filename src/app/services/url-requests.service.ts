@@ -13,15 +13,15 @@ import { Collection } from "@models/collection";
 export class UrlRequestsService {
   constructor() {}
 
-  async sendRequest(infoRequest: Request): Promise<Response> {
-    return await invoke<Response>("send_request", { infoRequest });
+  async sendRequest<R>(infoRequest: Request): Promise<Response<R>> {
+    return await invoke<Response<R>>("sendRequest", { infoRequest });
   }
 
-  async saveData(listCollections: Array<Collection>): Promise<Response> {
-    return await invoke<Response>("save_data", { listCollections });
+  async saveData<R>(listCollections: Array<Collection>): Promise<Response<R>> {
+    return await invoke<Response<R>>("saveData", { listCollections });
   }
 
-  async getData(): Promise<Response> {
-    return await invoke<Response>("get_data");
+  async getData<R>(): Promise<Response<R>> {
+    return await invoke<Response<R>>("getData");
   }
 }

@@ -120,8 +120,8 @@ export class UrlRequestsComponent implements OnInit {
     });
 
     this.urlRequestsService
-      .getData()
-      .then((response: Response) => {
+      .getData<Array<any>>()
+      .then((response: Response<Array<any>>) => {
         if (response.status == ResponseStatus.SUCCESS) {
           this.savedListCollections = response.data;
           this.listCollections = this.savedListCollections;
@@ -129,9 +129,8 @@ export class UrlRequestsComponent implements OnInit {
           this.notifyService.showError("Failed to load data");
         }
       })
-      .catch((err) => {
-        console.error(err);
-        this.notifyService.showError(err);
+      .catch((err: Response<string>) => {
+        this.notifyService.showError(err.message ?? err.toString());
       });
   }
 
@@ -571,8 +570,8 @@ export class UrlRequestsComponent implements OnInit {
   sendRequest() {
     if (this.infoRequest) {
       this.urlRequestsService
-        .sendRequest(this.infoRequest)
-        .then((response: Response) => {
+        .sendRequest<string>(this.infoRequest)
+        .then((response: Response<string>) => {
           this.selectedTabIndex = 3;
           this.notifyService.showNotify(response.status, response.message);
           if (response.status == ResponseStatus.SUCCESS) {
@@ -582,22 +581,20 @@ export class UrlRequestsComponent implements OnInit {
             }, 500);
           }
         })
-        .catch((err) => {
-          console.error(err);
-          this.notifyService.showError(err);
+        .catch((err: Response<string>) => {
+          this.notifyService.showError(err.message ?? err.toString());
         });
     }
   }
 
   saveData() {
     this.urlRequestsService
-      .saveData(this.listCollections)
-      .then((data: Response) => {
+      .saveData<string>(this.listCollections)
+      .then((data: Response<string>) => {
         this.notifyService.showNotify(data.status, data.message);
       })
-      .catch((err) => {
-        console.error(err);
-        this.notifyService.showError(err);
+      .catch((err: Response<string>) => {
+        this.notifyService.showError(err.message ?? err.toString());
       });
   }
 }

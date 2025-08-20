@@ -47,8 +47,8 @@ export class UnicodeConverterComponent {
         .split(";")
         .map((symbol: string) => {
           this.unicodeConverterService
-            .getInfoSymbol(this.typeCoding, symbol)
-            .then((response: Response) => {
+            .getInfoSymbol<{ symbol: string; dec: string; hex: string }>(this.typeCoding, symbol)
+            .then((response: Response<{ symbol: string; dec: string; hex: string }>) => {
               if (response.status == ResponseStatus.SUCCESS) {
                 this.listResult.push({
                   symbol: response.data.symbol,
@@ -59,9 +59,8 @@ export class UnicodeConverterComponent {
                 this.notifyService.showError(response.message);
               }
             })
-            .catch((err) => {
-              console.error(err);
-              this.notifyService.showError(err);
+            .catch((err: Response<string>) => {
+              this.notifyService.showError(err.message ?? err.toString());
             });
         });
     }

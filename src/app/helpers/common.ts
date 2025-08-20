@@ -223,13 +223,13 @@ export class Common {
     typeFile: string
   ): Promise<string> {
     try {
-      let response: Response;
+      let response: Response<string>;
       let pathNewFile = "";
 
       if (typeFile == "xls") {
-        response = await fileService.writeDataToFileXls(nameNewFile, data);
+        response = await fileService.writeDataToFileXls<string>(nameNewFile, data);
       } else {
-        response = await fileService.writeDataToFile(nameNewFile, data, typeFile);
+        response = await fileService.writeDataToFile<string>(nameNewFile, data, typeFile);
       }
 
       if (response.status == ResponseStatus.SUCCESS) {
@@ -258,17 +258,16 @@ export class Common {
     pathFolder: string
   ) {
     await fileService
-      .openFolderWithFile(pathFolder)
-      .then((data: Response) => {
+      .openFolderWithFile<string>(pathFolder)
+      .then((data: Response<string>) => {
         if (data.status == ResponseStatus.SUCCESS) {
           notifyService.showWarning("Wait a bit until the explorer opens!");
         } else {
           notifyService.showNotify(data.status, data.message);
         }
       })
-      .catch((err: any) => {
-        console.error(err);
-        notifyService.showError(err);
+      .catch((err: Response<string>) => {
+        notifyService.showError(err.message ?? err.toString());
       });
   }
 
@@ -278,8 +277,8 @@ export class Common {
     pathNewFile: string
   ) {
     await fileService
-      .openFileInApp(pathNewFile)
-      .then((data: Response) => {
+      .openFileInApp<string>(pathNewFile)
+      .then((data: Response<string>) => {
         if (data.status == ResponseStatus.SUCCESS) {
           notifyService.showWarning(
             "Wait a bit until the program starts to read this file format!"
@@ -288,9 +287,8 @@ export class Common {
           notifyService.showNotify(data.status, data.message);
         }
       })
-      .catch((err: any) => {
-        console.error(err);
-        notifyService.showError(err);
+      .catch((err: Response<string>) => {
+        notifyService.showError(err.message ?? err.toString());
       });
   }
 }

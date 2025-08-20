@@ -140,11 +140,11 @@ export class FileInputComponent implements OnInit, OnDestroy {
     }
 
     try {
-      let response: Response;
+      let response: Response<string>;
       if (this.typeFile.includes("xls")) {
-        response = await this.fileService.getDataFromXLS(this.filePath);
+        response = await this.fileService.getDataFromXLS<string>(this.filePath);
       } else if (this.typeFile.length > 0) {
-        response = await this.fileService.getDataFromAnyFile(this.filePath);
+        response = await this.fileService.getDataFromAnyFile<string>(this.filePath);
       } else {
         this.notifyService.showError("No valid file type specified");
         return;
@@ -167,7 +167,7 @@ export class FileInputComponent implements OnInit, OnDestroy {
       this.filePath = "";
       this.cdr.detectChanges();
 
-      const response: Response = await this.fileService.chooseFile(this.typeFile);
+      const response: Response<string> = await this.fileService.chooseFile<string>(this.typeFile);
       if (response.status == ResponseStatus.ERROR) {
         this.notifyService.showError(response.message || "Failed to open file dialog");
         return;

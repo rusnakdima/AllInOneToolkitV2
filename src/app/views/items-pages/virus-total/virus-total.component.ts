@@ -53,8 +53,8 @@ export class VirusTotalComponent {
       const apiUrl = `https://www.virustotal.com/api/v3/urls/${encodeURIComponent(url)}`;
 
       this.virusTotalService
-        .checkOnViruses(apiUrl)
-        .then((response: Response) => {
+        .checkOnViruses<string>(apiUrl)
+        .then((response: Response<string>) => {
           if (response.status == ResponseStatus.SUCCESS) {
             if (response.data && response.data != "") {
               if (Common.isJsonAsString(response.data)) {
@@ -94,9 +94,8 @@ export class VirusTotalComponent {
             }
           }
         })
-        .catch((err) => {
-          console.error(err);
-          this.notifyService.showError(err);
+        .catch((err: Response<string>) => {
+          this.notifyService.showError(err.message ?? err.toString());
           this.reqText = "Errors occurred when executing the request!";
         });
     }
