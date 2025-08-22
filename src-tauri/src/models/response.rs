@@ -1,7 +1,7 @@
 /* sys lib */
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ResponseStatus {
   Success,
   Info,
@@ -9,7 +9,7 @@ pub enum ResponseStatus {
   Error,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DataValue {
   String(String),
@@ -19,7 +19,7 @@ pub enum DataValue {
   Object(serde_json::Value),
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ResponseModel {
   pub status: ResponseStatus,
   pub message: String,

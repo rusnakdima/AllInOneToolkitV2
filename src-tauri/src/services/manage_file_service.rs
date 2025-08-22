@@ -47,7 +47,6 @@ impl ManageFileService {
       _listExt = typeFile;
     }
 
-    let (tx, rx) = std::sync::mpsc::channel();
     let appHandleClone = appHandle.clone();
 
     appHandle
@@ -59,40 +58,42 @@ impl ManageFileService {
           if let Some(path_str) = path.as_path().unwrap().to_str() {
             let filePathString = path_str.to_string();
 
-            let _ = appHandleClone
-              .emit("send-file-path", filePathString.clone())
-              .unwrap();
-
-            let _ = tx.send(Ok(ResponseModel {
-              status: ResponseStatus::Success,
-              message: "File selected successfully".to_string(),
-              data: DataValue::String(filePathString),
-            }));
+            let _ = appHandleClone.emit(
+              "send-file-path",
+              ResponseModel {
+                status: ResponseStatus::Success,
+                message: "File selected successfully".to_string(),
+                data: DataValue::String(filePathString.clone()),
+              },
+            );
           } else {
-            let _ = tx.send(Err(ResponseModel {
-              status: ResponseStatus::Error,
-              message: "Failed to convert file path to string".to_string(),
-              data: DataValue::String("".to_string()),
-            }));
+            let _ = appHandleClone.emit(
+              "send-file-path",
+              ResponseModel {
+                status: ResponseStatus::Error,
+                message: "Failed to convert file path to string".to_string(),
+                data: DataValue::String("".to_string()),
+              },
+            );
           }
         }
         None => {
-          let _ = tx.send(Err(ResponseModel {
-            status: ResponseStatus::Error,
-            message: "No file selected or dialog cancelled".to_string(),
-            data: DataValue::String("".to_string()),
-          }));
+          let _ = appHandleClone.emit(
+            "send-file-path",
+            ResponseModel {
+              status: ResponseStatus::Error,
+              message: "No file selected or dialog cancelled".to_string(),
+              data: DataValue::String("".to_string()),
+            },
+          );
         }
       });
 
-    match rx.recv() {
-      Ok(result) => result,
-      Err(_) => Err(ResponseModel {
-        status: ResponseStatus::Error,
-        message: "Failed to receive dialog result".to_string(),
-        data: DataValue::String("".to_string()),
-      }),
-    }
+    Ok(ResponseModel {
+      status: ResponseStatus::Warning,
+      message: "Select the file!".to_string(),
+      data: DataValue::String("".to_string()),
+    })
   }
 
   #[allow(non_snake_case)]
