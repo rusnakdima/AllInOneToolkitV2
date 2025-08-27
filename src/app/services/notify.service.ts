@@ -11,7 +11,7 @@ export class NotifyService {
 
   showNotify(status: ResponseStatus, message: string) {
     try {
-      this.notify.next(new Response(status, message, null));
+      this.notify.next({ status, message, data: null } as Response<null>);
     } catch (error) {
       console.error("Error in showNotify:", error);
     }
