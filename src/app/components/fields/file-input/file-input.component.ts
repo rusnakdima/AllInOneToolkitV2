@@ -1,6 +1,7 @@
 /* sys lib */
 import { CommonModule } from "@angular/common";
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   EventEmitter,
@@ -9,7 +10,7 @@ import {
   OnInit,
   Output,
 } from "@angular/core";
-import { listen } from "@tauri-apps/api/event";
+import { listen, UnlistenFn } from "@tauri-apps/api/event";
 
 /* materials */
 import { MatIconModule } from "@angular/material/icon";
@@ -26,6 +27,7 @@ import { NotifyService } from "@services/notify.service";
   standalone: true,
   imports: [CommonModule, MatIconModule],
   templateUrl: "./file-input.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileInputComponent implements OnInit, OnDestroy {
   constructor(
@@ -38,26 +40,63 @@ export class FileInputComponent implements OnInit, OnDestroy {
   @Output() dataFile: EventEmitter<string> = new EventEmitter();
   @Output() reciveFileName: EventEmitter<string> = new EventEmitter();
 
+  unlistenDragDrop: UnlistenFn | undefined;
+  unlistenFilePath: UnlistenFn | undefined;
+
   fileName: string = "";
   filePath: string = "";
 
-  ngOnInit() {
-    this.listenDragDrop();
-    this.getFilePath();
+  async ngOnInit() {
+    await this.setupEventListeners();
   }
 
-  ngOnDestroy(): void {
+  async ngOnDestroy() {
+    // await this.cleanupEventListeners();
     this.typeFile = [];
   }
 
-  async listenDragDrop() {
-    await listen("tauri://drag-drop", (event: any) => {
-      this.checkFileExt(event);
-      const target = document.getElementById("fileInput") as HTMLElement;
-      if (target?.id === "fileInput") {
-        target.classList.remove("!border-green-500", "!border-4");
+  async setupEventListeners() {
+    try {
+      await this.listenDragDrop();
+      await this.getFilePath();
+    } catch (error) {
+      console.error("Error setting up event listeners:", error);
+    }
+  }
+
+  async cleanupEventListeners() {
+    try {
+      if (this.unlistenDragDrop) {
+        await this.unlistenDragDrop();
+        this.unlistenDragDrop = undefined;
       }
-      this.cdr.detectChanges();
+
+      if (this.unlistenFilePath) {
+        await this.unlistenFilePath();
+        this.unlistenFilePath = undefined;
+      }
+    } catch (error) {
+      console.error("Error cleaning up event listeners:", error);
+    }
+  }
+
+  async listenDragDrop() {
+    if (this.unlistenDragDrop) {
+      await this.unlistenDragDrop();
+    }
+
+    this.unlistenDragDrop = await listen<Response<string>>("tauri://drag-drop", (event) => {
+      this.notifyService.showInfo("File dropped");
+      try {
+        this.checkFileExt(event);
+        const target = document.getElementById("fileInput") as HTMLElement;
+        if (target?.id === "fileInput") {
+          target.classList.remove("!border-green-500", "!border-4");
+        }
+      } catch (error) {
+        console.error(error);
+        this.notifyService.showError("Error processing dropped file.");
+      }
     });
   }
 
@@ -115,19 +154,34 @@ export class FileInputComponent implements OnInit, OnDestroy {
       this.reciveFileName.emit(this.fileName);
       this.getDataFile();
       this.cdr.detectChanges();
+      this.notifyService.showSuccess("File dropped successfully");
     } else {
-      this.notifyService.showError(`Invalid file type. Expected: ${this.typeFile.join(", ")}`);
+      const expectedTypes = this.typeFile.join(", ");
+      const errorMessage = `Invalid file type. Dropped file has extension '.${fileExt}', but expected one of: ${expectedTypes}`;
+      console.error(errorMessage);
+      this.notifyService.showError(errorMessage);
     }
   }
 
   async getFilePath() {
-    await listen("send-file-path", (event: any) => {
-      this.filePath = event.payload;
-      this.fileName = event.payload.split(/[\/\\]/).pop() ?? "";
-      this.notifyService.showInfo("File path received");
-      this.reciveFileName.emit(this.fileName);
-      this.getDataFile();
-      this.cdr.detectChanges();
+    if (this.unlistenFilePath) {
+      await this.unlistenFilePath();
+    }
+
+    this.unlistenFilePath = await listen("send-file-path", (event: any) => {
+      const payload = event.payload as Response<string>;
+      if (payload) {
+        if (payload.status == ResponseStatus.SUCCESS) {
+          this.notifyService.showSuccess(payload.message || "File selected successfully");
+          this.filePath = payload.data;
+          this.fileName = payload.data.split(/[\/\\]/).pop() ?? "";
+          this.reciveFileName.emit(this.fileName);
+          this.getDataFile();
+          this.cdr.detectChanges();
+        } else {
+          this.notifyService.showNotify(payload.status, payload.message);
+        }
+      }
     });
   }
 
@@ -160,21 +214,16 @@ export class FileInputComponent implements OnInit, OnDestroy {
   }
 
   async chooseFile() {
+    this.fileName = "";
+    this.filePath = "";
+    this.cdr.detectChanges();
+
     try {
-      this.fileName = "";
-      this.filePath = "";
-      this.cdr.detectChanges();
+      const response = await this.fileService.chooseFile<string>(this.typeFile);
 
-      const response: Response<string> = await this.fileService.chooseFile<string>(this.typeFile);
-      if (response.status == ResponseStatus.ERROR) {
-        this.notifyService.showError(response.message || "Failed to open file dialog");
-        return;
-      }
-
-      this.notifyService.showInfo("Please select a file");
-    } catch (error) {
-      console.error(error);
-      this.notifyService.showError(String(error));
+      this.notifyService.showNotify(response.status, response.message);
+    } catch (error: any) {
+      this.notifyService.showError(error.message ?? error.toString());
     }
   }
 }
