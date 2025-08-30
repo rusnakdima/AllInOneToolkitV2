@@ -6,14 +6,16 @@ import { FileService } from "@services/file.service";
 import { NotifyService } from "@services/notify.service";
 
 export class Common {
+  static isXML(str: string): boolean {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(str, "application/xml");
+    return doc.getElementsByTagName("parsererror").length === 0;
+  }
+
   static isHTML(str: string): boolean {
     const parser = new DOMParser();
-    try {
-      parser.parseFromString(str, "text/html");
-      return true;
-    } catch (err) {
-      return false;
-    }
+    const doc = parser.parseFromString(str, "text/html");
+    return Array.from(doc.body.childNodes).every((element) => element.nodeName !== "parsererror");
   }
 
   static isJson(data: Object): boolean {

@@ -90,6 +90,7 @@ export class UrlRequestsComponent implements OnInit {
 
   isJsonAsString = Common.isJsonAsString;
   isHTML = Common.isHTML;
+  isXML = Common.isXML;
 
   ngOnInit(): void {
     document.addEventListener("mousedown", (e: any) => {
