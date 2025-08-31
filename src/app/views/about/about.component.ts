@@ -31,6 +31,7 @@ export class AboutComponent {
   yearCreate: number = environment.yearCreate;
   companyName: string = environment.companyName;
   authors: Array<Author> = environment.authors;
+  gitRepoName: string = environment.gitRepoName;
   dateVersion: string = localStorage["dateVersion"] || "Unknown";
   dateCheck: string = localStorage["dateCheck"] || "Unknown";
 
@@ -68,20 +69,20 @@ export class AboutComponent {
   }
 
   getDate() {
-    this.aboutService
-      .getBinaryNameFile<string>()
-      .then((response: Response<string>) => {
-        if (response.status == ResponseStatus.SUCCESS) {
-          if (response.data != "Unknown") {
-            this.nameFile = response.data;
-          }
-        } else {
-          this.notifyService.showNotify(response.status, response.message);
-        }
-      })
-      .catch((err: Response<string>) => {
-        this.notifyService.showError(err.message ?? err.toString());
-      });
+    // this.aboutService
+    //   .getBinaryNameFile<string>()
+    //   .then((response: Response<string>) => {
+    //     if (response.status == ResponseStatus.SUCCESS) {
+    //       if (response.data != "Unknown") {
+    //         this.nameFile = response.data;
+    //       }
+    //     } else {
+    //       this.notifyService.showNotify(response.status, response.message);
+    //     }
+    //   })
+    //   .catch((err: Response<string>) => {
+    //     this.notifyService.showError(err.message ?? err.toString());
+    //   });
 
     this.aboutService.getDate(this.version).subscribe({
       next: (res: any) => {
@@ -128,32 +129,43 @@ export class AboutComponent {
   }
 
   downloadFile() {
-    if (this.nameFile != "") {
-      this.downloadProgress = true;
-      this.notifyService.showWarning("Wait until the program update is downloaded!");
+    // if (this.nameFile != "") {
+    //   this.downloadProgress = true;
+    //   this.notifyService.showWarning("Wait until the program update is downloaded!");
 
-      this.aboutService
-        .downloadUpdate<string>(this.lastVersion, this.nameFile)
-        .then((response: Response<string>) => {
-          if (response.status == ResponseStatus.SUCCESS) {
-            this.notifyService.showSuccess(
-              "The new version of the program has been successfully downloaded!"
-            );
-            this.pathUpdate = response.data;
-          } else {
-            this.notifyService.showNotify(response.status, response.message);
-          }
-        })
-        .catch((err: Response<string>) => {
-          console.error(err);
-          this.notifyService.showError(err.message ?? err.toString());
-        });
-      this.downloadProgress = false;
-      this.windUpdates = false;
-    } else {
-      this.notifyService.showError(
-        "System definition error! It is impossible to find a file for this OS!"
-      );
+    //   this.aboutService
+    //     .downloadUpdate<string>(this.lastVersion, this.nameFile)
+    //     .then((response: Response<string>) => {
+    //       if (response.status == ResponseStatus.SUCCESS) {
+    //         this.notifyService.showSuccess(
+    //           "The new version of the program has been successfully downloaded!"
+    //         );
+    //         this.pathUpdate = response.data;
+    //       } else {
+    //         this.notifyService.showNotify(response.status, response.message);
+    //       }
+    //     })
+    //     .catch((err: Response<string>) => {
+    //       console.error(err);
+    //       this.notifyService.showError(err.message ?? err.toString());
+    //     });
+    //   this.downloadProgress = false;
+    //   this.windUpdates = false;
+    // } else {
+    //   this.notifyService.showError(
+    //     "System definition error! It is impossible to find a file for this OS!"
+    //   );
+    // }
+
+    try {
+      const link = document.createElement("a");
+      link.href = `https://github.com/rusnakdima/${this.gitRepoName}/releases/tag/latest`;
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error(error);
     }
   }
 
