@@ -1,15 +1,15 @@
 export const environment = {
   production: false,
-  version: '0.4.1',
-  gitRepoName: 'AllInOneToolkitV2',
-  nameProduct: 'All In One Toolkit v2',
+  version: "0.4.2",
+  gitRepoName: "AllInOneToolkitV2",
+  nameProduct: "All In One Toolkit v2",
   yearCreate: 2024,
-  companyName: 'TechCraft Solutions',
+  companyName: "TechCraft Solutions",
   authors: [
     {
-      name: 'Dmitriy303',
-      email: 'rusnakdima03@gmail.com',
-      url: 'https://github.com/rusnakdima'
-    }
-  ]
-}
+      name: "Dmitriy303",
+      email: "rusnakdima03@gmail.com",
+      url: "https://github.com/rusnakdima",
+    },
+  ],
+};
