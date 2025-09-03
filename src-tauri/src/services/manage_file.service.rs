@@ -1,6 +1,4 @@
 /* sys lib */
-use dotenv::dotenv;
-use std::env;
 use std::fs::File;
 use std::io::Read;
 use std::io::Write;
@@ -22,11 +20,11 @@ pub struct ManageFileService {
 }
 
 impl ManageFileService {
-  pub fn new() -> Self {
-    dotenv().ok();
+  #[allow(non_snake_case)]
+  pub fn new(envValue: String) -> Self {
     Self {
       commonHelper: CommonHelper::new(),
-      homeAppFolder: env::var("APP_HOMEFOLDER").expect("APP_HOMEFOLDER not set"),
+      homeAppFolder: envValue,
     }
   }
 

@@ -10,9 +10,10 @@ pub struct ManageXlsController {
 }
 
 impl ManageXlsController {
-  pub fn new() -> Self {
+  #[allow(non_snake_case)]
+  pub fn new(envValue: String) -> Self {
     Self {
-      manageXlsService: manage_xls_service::ManageXlsService::new(),
+      manageXlsService: manage_xls_service::ManageXlsService::new(envValue),
     }
   }
 

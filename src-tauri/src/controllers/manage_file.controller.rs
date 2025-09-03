@@ -10,9 +10,10 @@ pub struct ManageFileController {
 }
 
 impl ManageFileController {
-  pub fn new() -> Self {
+  #[allow(non_snake_case)]
+  pub fn new(envValue: String) -> Self {
     Self {
-      manageFileService: manage_file_service::ManageFileService::new(),
+      manageFileService: manage_file_service::ManageFileService::new(envValue),
     }
   }
 

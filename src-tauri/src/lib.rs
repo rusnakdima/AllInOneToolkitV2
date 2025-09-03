@@ -6,7 +6,8 @@ mod routes;
 mod services;
 
 /* sys lib */
-use std::sync::Arc;
+use std::{env, path::PathBuf, sync::Arc};
+use tauri::{path::BaseDirectory, Manager};
 
 /* routes */
 use routes::{
@@ -41,19 +42,38 @@ pub struct AppState {
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
+#[allow(non_snake_case)]
 pub fn run() {
   tauri::Builder::default()
     .plugin(tauri_plugin_dialog::init())
     .plugin(tauri_plugin_shell::init())
     .plugin(tauri_plugin_http::init())
-    .manage(AppState {
-      aboutController: Arc::new(AboutController::new()),
-      manageFileController: Arc::new(ManageFileController::new()),
-      manageXlsController: Arc::new(ManageXlsController::new()),
-      virusTotalController: Arc::new(VirusTotalController::new()),
-      unicodeController: Arc::new(UnicodeController::new()),
-      urlRequestsController: Arc::new(UrlRequestsController::new()),
-      mathController: Arc::new(MathController::new()),
+    .setup(|app| {
+      let resourcePath: PathBuf = app
+        .path()
+        .resolve(".env", BaseDirectory::Resource)
+        .expect("Failed to resolve .env resource path");
+      dotenvy::from_path(&resourcePath).ok();
+
+      app.manage(AppState {
+        aboutController: Arc::new(AboutController::new(
+          env::var("NAME_APP").expect("NAME_APP not set"),
+        )),
+        manageFileController: Arc::new(ManageFileController::new(
+          env::var("APP_HOME_FOLDER").expect("APP_HOME_FOLDER not set"),
+        )),
+        manageXlsController: Arc::new(ManageXlsController::new(
+          env::var("APP_HOME_FOLDER").expect("APP_HOME_FOLDER not set"),
+        )),
+        virusTotalController: Arc::new(VirusTotalController::new()),
+        unicodeController: Arc::new(UnicodeController::new()),
+        urlRequestsController: Arc::new(UrlRequestsController::new(
+          env::var("APP_HOME_FOLDER").expect("APP_HOME_FOLDER not set"),
+        )),
+        mathController: Arc::new(MathController::new()),
+      });
+
+      Ok(())
     })
     .invoke_handler(tauri::generate_handler![
       getBinaryNameFile,

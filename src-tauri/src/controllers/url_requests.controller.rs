@@ -12,9 +12,10 @@ pub struct UrlRequestsController {
 }
 
 impl UrlRequestsController {
-  pub fn new() -> Self {
+  #[allow(non_snake_case)]
+  pub fn new(envValue: String) -> Self {
     Self {
-      urlRequestsService: url_requests_service::UrlRequestsService::new(),
+      urlRequestsService: url_requests_service::UrlRequestsService::new(envValue),
     }
   }
 

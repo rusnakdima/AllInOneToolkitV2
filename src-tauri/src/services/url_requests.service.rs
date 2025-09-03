@@ -1,10 +1,8 @@
 /* sys lib */
-use dotenv::dotenv;
 use encoding_rs::{ISO_8859_10, UTF_8, WINDOWS_1252};
 use reqwest::header::CONTENT_TYPE;
 use roxmltree::Document;
 use serde_json::Value;
-use std::env;
 use std::io::{Read, Write};
 use std::str::FromStr;
 use std::{fs::File, path::Path};
@@ -29,11 +27,11 @@ pub struct UrlRequestsService {
 }
 
 impl UrlRequestsService {
-  pub fn new() -> Self {
-    dotenv().ok();
+  #[allow(non_snake_case)]
+  pub fn new(envValue: String) -> Self {
     Self {
       commonHelper: CommonHelper::new(),
-      homeAppFolder: env::var("APP_HOMEFOLDER").expect("APP_HOMEFOLDER not set"),
+      homeAppFolder: envValue,
     }
   }
 

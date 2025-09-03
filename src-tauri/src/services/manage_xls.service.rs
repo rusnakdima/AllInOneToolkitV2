@@ -1,8 +1,6 @@
 /* sys lib */
 use calamine::{open_workbook, Reader, Xlsx};
-use dotenv::dotenv;
 use rust_xlsxwriter::Workbook;
-use std::env;
 use std::path::Path;
 use tauri::Manager;
 
@@ -24,11 +22,11 @@ pub struct ManageXlsService {
 }
 
 impl ManageXlsService {
-  pub fn new() -> Self {
-    dotenv().ok();
+  #[allow(non_snake_case)]
+  pub fn new(envValue: String) -> Self {
     Self {
       commonHelper: CommonHelper::new(),
-      homeAppFolder: env::var("APP_HOMEFOLDER").expect("APP_HOMEFOLDER not set"),
+      homeAppFolder: envValue,
     }
   }
 
