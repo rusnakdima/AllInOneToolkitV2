@@ -12,40 +12,16 @@ jobs:
 
       - name: Create Discord Forum Post
         run: |
-          # Create JSON payload safely
-          cat > payload.json << 'EOF'
-          {
-            "name": "🚀 All In One Toolkit V2 (Beta release ${{ github.event.release.tag_name }})",
-            "auto_archive_duration": 4320,
-            "message": {
-              "content": `
-                **🚀 New Release Available!**
-
-                📦 **Version:** ${{ github.event.release.tag_name }}
-                🔗 **Download:** ${{ github.event.release.html_url }}
-
-                📝 **Release Notes:**
-                Information about the changes is shown in the picture.
-
-                ---
-
-                **🇷🇺 Русский перевод**
-                **🚀 Новая версия доступна!**
-
-                📦 **Версия:** ${{ github.event.release.tag_name }}
-                🔗 **Скачать:** ${{ github.event.release.html_url }}
-
-                📝 **Примечания к выпуску:**
-                Информация об изменениях изображена на картинке.
-              `
-            }
-          }
-          EOF
-
           # Send the request
           curl -X POST "${{ secrets.WEBHOOK_URL }}" \
             -H "Authorization: Bot ${{ secrets.DISCORD_BOT_TOKEN }}" \
             -H "Content-Type: application/json" \
-            --data @payload.json \
+            --data '{
+              "name": "🚀 All In One Toolkit V2 (Beta release ${{ github.event.release.tag_name }})",
+              "auto_archive_duration": 4320,
+              "message": {
+                "content": "**🚀 New Release Available!**\n\n📦 **Version:** ${{ github.event.release.tag_name }}\n🔗 **Download:** ${{ github.event.release.html_url }}\n\n📝 **Release Notes:**\nInformation about the changes is shown in the picture.\n\n---\n\n**🇷🇺 Русский перевод**\n**🚀 Новая версия доступна!**\n\n📦 **Версия:** ${{ github.event.release.tag_name }}\n🔗 **Скачать:** ${{ github.event.release.html_url }}\n\n📝 **Примечания к выпуску:**\nИнформация об изменениях изображена на картинке."
+              }
+            }' \
             --fail \
             --show-error
