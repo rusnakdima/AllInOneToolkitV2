@@ -28,7 +28,7 @@ impl ManageXlsService {
     dotenv().ok();
     Self {
       commonHelper: CommonHelper::new(),
-      homeAppFolder: env::var("HOME_APP_FOLDER").expect("HOME_APP_FOLDER not set"),
+      homeAppFolder: env::var("APP_HOMEFOLDER").expect("APP_HOMEFOLDER not set"),
     }
   }
 
