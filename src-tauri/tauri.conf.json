@@ -51,6 +51,10 @@
         "release": "1"
       }
     },
+    "iOS": {
+      "minimumSystemVersion": "14.0",
+      "developmentTeam": "TechCraft Solutions"
+    },
     "windows": {
       "webviewInstallMode": {
         "type": "embedBootstrapper"
