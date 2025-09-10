@@ -6,8 +6,11 @@ mod routes;
 mod services;
 
 /* sys lib */
-use std::{env, path::PathBuf, sync::Arc};
-use tauri::{path::BaseDirectory, Manager};
+use std::sync::Arc;
+use tauri::Manager;
+
+/* helpers */
+use helpers::config::ConfigHelper;
 
 /* routes */
 use routes::{
@@ -49,27 +52,15 @@ pub fn run() {
     .plugin(tauri_plugin_shell::init())
     .plugin(tauri_plugin_http::init())
     .setup(|app| {
-      let resourcePath: PathBuf = app
-        .path()
-        .resolve(".env", BaseDirectory::Resource)
-        .expect("Failed to resolve .env resource path");
-      dotenvy::from_path(&resourcePath).ok();
+      let config = ConfigHelper::new();
 
       app.manage(AppState {
-        aboutController: Arc::new(AboutController::new(
-          env::var("NAME_APP").expect("NAME_APP not set"),
-        )),
-        manageFileController: Arc::new(ManageFileController::new(
-          env::var("APP_HOME_FOLDER").expect("APP_HOME_FOLDER not set"),
-        )),
-        manageXlsController: Arc::new(ManageXlsController::new(
-          env::var("APP_HOME_FOLDER").expect("APP_HOME_FOLDER not set"),
-        )),
+        aboutController: Arc::new(AboutController::new(config.nameApp.clone())),
+        manageFileController: Arc::new(ManageFileController::new(config.appHomeFolder.clone())),
+        manageXlsController: Arc::new(ManageXlsController::new(config.appHomeFolder.clone())),
         virusTotalController: Arc::new(VirusTotalController::new()),
         unicodeController: Arc::new(UnicodeController::new()),
-        urlRequestsController: Arc::new(UrlRequestsController::new(
-          env::var("APP_HOME_FOLDER").expect("APP_HOME_FOLDER not set"),
-        )),
+        urlRequestsController: Arc::new(UrlRequestsController::new(config.appHomeFolder.clone())),
         mathController: Arc::new(MathController::new()),
       });
 
