@@ -235,11 +235,12 @@ impl UrlRequestsService {
     let response_result = match infoRequest.typeReq {
       TypeRequest::GET => client.get(&url).headers(headers).send().await,
       TypeRequest::POST | TypeRequest::PUT => {
-        let mut requestBuilder = if infoRequest.typeReq == TypeRequest::POST {
-          client.post(&url)
-        } else {
-          client.put(&url)
-        };
+        let mut requestBuilder: reqwest::RequestBuilder =
+          if infoRequest.typeReq == TypeRequest::POST {
+            client.post(&url)
+          } else {
+            client.put(&url)
+          };
 
         requestBuilder = requestBuilder.headers(headers);
 
