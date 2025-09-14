@@ -47,45 +47,48 @@ impl ManageFileService {
 
     let appHandleClone = appHandle.clone();
 
-    appHandle
-      .dialog()
-      .file()
-      .add_filter(_nameFilter, &_listExt)
-      .pick_file(move |filePath| match filePath {
-        Some(path) => {
-          if let Some(path_str) = path.as_path().unwrap().to_str() {
-            let filePathString = path_str.to_string();
+    let mut filDialogBuilder = appHandleClone.dialog().file();
 
-            let _ = appHandleClone.emit(
-              "send-file-path",
-              ResponseModel {
-                status: ResponseStatus::Success,
-                message: "File selected successfully".to_string(),
-                data: DataValue::String(filePathString.clone()),
-              },
-            );
-          } else {
-            let _ = appHandleClone.emit(
-              "send-file-path",
-              ResponseModel {
-                status: ResponseStatus::Error,
-                message: "Failed to convert file path to string".to_string(),
-                data: DataValue::String("".to_string()),
-              },
-            );
-          }
-        }
-        None => {
+    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    {
+      filDialogBuilder = filDialogBuilder.add_filter(_nameFilter, &_listExt);
+    }
+
+    filDialogBuilder.pick_file(move |filePath| match filePath {
+      Some(path) => {
+        if let Some(path_str) = path.as_path().unwrap().to_str() {
+          let filePathString = path_str.to_string();
+
+          let _ = appHandleClone.emit(
+            "send-file-path",
+            ResponseModel {
+              status: ResponseStatus::Success,
+              message: "File selected successfully".to_string(),
+              data: DataValue::String(filePathString.clone()),
+            },
+          );
+        } else {
           let _ = appHandleClone.emit(
             "send-file-path",
             ResponseModel {
               status: ResponseStatus::Error,
-              message: "No file selected or dialog cancelled".to_string(),
+              message: "Failed to convert file path to string".to_string(),
               data: DataValue::String("".to_string()),
             },
           );
         }
-      });
+      }
+      None => {
+        let _ = appHandleClone.emit(
+          "send-file-path",
+          ResponseModel {
+            status: ResponseStatus::Error,
+            message: "No file selected or dialog cancelled".to_string(),
+            data: DataValue::String("".to_string()),
+          },
+        );
+      }
+    });
 
     Ok(ResponseModel {
       status: ResponseStatus::Warning,
