@@ -220,7 +220,6 @@ export class FileInputComponent implements OnInit, OnDestroy {
 
     try {
       const response = await this.fileService.chooseFile<string>(this.typeFile);
-
       this.notifyService.showNotify(response.status, response.message);
     } catch (error: any) {
       this.notifyService.showError(error.message ?? error.toString());
