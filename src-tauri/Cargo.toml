@@ -5,7 +5,7 @@ edition = "2021"
 license = "MIT License"
 name = "allinonetoolkitv2"
 repository = "https://github.com/rusnakdima/AllInOneToolkitV2"
-version = "0.4.3"
+version = "0.4.4"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -20,6 +20,7 @@ name = "allinonetoolkitv2_lib"
 tauri-build = {version = "2", features = [] }
 
 [dependencies]
+base64 = "0.22.1"
 calamine = "0.26.1"
 chrono = "0.4.38"
 dotenv = "0.15.0"
@@ -33,5 +34,5 @@ serde = {version = "1", features = ["derive"] }
 serde_json = "1"
 tauri = {version = "2", features = [] }
 tauri-plugin-dialog = "2"
-tauri-plugin-http = "2.0.1"
+tauri-plugin-http = {version = "2.0.1", features = ['json'] }
 tauri-plugin-shell = "2"
