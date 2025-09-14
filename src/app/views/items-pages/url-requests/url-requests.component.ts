@@ -85,6 +85,7 @@ export class UrlRequestsComponent implements OnInit {
 
   selectedTabIndex: number = 0;
   response: string = "";
+  windowInnerWidth: number = 0;
 
   isShowSidebar: boolean = false;
 
@@ -105,7 +106,9 @@ export class UrlRequestsComponent implements OnInit {
     });
 
     this.widthRightSidebar = window.innerWidth - 300;
+    this.windowInnerWidth = window.innerWidth;
     setInterval(() => {
+      this.windowInnerWidth = window.innerWidth;
       this.widthRightSidebar = window.innerWidth - this.widthLeftSidebar - 10;
     }, 500);
 
@@ -261,7 +264,7 @@ export class UrlRequestsComponent implements OnInit {
       params: [{ key: "", value: "", isActive: false }],
       headers: [
         { key: "Accept", value: "*/*", isActive: true },
-        { key: "Accept-Encoding", value: "gzip, deflate, br", isActive: true },
+        { key: "Accept-Encoding", value: "utf-8", isActive: false },
         { key: "Content-Type", value: "application/json", isActive: true },
         { key: "Connection", value: "keep-alive", isActive: true },
         {

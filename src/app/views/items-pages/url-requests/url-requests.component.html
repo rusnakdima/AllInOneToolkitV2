@@ -1,8 +1,9 @@
 <div class="sticky flex flex-row w-full" style="height: calc(100vh - 72px)">
   <div
     class="flex flex-col gap-y-5 p-3"
+    [ngClass]="windowInnerWidth <= 400 ? 'absolute z-10' : ''"
     style="height: calc(100vh - 72px)"
-    [style.width]="isShowSidebar ? widthLeftSidebar + 'px' : '70px'"
+    [style.width]="isShowSidebar ? widthLeftSidebar + 'px' : '65px'"
   >
     <div class="flex flex-row justify-between !rounded-none styleBorderSolidLite border-b">
       @if (isShowSidebar) {
@@ -180,12 +181,14 @@
 
   <hr
     class="fixed flex flex-col !rounded-none styleBorderSolidLite border-r-2 min-h-full cursor-ew-resize"
-    [style.left]="isShowSidebar ? widthLeftSidebar + 'px' : '70px'"
+    [style.left]="isShowSidebar ? widthLeftSidebar + 'px' : '53px'"
     (mousedown)="onMouseDown($event)"
   />
 
   <div
     class="flex flex-col gap-y-5 p-3 h-full"
+    [ngClass]="windowInnerWidth <= 400 ? 'ml-[54px]' : ''"
+    style="height: calc(100vh - 72px)"
     [style.width]="isShowSidebar ? widthRightSidebar + 'px' : '100%'"
   >
     @if (infoCollection && infoRequest) {
