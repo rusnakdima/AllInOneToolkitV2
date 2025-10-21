@@ -26,6 +26,7 @@ jobs:
         run: |
           # Install any additional dependencies if needed
           echo "Installing macOS dependencies..."
+          brew install cocoapods jq
 
       - name: Install pnpm
         run: |
@@ -107,9 +108,9 @@ jobs:
           crate_name=$(awk '/^\[package\]$/{getline; gsub(/"/, "", $3); print $3}' src-tauri/Cargo.toml)
           lib_name=$(echo "$crate_name" | tr '-' '_')
           PBXPROJ="src-tauri/gen/apple/*.xcodeproj/project.pbxproj"
-          sed -i '' "s/-l\\(\"\\\)\\?app\\(\"\\\)\\?/-l\\1$lib_name\\2/g" $PBXPROJ
-          sed -i '' 's/VALID_ARCHS = \\(\"\\)\\?arm64 x86_64\\(\"\\)\\?/VALID_ARCHS = \\1arm64\\2/g' $PBXPROJ
-          sed -i '' 's/ARCHS = \\(\"\\)\\?arm64 x86_64\\(\"\\)\\?/ARCHS = \\1arm64\\2/g' $PBXPROJ
+          sed -i '' -E 's/-l(")?app(")?/-l\1'"$lib_name"'\2/g' $PBXPROJ
+          sed -i '' -E 's/VALID_ARCHS = ("? )?arm64 x86_64("? )?/VALID_ARCHS = \1arm64\2/g' $PBXPROJ
+          sed -i '' -E 's/ARCHS = ("? )?arm64 x86_64("? )?/ARCHS = \1arm64\2/g' $PBXPROJ
 
       - name: Build iOS app (with signing)
         if: env.ENABLE_CODE_SIGNING == 'true'
