@@ -107,12 +107,13 @@ jobs:
         run: |
           pnpm tauri ios build
 
-      - name: Build iOS app (without signing - for testing)
+      - name: Build iOS simulator app (without signing)
         if: env.ENABLE_CODE_SIGNING == 'false'
         run: |
-          pnpm tauri ios build
+          pnpm tauri ios build --target aarch64-apple-ios-sim
 
-      - name: Create IPA (if xcarchive exists)
+      - name: Create IPA (if xcarchive exists and signing enabled)
+        if: env.ENABLE_CODE_SIGNING == 'true'
         run: |
           XCARCHIVE_PATH=$(find src-tauri/gen/apple -name "*.xcarchive" | head -1)
           if [ -n "$XCARCHIVE_PATH" ] && [ -f "$XCARCHIVE_PATH" ]; then
