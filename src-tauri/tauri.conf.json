@@ -29,11 +29,7 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "icon": [
-      "icons/icon.png",
-      "icons/icon.ico",
-      "icons/128x128.png"
-    ],
+    "icon": ["icons/icon.png", "icons/icon.ico", "icons/128x128.png"],
     "resources": {
       ".env": ".env"
     },
@@ -53,8 +49,7 @@
     },
     "iOS": {
       "minimumSystemVersion": "14.0",
-      "developmentTeam": "TechCraft Solutions",
-      "targets": ["aarch64-sim"]
+      "developmentTeam": "TechCraft Solutions"
     },
     "windows": {
       "webviewInstallMode": {
