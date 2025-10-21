@@ -91,9 +91,12 @@ jobs:
         run: |
           echo "Reading Cargo.toml..."
           cat src-tauri/Cargo.toml
-          crate_name=$(awk '/^\[package\]$/{getline; if ($1 == "name") {gsub(/"/, "", $3); print $3}}' src-tauri/Cargo.toml)
-          lib_name=$(echo "$crate_name" | tr '-' '_')
-          echo "Crate name: $crate_name"
+          # Check for [lib] section name, fall back to [package] name
+          lib_name=$(awk '/^\[lib\]$/{getline; if ($1 == "name") {gsub(/"/, "", $3); print $3; exit}} /^\[package\]$/{getline; if ($1 == "name") {gsub(/"/, "", $3); print $3}}' src-tauri/Cargo.toml | tr '-' '_')
+          if [ -z "$lib_name" ]; then
+            echo "Error: Could not determine library name from Cargo.toml"
+            exit 1
+          fi
           echo "Library name: $lib_name"
           echo "LIB_NAME=$lib_name" >> $GITHUB_ENV
 
@@ -105,6 +108,7 @@ jobs:
           echo "Checking for lib${{ env.LIB_NAME }}.a"
           if [ -f "target/aarch64-apple-ios-sim/release/lib${{ env.LIB_NAME }}.a" ]; then
             echo "Rust library found: lib${{ env.LIB_NAME }}.a"
+            cp target/aarch64-apple-ios-sim/release/lib${{ env.LIB_NAME }}.a gen/apple/Externals/aarch64/release/
           else
             echo "Rust library lib${{ env.LIB_NAME }}.a not found!"
             exit 1
@@ -213,15 +217,4 @@ jobs:
       - name: Find and list build outputs
         run: |
           echo "=== Build outputs ==="
-          find src-tauri/gen/apple -type f -name "*.app" -o -name "*.ipa" -o -name "*.xcarchive" | head -20
-
-      - name: Upload to Existing Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          tag_name: ${{ github.ref_name }}
-          files: |
-            src-tauri/gen/apple/build/*.ipa
-            src-tauri/gen/apple/*.ipa
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          find src-tauri/gen/apple -type f -name "*.app" -o -name "*.ipa
