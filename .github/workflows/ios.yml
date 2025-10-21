@@ -13,8 +13,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: 'macos-latest'
-            args: ''
+          - platform: "macos-latest"
+            args: ""
 
     runs-on: ${{ matrix.platform }}
 
@@ -35,23 +35,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-apple-ios,x86_64-apple-ios,aarch64-apple-ios-sim
 
-      - name: Add iOS Rust targets
-        run: |
-          rustup target add aarch64-apple-ios
-          rustup target add x86_64-apple-ios
-          rustup target add aarch64-apple-ios-sim
-
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
-          workspaces: './src-tauri -> target'
+          workspaces: "./src-tauri -> target"
 
       - name: Install frontend dependencies
         run: pnpm install
@@ -104,6 +98,8 @@ jobs:
               # Use jq to update the development team
               jq '.bundle.iOS.developmentTeam = "${{ secrets.IOS_DEVELOPMENT_TEAM }}"' src-tauri/tauri.conf.json > temp.json && mv temp.json src-tauri/tauri.conf.json
             fi
+            # Set environment variable for ExportOptions.plist
+            echo "DEVELOPMENT_TEAM=${{ secrets.IOS_DEVELOPMENT_TEAM }}" >> $GITHUB_ENV
           fi
 
       - name: Build iOS app (with signing)
@@ -114,29 +110,7 @@ jobs:
       - name: Build iOS app (without signing - for testing)
         if: env.ENABLE_CODE_SIGNING == 'false'
         run: |
-          # Build without code signing for CI testing
-          cd src-tauri/gen/apple
-          xcodebuild -allowProvisioningUpdates \
-            -scheme allinonetoolkitv2_iOS \
-            -workspace allinonetoolkitv2.xcodeproj/project.xcworkspace/ \
-            -sdk iphonesimulator \
-            -configuration Debug \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGNING_ALLOWED=NO \
-            build
-
-      - name: Alternative - Build for iOS Simulator
-        if: failure()
-        run: |
-          echo "Trying iOS Simulator build..."
-          cd src-tauri/gen/apple
-          xcodebuild -allowProvisioningUpdates \
-            -scheme allinonetoolkitv2_iOS \
-            -workspace allinonetoolkitv2.xcodeproj/project.xcworkspace/ \
-            -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=iPhone 15" \
-            build
+          pnpm tauri ios build
 
       - name: Create IPA (if xcarchive exists)
         run: |
@@ -174,7 +148,7 @@ jobs:
               <key>method</key>
               <string>development</string>
               <key>teamID</key>
-              <string>\$DEVELOPMENT_TEAM</string>
+              <string>$DEVELOPMENT_TEAM</string>
               <key>compileBitcode</key>
               <false/>
               <key>destination</key>
@@ -184,7 +158,7 @@ jobs:
               <key>stripSwiftSymbols</key>
               <true/>
               <key>thinning</key>
-              <string>&lt;none&gt;</string>
+              <string><none></string>
           </dict>
           </plist>
           EOF
