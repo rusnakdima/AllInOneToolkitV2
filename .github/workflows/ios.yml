@@ -110,7 +110,7 @@ jobs:
       - name: Build iOS simulator app (without signing)
         if: env.ENABLE_CODE_SIGNING == 'false'
         run: |
-          pnpm tauri ios build --target aarch64-apple-ios-sim
+          pnpm tauri ios build --target aarch64-sim
 
       - name: Create IPA (if xcarchive exists and signing enabled)
         if: env.ENABLE_CODE_SIGNING == 'true'
