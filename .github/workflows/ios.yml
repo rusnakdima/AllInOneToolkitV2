@@ -102,6 +102,14 @@ jobs:
             echo "DEVELOPMENT_TEAM=${{ secrets.IOS_DEVELOPMENT_TEAM }}" >> $GITHUB_ENV
           fi
 
+      - name: Fix Xcode project for correct library name and architectures
+        run: |
+          crate_name=$(awk '/^\[package\]$/{getline; gsub(/"/, "", $3); print $3}' src-tauri/Cargo.toml)
+          lib_name=$(echo "$crate_name" | tr '-' '_')
+          sed -i '' "s/-lapp/-l$lib_name/g" src-tauri/gen/apple/*.xcodeproj/project.pbxproj
+          sed -i '' 's/VALID_ARCHS = "arm64 x86_64"/VALID_ARCHS = "arm64"/g' src-tauri/gen/apple/*.xcodeproj/project.pbxproj
+          sed -i '' 's/ARCHS = "arm64 x86_64"/ARCHS = "arm64"/g' src-tauri/gen/apple/*.xcodeproj/project.pbxproj
+
       - name: Build iOS app (with signing)
         if: env.ENABLE_CODE_SIGNING == 'true'
         run: |
