@@ -53,7 +53,8 @@
     },
     "iOS": {
       "minimumSystemVersion": "14.0",
-      "developmentTeam": "TechCraft Solutions"
+      "developmentTeam": "TechCraft Solutions",
+      "targets": ["aarch64-sim"]
     },
     "windows": {
       "webviewInstallMode": {
