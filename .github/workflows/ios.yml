@@ -67,6 +67,7 @@ jobs:
           CODE_SIGN_IDENTITY: ""
           CODE_SIGNING_REQUIRED: NO
           CODE_SIGNING_ALLOWED: NO
+          DEVELOPMENT_TEAM: "TechCraft Solutions"
         run: pnpm tauri ios build --export-method debugging
 
       - name: Upload IPA artifact
