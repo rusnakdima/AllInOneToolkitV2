@@ -16,8 +16,7 @@ jobs:
           - platform: "macos-latest"
             args: ""
 
-    runs-on: "macos-latest"
-    # runs-on: ${{ matrix.platform }}
+    runs-on: ${{ matrix.platform }}
 
     steps:
       - name: Checkout code
@@ -59,7 +58,7 @@ jobs:
             -e 's/CODE_SIGN_STYLE = "Automatic";/CODE_SIGN_STYLE = "Manual";/g' \
             -e 's/CODE_SIGN_IDENTITY = .*/CODE_SIGN_IDENTITY = "";/g' \
             -e 's/PROVISIONING_PROFILE_SPECIFIER = .*/PROVISIONING_PROFILE_SPECIFIER = "";/g' \
-            -e 's/DEVELOPMENT_TEAM = .*/DEVELOPMENT_TEAM = "";/g' \
+            -e 's/DEVELOPMENT_TEAM = .*/DEVELOPMENT_TEAM = "123456789A";/g' \
             "$PROJECT_FILE"
 
       - name: Build iOS app without signing
