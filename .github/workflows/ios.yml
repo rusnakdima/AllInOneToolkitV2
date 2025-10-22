@@ -16,205 +16,57 @@ jobs:
           - platform: "macos-latest"
             args: ""
 
-    runs-on: ${{ matrix.platform }}
+    runs-on: "macos-latest"
+    # runs-on: ${{ matrix.platform }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Install dependencies (macOS only)
-        if: matrix.platform == 'macos-latest'
-        run: |
-          echo "Installing macOS dependencies..."
-          brew install cocoapods jq
-
-      - name: Install pnpm
-        run: |
-          npm i -g pnpm
-
-      - name: Setup node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
-          cache: "pnpm"
+          node-version: 22
 
-      - name: Install Rust stable
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: aarch64-apple-ios,x86_64-apple-ios,aarch64-apple-ios-sim
+      - name: Enable corepack
+        run: corepack enable
 
-      - name: Rust cache
-        uses: swatinem/rust-cache@v2
-        with:
-          workspaces: "./src-tauri -> target"
+      - name: Setup PNPM
+        run: corepack prepare pnpm@latest --activate
 
-      - name: Install frontend dependencies
+      - name: Install dependencies
         run: pnpm install
 
-      - name: Initialize Tauri iOS (if needed)
-        run: |
-          if [ ! -d "src-tauri/gen/apple" ]; then
-            pnpm tauri ios init
-          fi
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
 
-      - name: Configure iOS Code Signing
-        run: |
-          if [ -n "${{ secrets.IOS_CERTIFICATE_BASE64 }}" ] && [ -n "${{ secrets.IOS_CERTIFICATE_PASSWORD }}" ]; then
-            echo "Setting up production code signing..."
-            mkdir -p ~/certificates
-            echo "${{ secrets.IOS_CERTIFICATE_BASE64 }}" | base64 -d > ~/certificates/certificate.p12
-            security create-keychain -p "temppass" build.keychain
-            security default-keychain -s build.keychain
-            security unlock-keychain -p "temppass" build.keychain
-            security set-keychain-settings -t 3600 -u build.keychain
-            security import ~/certificates/certificate.p12 -k build.keychain -P "${{ secrets.IOS_CERTIFICATE_PASSWORD }}" -T /usr/bin/codesign
-            security set-key-partition-list -S apple-tool:,apple: -s -k "temppass" build.keychain
-            if [ -n "${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}" ]; then
-              mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-              echo "${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}" | base64 -d > ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
-            fi
-            echo "ENABLE_CODE_SIGNING=true" >> $GITHUB_ENV
-          else
-            echo "No signing credentials provided, will build without signing..."
-            echo "ENABLE_CODE_SIGNING=false" >> $GITHUB_ENV
-          fi
+      - name: Add Rust targets for iOS
+        run: rustup target add aarch64-apple-ios x86_64-apple-ios aarch64-apple-ios-sim
 
-      - name: Update Tauri iOS Configuration
+      - name: Clean caches
         run: |
-          if [ -n "${{ secrets.IOS_DEVELOPMENT_TEAM }}" ]; then
-            if [ -f "src-tauri/tauri.conf.json" ]; then
-              jq '.bundle.iOS.developmentTeam = "${{ secrets.IOS_DEVELOPMENT_TEAM }}"' src-tauri/tauri.conf.json > temp.json && mv temp.json src-tauri/tauri.conf.json
-            fi
-            echo "DEVELOPMENT_TEAM=${{ secrets.IOS_DEVELOPMENT_TEAM }}" >> $GITHUB_ENV
-          fi
+          pnpm store prune
+          cargo clean || true  # Clean target dir if exists
 
-      - name: Debug Cargo.toml and Library Name
+      - name: Initialize Tauri iOS project
+        run: pnpm tauri ios init
+
+      - name: Disable code signing in Xcode project
         run: |
-          echo "Reading Cargo.toml..."
-          cat src-tauri/Cargo.toml
-          # Check for [lib] section name, fall back to [package] name
-          lib_name=$(awk '/^\[lib\]$/{getline; if ($1 == "name") {gsub(/"/, "", $3); print $3; exit}} /^\[package\]$/{getline; if ($1 == "name") {gsub(/"/, "", $3); print $3}}' src-tauri/Cargo.toml | tr '-' '_')
-          if [ -z "$lib_name" ]; then
-            echo "Error: Could not determine library name from Cargo.toml"
-            exit 1
-          fi
-          echo "Library name: $lib_name"
-          echo "LIB_NAME=$lib_name" >> $GITHUB_ENV
+          cd src-tauri/gen/apple
+          PROJECT_FILE=$(find . -name "project.pbxproj")
+          sed -i '' -e 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' \
+            -e 's/CODE_SIGN_STYLE = "Automatic";/CODE_SIGN_STYLE = "Manual";/g' \
+            -e 's/CODE_SIGN_IDENTITY = .*/CODE_SIGN_IDENTITY = "";/g' \
+            -e 's/PROVISIONING_PROFILE_SPECIFIER = .*/PROVISIONING_PROFILE_SPECIFIER = "";/g' \
+            -e 's/DEVELOPMENT_TEAM = .*/DEVELOPMENT_TEAM = "";/g' \
+            "$PROJECT_FILE"
 
-      - name: Build Rust Library for Simulator
-        run: |
-          cd src-tauri
-          cargo build --release --target aarch64-apple-ios-sim
-          ls -l target/aarch64-apple-ios-sim/release/
-          echo "Checking for lib${{ env.LIB_NAME }}.a"
-          if [ -f "target/aarch64-apple-ios-sim/release/lib${{ env.LIB_NAME }}.a" ]; then
-            echo "Rust library found: lib${{ env.LIB_NAME }}.a"
-            cp target/aarch64-apple-ios-sim/release/lib${{ env.LIB_NAME }}.a gen/apple/Externals/aarch64/release/
-          else
-            echo "Rust library lib${{ env.LIB_NAME }}.a not found!"
-            exit 1
-          fi
-
-      - name: Fix Xcode project for correct library name and architectures
-        run: |
-          PBXPROJ=$(find src-tauri/gen/apple -name "project.pbxproj" | head -1)
-          if [ -z "$PBXPROJ" ]; then
-            echo "Error: No project.pbxproj found in src-tauri/gen/apple"
-            exit 1
-          fi
-          echo "Found project.pbxproj at: $PBXPROJ"
-          sed -i '' -E 's/-l(")?app(")?/-l\1'"${{ env.LIB_NAME }}"'\2/g' "$PBXPROJ"
-          sed -i '' -E 's/VALID_ARCHS = ("? )?arm64 x86_64("? )?/VALID_ARCHS = \1arm64\2/g' "$PBXPROJ"
-          sed -i '' -E 's/ARCHS = ("? )?arm64 x86_64("? )?/ARCHS = \1arm64\2/g' "$PBXPROJ"
-          echo "Xcode project updated. Verifying changes..."
-          grep "LD.*${{ env.LIB_NAME }}" "$PBXPROJ" || echo "Warning: Library name not found in project.pbxproj"
-          grep "ARCHS" "$PBXPROJ"
-          grep "VALID_ARCHS" "$PBXPROJ"
-
-      - name: Build iOS app (with signing)
-        if: env.ENABLE_CODE_SIGNING == 'true'
-        run: |
-          pnpm tauri ios build
-
-      - name: Build iOS simulator app (without signing)
-        if: env.ENABLE_CODE_SIGNING == 'false'
-        run: |
-          pnpm tauri ios build --target aarch64-apple-ios-sim
-
-      - name: Create IPA (if xcarchive exists and signing enabled)
-        if: env.ENABLE_CODE_SIGNING == 'true'
-        run: |
-          XCARCHIVE_PATH=$(find src-tauri/gen/apple -name "*.xcarchive" | head -1)
-          if [ -n "$XCARCHIVE_PATH" ] && [ -f "$XCARCHIVE_PATH" ]; then
-            echo "Found xcarchive at: $XCARCHIVE_PATH"
-            xcodebuild -exportArchive \
-              -archivePath "$XCARCHIVE_PATH" \
-              -exportPath src-tauri/gen/apple/build \
-              -exportOptionsPlist src-tauri/gen/apple/ExportOptions.plist
-          else
-            echo "No xcarchive found, checking for app bundle..."
-            APP_PATH=$(find src-tauri/gen/apple -name "*.app" | head -1)
-            if [ -n "$APP_PATH" ]; then
-              echo "Found app bundle at: $APP_PATH"
-              IPA_DIR="src-tauri/gen/apple/build"
-              mkdir -p "$IPA_DIR/Payload"
-              cp -r "$APP_PATH" "$IPA_DIR/Payload/"
-              cd "$IPA_DIR"
-              zip -r "../$(basename "$APP_PATH" .app).ipa" Payload/
-              cd - > /dev/null
-            fi
-          fi
-
-      - name: Create ExportOptions.plist (if not exists)
-        run: |
-          if [ ! -f "src-tauri/gen/apple/ExportOptions.plist" ]; then
-            cat > src-tauri/gen/apple/ExportOptions.plist << EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-              <key>method</key>
-              <string>development</string>
-              <key>teamID</key>
-              <string>$DEVELOPMENT_TEAM</string>
-              <key>compileBitcode</key>
-              <false/>
-              <key>destination</key>
-              <string>export</string>
-              <key>signingStyle</key>
-              <string>automatic</string>
-              <key>stripSwiftSymbols</key>
-              <true/>
-              <key>thinning</key>
-              <string><none></string>
-          </dict>
-          </plist>
-          EOF
-          fi
-
-      - name: Upload APP bundle artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-app-bundle
-          path: src-tauri/gen/apple/**/*.app
-          if-no-files-found: warn
+      - name: Build iOS app without signing
+        run: pnpm tauri ios build -- CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO --export-method development
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ios-ipa
-          path: |
-            src-tauri/gen/apple/build/*.ipa
-            src-tauri/gen/apple/*.ipa
-          if-no-files-found: warn
-
-      - name: Upload XCARCHIVE artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-xcarchive
-          path: src-tauri/gen/apple/**/*.xcarchive
-          if-no-files-found: warn
-
-      - name: Find and list build outputs
-        run: |
-          echo "=== Build outputs ==="
-          find src-tauri/gen/apple -type f -name "*.app" -o -name "*.ipa
+          name: ios-app
+          path: src-tauri/gen/apple/build/arm64/*.ipa
