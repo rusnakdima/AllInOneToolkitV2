@@ -46,7 +46,7 @@ jobs:
       - name: Clean caches
         run: |
           pnpm store prune
-          cargo clean || true  # Clean target dir if exists
+          cd src-tauri && cargo clean || true  # Clean target dir if exists
 
       - name: Initialize Tauri iOS project
         run: pnpm tauri ios init
@@ -67,7 +67,7 @@ jobs:
           CODE_SIGN_IDENTITY: ""
           CODE_SIGNING_REQUIRED: NO
           CODE_SIGNING_ALLOWED: NO
-        run: pnpm tauri ios build --export-method development
+        run: pnpm tauri ios build --export-method debugging
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
