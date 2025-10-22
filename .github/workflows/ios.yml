@@ -63,7 +63,11 @@ jobs:
             "$PROJECT_FILE"
 
       - name: Build iOS app without signing
-        run: pnpm tauri ios build -- CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO --export-method development
+        env:
+          CODE_SIGN_IDENTITY: ""
+          CODE_SIGNING_REQUIRED: NO
+          CODE_SIGNING_ALLOWED: NO
+        run: pnpm tauri ios build --export-method development
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
