@@ -1,0 +1,80 @@
+app-id: com.tcs.allinonetoolkitv2
+runtime: org.gnome.Platform
+runtime-version: "48"
+sdk: org.gnome.Sdk
+command: allinonetoolkitv2
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.node22
+  - org.freedesktop.Sdk.Extension.rust-stable
+build-options:
+  append-path: /usr/lib/sdk/node22/bin:/usr/lib/sdk/rust-stable/bin
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --device=dri
+  - --share=network
+  - --filesystem=home
+modules:
+  - name: allinonetoolkitv2
+    buildsystem: simple
+    build-options:
+      build-args:
+        - --share=network
+      env:
+        CARGO_HOME: /run/build/allinonetoolkitv2/cargo
+        RUST_BACKTRACE: "1"
+        CI: "true"
+        NPM_CONFIG_LOGLEVEL: info
+        PNPM_HOME: /run/build/allinonetoolkitv2/.pnpm
+    sources:
+      - type: dir
+        path: ..
+        dest: source
+      - type: script
+        dest-filename: install-pnpm.sh
+        commands:
+          - mkdir -p /run/build/allinonetoolkitv2/.pnpm
+          - curl -fsSL https://github.com/pnpm/pnpm/releases/latest/download/pnpm-linuxstatic-x64 -o /run/build/allinonetoolkitv2/.pnpm/pnpm
+          - chmod +x /run/build/allinonetoolkitv2/.pnpm/pnpm
+    build-commands:
+      # Setup pnpm (latest version)
+      - chmod +x install-pnpm.sh
+      - ./install-pnpm.sh
+
+      # Install dependencies and build Tauri app
+      - |
+        cd source
+        export PATH="/run/build/allinonetoolkitv2/.pnpm:/usr/lib/sdk/node22/bin:/usr/lib/sdk/rust-stable/bin:$PATH"
+
+        # Configure pnpm
+        /run/build/allinonetoolkitv2/.pnpm/pnpm config set store-dir /run/build/allinonetoolkitv2/.pnpm-store
+        /run/build/allinonetoolkitv2/.pnpm/pnpm config set fetch-timeout 600000
+        /run/build/allinonetoolkitv2/.pnpm/pnpm config set fetch-retries 5
+        /run/build/allinonetoolkitv2/.pnpm/pnpm config set network-concurrency 1
+
+        # Install dependencies
+        /run/build/allinonetoolkitv2/.pnpm/pnpm install --frozen-lockfile
+
+        # Build Tauri app (binary only, no bundles needed for Flatpak)
+        /run/build/allinonetoolkitv2/.pnpm/pnpm tauri build --bundles deb
+
+      # Install the binary
+      - install -Dm755 source/src-tauri/target/release/allinonetoolkitv2 /app/bin/allinonetoolkitv2
+
+      # Install icons
+      - install -Dm644 source/src-tauri/icons/128x128.png /app/share/icons/hicolor/128x128/apps/com.tcs.allinonetoolkitv2.png
+      - install -Dm644 source/src-tauri/icons/32x32.png /app/share/icons/hicolor/32x32/apps/com.tcs.allinonetoolkitv2.png
+
+      # Install desktop file
+      - install -Dm644 /dev/stdin /app/share/applications/com.tcs.allinonetoolkitv2.desktop <<EOF
+      - |
+        cat <<EOF > /app/share/applications/com.tcs.allinonetoolkitv2.desktop
+        [Desktop Entry]
+        Type=Application
+        Name=All In One Toolkit v2.0
+        Exec=allinonetoolkitv2
+        Icon=com.tcs.allinonetoolkitv2
+        Categories=Utility;
+        Terminal=false
+        EOF
