@@ -1,0 +1,56 @@
+name: Build for Windows
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  publish-tauri:
+    permissions:
+      contents: write
+    runs-on: windows-2022
+    env:
+      NAME_APP: allinonetoolkitv2
+      APP_HOME_FOLDER: AllInOneToolkitV2
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        run: |
+          npm i -g pnpm
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "pnpm"
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: Install frontend dependencies
+        run: pnpm install
+
+      - name: Build app
+        shell: bash
+        run: |
+          chmod +x ./build-optimized.sh
+          FORCE_BUILD=true ./build-optimized.sh build desktop release
+
+      - name: Upload to Existing Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: |
+            src-tauri/target/release/bundle/msi/*.msi
+            src-tauri/target/release/bundle/nsis/*.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
