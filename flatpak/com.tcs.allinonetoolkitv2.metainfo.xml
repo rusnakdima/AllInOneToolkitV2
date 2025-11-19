@@ -55,9 +55,35 @@
         <p>Fixed Tauri configuration issues and improved Flatpak build process.</p>
       </description>
     </release>
-    <release version="0.4.4" date="2025-11-19">
+    <release version="0.4.4" date="2025-09-14">
       <description>
-        <p>Initial release with basic toolkit functionality.</p>
+        <p>Updated icons in the product</p>
+        <p>Fixed reading the env file on mobile devices</p>
+        <p>Fixed the logic of calling the file selection window</p>
+      </description>
+    </release>
+    <release version="0.4.3" date="2025-09-03">
+      <description>
+        <p>Fixed the logic of getting data from an environment variable</p>
+      </description>
+    </release>
+    <release version="0.4.2" date="2025-08-31">
+      <description>
+        <p>Changed the logic of downloading updates</p>
+        <p>Fixed styles of the update download window</p>
+      </description>
+    </release>
+    <release version="0.4.1" date="2025-08-30">
+      <description>
+        <p>The business structure has been changed</p>
+        <p>The type of the business logic response model has been changed</p>
+        <p>Fixed the color of the text in the notification window</p>
+        <p>Fixed query response parsing</p>
+      </description>
+    </release>
+    <release version="0.4.0" date="2025-08-20">
+      <description>
+        <p>Added new features and improved functionality</p>
       </description>
     </release>
   </releases>
