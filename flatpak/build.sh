@@ -44,7 +44,7 @@ BUILD_DIR="./build"
 REPO_DIR="./repo"
 
 echo -e "${YELLOW}Step 1: Installing required runtimes...${NC}"
-flatpak install -y --user flathub org.gnome.Platform//47 org.gnome.Sdk//47 || true
+flatpak install -y --user flathub org.gnome.Platform//48 org.gnome.Sdk//48 || true
 
 echo -e "${YELLOW}Step 2: Building Tauri app with optimized build process (no bundle)...${NC}"
 # Use the optimized build script from package.json with --no-bundle to avoid linuxdeploy
