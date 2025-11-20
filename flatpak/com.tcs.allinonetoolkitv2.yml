@@ -2,64 +2,37 @@ id: com.tcs.allinonetoolkitv2
 runtime: org.gnome.Platform
 runtime-version: "48"
 sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+  - org.freedesktop.Sdk.Extension.node22
 command: allinonetoolkitv2
-
 finish-args:
-  # Window display permissions
   - --socket=wayland
   - --socket=fallback-x11
   - --device=dri
   - --share=ipc
-
-  # Network access (if your app needs it)
   - --share=network
-
-  # File system access (adjust as needed)
   - --filesystem=home
 
-  # Optional: Tray icon support
-  - --talk-name=org.kde.StatusNotifierWatcher
-  - --filesystem=xdg-run/tray-icon:create
-
-  # Optional: Single instance support
-  - --own-name=com.tcs.allinonetoolkitv2.SingleInstance
-
-  # Optional: Audio support (if your app plays sounds)
-  # - --socket=pulseaudio
-
-  # Optional: Notifications
-  # - --talk-name=org.freedesktop.Notifications
-
 modules:
-  - name: binary
+  - name: allinonetoolkitv2
     buildsystem: simple
-    sources:
-      # Using the portable binary directly from the build output
-      - type: file
-        path: ../src-tauri/target/release/allinonetoolkitv2
-
-      # Desktop file - you'll need to create this
-      - type: file
-        path: com.tcs.allinonetoolkitv2.desktop
-
-      # Icon - adjust path to your actual icon location
-      - type: file
-        path: ../src-tauri/icons/icon.png
-
-      # AppStream metadata
-      - type: file
-        path: com.tcs.allinonetoolkitv2.metainfo.xml
-
     build-commands:
-      # Install binary
+      # Copy the pre-built application binary and other files that have been copied to the build directory
       - install -Dm755 allinonetoolkitv2 /app/bin/allinonetoolkitv2
-
-      # Install desktop file
       - install -Dm644 com.tcs.allinonetoolkitv2.desktop /app/share/applications/com.tcs.allinonetoolkitv2.desktop
-
-      # Install icon (to multiple sizes for better scaling)
       - install -Dm644 icon.png /app/share/icons/hicolor/128x128/apps/com.tcs.allinonetoolkitv2.png
       - install -Dm644 icon.png /app/share/icons/hicolor/256x256/apps/com.tcs.allinonetoolkitv2.png
-
-      # Install AppStream metadata
       - install -Dm644 com.tcs.allinonetoolkitv2.metainfo.xml /app/share/metainfo/com.tcs.allinonetoolkitv2.metainfo.xml
+    sources:
+      # Use the pre-built binary from its build location (relative to project root where flatpak-builder runs)
+      - type: file
+        path: ../src-tauri/target/release/allinonetoolkitv2
+      - type: file
+        path: com.tcs.allinonetoolkitv2.desktop
+      - type: file
+        path: com.tcs.allinonetoolkitv2.metainfo.xml
+      - type: file
+        path: ../src-tauri/icons/icon.png
+    cleanup:
+      - /share/man
