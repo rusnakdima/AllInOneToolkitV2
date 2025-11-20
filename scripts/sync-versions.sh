@@ -37,6 +37,8 @@ fi
 
 # Update environment.ts
 if [ -f "src/environments/environment.ts" ]; then
+	# Handle both single and double quotes for version
+	sed -i "s/version: '[^']*'/version: '$NEW_VERSION'/" src/environments/environment.ts
 	sed -i "s/version: \"[^\"]*\"/version: \"$NEW_VERSION\"/" src/environments/environment.ts
 	echo "✓ Updated src/environments/environment.ts"
 fi
