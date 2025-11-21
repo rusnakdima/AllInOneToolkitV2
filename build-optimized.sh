@@ -112,9 +112,9 @@ build_optimized() {
 	if check_frontend_changes; then
 		print_status "Building frontend..."
 		if [ "$build_type" = "debug" ]; then
-			pnpm build
+			bun run build
 		else
-			pnpm build
+			bun run build
 		fi
 		date +%s >.last-frontend-build
 		print_success "Frontend built successfully"
@@ -125,19 +125,19 @@ build_optimized() {
 	case $target in
 	"desktop")
 		if [ "$build_type" = "debug" ]; then
-			pnpm tauri build --debug
+			bun run tauri build --debug
 		else
-			pnpm tauri build
+			bun run tauri build
 		fi
 		;;
 	"android-apk")
-		pnpm tauri android build --apk
+		bun run tauri android build --apk
 		;;
 	"android-aab")
-		pnpm tauri android build --aab
+		bun run tauri android build --aab
 		;;
 	"android")
-		pnpm tauri android build
+		bun run tauri android build
 		;;
 	"ios")
 		# For iOS, we only build the frontend here

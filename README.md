@@ -120,10 +120,10 @@ node -v
 npm -v
 ```
 
-If you are using the pnpm package manager, then run this command:
+If you are using the bun package manager, then run this command:
 
 ```bash
-pnpm -v
+bun -v
 ```
 
 #### Installation dependencies
@@ -134,10 +134,10 @@ After that, go to the folder with this project and run the following command:
 npm install
 ```
 
-If you are using the pnpm package manager, then run this command:
+If you are using the bun package manager, then run this command:
 
 ```bash
-pnpm install
+bun install
 ```
 
 #### Checking the installed tools to launch the project
@@ -162,7 +162,7 @@ npm run tauri dev
 Or
 
 ```bash
-pnpm tauri dev
+bun run tauri dev
 ```
 
 ## Authors

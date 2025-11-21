@@ -16,8 +16,8 @@
     "tauri:build:android:apk": "tauri android build --apk",
     "tauri:build:android:aab": "tauri android build --aab",
     "build:frontend:check": "ng build --configuration production --output-hashing none",
-    "build:optimized": "pnpm build:prod && pnpm tauri:build",
-    "build:android:optimized": "pnpm build:prod && pnpm tauri:build:android:apk",
+    "build:optimized": "bun run build:prod && bun run tauri:build",
+    "build:android:optimized": "bun run build:prod && bun run tauri:build:android:apk",
     "build:smart": "./build-optimized.sh build desktop release",
     "build:smart:debug": "./build-optimized.sh build desktop debug",
     "build:smart:android": "./build-optimized.sh build android release",
@@ -70,14 +70,5 @@
     "prettier": "3.4.2",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.8.3"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "esbuild",
-      "lmdb",
-      "msgpackr-extract",
-      "nice-napi"
-    ]
   }
 }
