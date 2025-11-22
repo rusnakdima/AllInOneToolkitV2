@@ -23,11 +23,16 @@ modules:
       build-args:
         - "--share=network"
     build-commands:
+      # Binary
       - install -Dm755 src-tauri/target/release/allinonetoolkitv2 /app/bin/allinonetoolkitv2
+      # Metadata
       - install -Dm644 flatpak/com.tcs.allinonetoolkitv2.desktop /app/share/applications/com.tcs.allinonetoolkitv2.desktop
       - install -Dm644 flatpak/com.tcs.allinonetoolkitv2.metainfo.xml /app/share/metainfo/com.tcs.allinonetoolkitv2.metainfo.xml
-      - install -Dm644 src-tauri/icons/icon.png /app/share/icons/hicolor/128x128/apps/com.tcs.allinonetoolkitv2.png
-      - install -Dm644 src-tauri/icons/icon.png /app/share/icons/hicolor/256x256/apps/com.tcs.allinonetoolkitv2.png
+      # Icons
+      - |
+        for size in 128x128 256x256; do
+          install -Dm644 src-tauri/icons/icon.png /app/share/icons/hicolor/$size/apps/com.tcs.allinonetoolkitv2.png
+        done
       - install -Dm644 src-tauri/icons/icon.png /app/share/icons/hicolor/scalable/apps/com.tcs.allinonetoolkitv2.svg
 
     sources:

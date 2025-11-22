@@ -46,21 +46,11 @@ if ! command -v flatpak-builder &>/dev/null; then
 	exit 1
 fi
 
-# Check if required tools are installed based on build type
-if [ "$BUILD_TYPE" = "dev" ]; then
-	# For dev mode, we need bun to build the app first
-	if ! command -v bun &>/dev/null; then
-		echo -e "${RED}Error: bun is not installed for development build${NC}"
-		echo "Install it with: curl -fsSL https://bun.sh/install | bash"
-		exit 1
-	fi
-elif [ "$BUILD_TYPE" = "prod" ]; then
-	# For prod mode, we need node/npm
-	if ! command -v node &>/dev/null; then
-		echo -e "${RED}Error: node is not installed for production build${NC}"
-		echo "Install it with: sudo pacman -S nodejs"
-		exit 1
-	fi
+# Check if bun is installed
+if ! command -v bun &>/dev/null; then
+	echo -e "${RED}Error: bun is not installed for development build${NC}"
+	echo "Install it with: curl -fsSL https://bun.sh/install | bash"
+	exit 1
 fi
 
 # Variables - CUSTOMIZE THESE
@@ -97,7 +87,7 @@ flatpak-builder \
 	--install-deps-from=flathub \
 	--repo="${REPO_DIR}" \
 	"${BUILD_DIR}" \
-	"${MANIFEST}" \
+	"${MANIFEST}"
 
 echo -e "${YELLOW}Step 4: Creating Flatpak bundle...${NC}"
 flatpak build-bundle "${REPO_DIR}" "${APP_ID}.flatpak" "${APP_ID}"
