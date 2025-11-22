@@ -36,3 +36,46 @@ When you run the script:
 6. Adds a new release entry to the metainfo.xml with current date
 
 This ensures consistency across all version references in the project.
+
+## Build Scripts
+
+### `build-optimized.sh`
+
+An optimized build script that helps avoid unnecessary recompilation of Tauri components by checking if frontend or Rust code has changed since the last build.
+
+#### Usage
+
+```bash
+# Build for desktop (default to release)
+./scripts/build-optimized.sh build desktop release
+
+# Build for desktop in debug mode
+./scripts/build-optimized.sh build desktop debug
+
+# Build for Android APK
+./scripts/build-optimized.sh build android-apk release
+
+# Build for Android AAB
+./scripts/build-optimized.sh build android-aab release
+
+# Clean all build artifacts
+./scripts/build-optimized.sh clean
+```
+
+### `build-tauri-appimage-arch.sh`
+
+A containerized build script that creates an AppImage for Tauri applications using Arch Linux and Podman. It uses Bun as the package manager exclusively and ensures all dependencies are properly installed in a containerized environment.
+
+#### Usage
+
+```bash
+# Build an AppImage for the current architecture
+./scripts/build-tauri-appimage-arch.sh
+```
+
+This script will:
+- Run in a containerized Arch Linux environment
+- Install all necessary dependencies
+- Use Bun exclusively for package management
+- Build the Tauri application
+- Create an AppImage bundle
