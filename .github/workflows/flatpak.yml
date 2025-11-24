@@ -10,14 +10,22 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-latest # Using newer Ubuntu for better support
+    env:
+      NAME_APP: allinonetoolkitv2
+      APP_HOME_FOLDER: AllInOneToolkitV2
 
     steps:
       - uses: actions/checkout@v4
 
+      - name: Create .env file
+        run: |
+          echo "NAME_APP=allinonetoolkitv2" > src-tauri/.env
+          echo "APP_HOME_FOLDER=AllInOneToolkitV2" >> src-tauri/.env
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Setup bun
         uses: oven-sh/setup-bun@v2
@@ -47,22 +55,22 @@ jobs:
 
       - name: Add flathub remote
         run: |
-          flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
       - name: Install Flatpak runtime and SDK
         run: |
-          flatpak install --noninteractive flathub org.gnome.Platform//48
-          flatpak install --noninteractive flathub org.gnome.Sdk//48
-          flatpak install --noninteractive flathub org.freedesktop.Sdk.Extension.node22//24.08
-          flatpak install --noninteractive flathub org.freedesktop.Sdk.Extension.rust-stable//24.08
+          flatpak install --user --noninteractive flathub org.gnome.Platform//48
+          flatpak install --user --noninteractive flathub org.gnome.Sdk//48
+          flatpak install --user --noninteractive flathub org.freedesktop.Sdk.Extension.node22//24.08
+          flatpak install --user --noninteractive flathub org.freedesktop.Sdk.Extension.rust-stable//24.08
 
-      - name: Build Tauri application
-        run: |
-          bun run tauri:build:fast
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
+      # - name: Build Tauri application
+      #   run: |
+      #     bun run tauri:build:fast
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+      #     TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
 
       - name: Build Flatpak using manifest
         run: |

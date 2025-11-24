@@ -17,9 +17,17 @@ jobs:
             args: ""
 
     runs-on: ${{ matrix.platform }}
+    env:
+      NAME_APP: allinonetoolkitv2
+      APP_HOME_FOLDER: AllInOneToolkitV2
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: |
+          echo "NAME_APP=allinonetoolkitv2" > src-tauri/.env
+          echo "APP_HOME_FOLDER=AllInOneToolkitV2" >> src-tauri/.env
 
       - name: Install dependencies (macOS only)
         if: matrix.platform == 'macos-latest'
@@ -30,7 +38,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: "22"
 
       - name: Setup bun
         uses: oven-sh/setup-bun@v2
