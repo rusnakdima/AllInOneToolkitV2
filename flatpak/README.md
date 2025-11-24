@@ -13,7 +13,7 @@ To build the Flatpak:
 
 1. Ensure you have `flatpak` and `flatpak-builder` installed on your system.
 2. Run `./build.sh` from this directory.
-3. This will create a `build-dir` with the built application.
+3. This will create a `build` with the built application.
 
 To create a distributable `.flatpak` bundle:
 
