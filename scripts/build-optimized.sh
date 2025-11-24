@@ -114,7 +114,7 @@ build_optimized() {
 		if [ "$build_type" = "debug" ]; then
 			bun run build
 		else
-			bun run build
+			bun run build:prod
 		fi
 		date +%s >.last-frontend-build
 		print_success "Frontend built successfully"
@@ -130,12 +130,6 @@ build_optimized() {
 			bun run tauri build
 		fi
 		;;
-	"android-apk")
-		bun run tauri android build --apk
-		;;
-	"android-aab")
-		bun run tauri android build --aab
-		;;
 	"android")
 		bun run tauri android build
 		;;
@@ -146,7 +140,7 @@ build_optimized() {
 		;;
 	*)
 		print_error "Unknown target: $target"
-		echo "Available targets: desktop, android, android-apk, android-aab, ios"
+		echo "Available targets: desktop, android, ios"
 		exit 1
 		;;
 	esac
@@ -178,8 +172,6 @@ usage() {
 	echo "Targets:"
 	echo "  desktop               - Desktop application (default)"
 	echo "  android               - Android application"
-	echo "  android-apk           - Android APK only"
-	echo "  android-aab           - Android AAB only"
 	echo "  ios                   - iOS application (frontend only)"
 	echo ""
 	echo "Types:"

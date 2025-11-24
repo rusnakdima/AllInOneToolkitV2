@@ -43,7 +43,7 @@ if [ -f "src/environments/environment.ts" ]; then
 	echo "✓ Updated src/environments/environment.ts"
 fi
 
-# Update Flatpak manifest - only update the app version, not runtime-version or sdk version
+# Update Flatpak manifest
 if [ -f "flatpak/com.tcs.allinonetoolkitv2.yml" ]; then
 	# Update only the version field (not runtime-version or sdk version)
 	sed -i "s/^version: .*/version: '$NEW_VERSION'/" flatpak/com.tcs.allinonetoolkitv2.yml
@@ -64,52 +64,26 @@ update_metainfo() {
 		return
 	fi
 
-	# Check if xmlstarlet is available for proper XML manipulation
-	if command -v xmlstarlet &>/dev/null; then
-		# Create a temporary file with the new release
-		xmlstarlet ed \
-			-s '//releases' -t elem -n 'release-tmp' \
-			-i '//release-tmp' -t attr -n 'version' -v "$NEW_VERSION" \
-			-i '//release-tmp' -t attr -n 'date' -v "$CURRENT_DATE" \
-			-s '//release-tmp' -t elem -n 'description' \
-			-s '//release-tmp/description' -t elem -n 'p' -v 'Release version '"$NEW_VERSION" \
-			-r '//release-tmp' -v 'release' \
-			"$metainfo_file" >/tmp/metainfo_tmp.xml
+	# Fallback method: simple text replacement
+	cp "$metainfo_file" "${metainfo_file}.bak"
 
-		# Move releases to be first child
-		xmlstarlet ed \
-			-m '//release[1]' -i '//releases/release[2]' \
-			/tmp/metainfo_tmp.xml >"$metainfo_file"
+	# Insert the new release after <releases> tag
+	awk -v version="$NEW_VERSION" -v date="$CURRENT_DATE" '
+		/<releases>/ {
+				print $0
+				print "    <release version=\"" version "\" date=\"" date "\">"
+				print "      <description>"
+				print "        <p>Release version " version "</p>"
+				print "      </description>"
+				print "    </release>"
+				next
+		}
+		{ print }
+	' "${metainfo_file}.bak" >"$metainfo_file"
 
-		rm -f /tmp/metainfo_tmp.xml
-		echo "✓ Updated $metainfo_file with new release using xmlstarlet"
-	else
-		# Fallback method: simple text replacement
-		cp "$metainfo_file" "${metainfo_file}.bak"
-
-		# Insert the new release after <releases> tag
-		awk -v version="$NEW_VERSION" -v date="$CURRENT_DATE" '
-        /<releases>/ {
-            print $0
-            print "    <release version=\"" version "\" date=\"" date "\">"
-            print "      <description>"
-            print "        <p>Release version " version "</p>"
-            print "      </description>"
-            print "    </release>"
-            next
-        }
-        { print }
-        ' "${metainfo_file}.bak" >"$metainfo_file"
-
-		rm -f "${metainfo_file}.bak"
-		echo "✓ Updated $metainfo_file with new release"
-	fi
+	rm -f "${metainfo_file}.bak"
+	echo "✓ Updated $metainfo_file with new release"
 }
-
-# # Update metainfo in root directory
-# if [ -f "com.tcs.allinonetoolkitv2.metainfo.xml" ]; then
-#     update_metainfo "com.tcs.allinonetoolkitv2.metainfo.xml"
-# fi
 
 # Update metainfo in flatpak directory
 if [ -f "flatpak/com.tcs.allinonetoolkitv2.metainfo.xml" ]; then
