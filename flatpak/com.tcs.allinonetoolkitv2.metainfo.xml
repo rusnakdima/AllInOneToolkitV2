@@ -66,11 +66,6 @@
   </provides>
 
   <releases>
-    <release version="0.4.5" date="2025-11-19">
-      <description>
-        <p>Fixed Tauri configuration issues and improved Flatpak build process.</p>
-      </description>
-    </release>
     <release version="0.4.4" date="2025-09-14">
       <description>
         <p>Updated icons in the product</p>
