@@ -1,4 +1,4 @@
-app-id: com.tcs.allinonetoolkitv2
+app-id: com.tcs.allinonetoolkitv2.local
 runtime: org.gnome.Platform
 runtime-version: "48"
 sdk: org.gnome.Sdk
@@ -13,7 +13,9 @@ finish-args:
   - --device=dri
   - --share=ipc
   - --share=network
-  - --filesystem=home
+  # Access to common user directories
+  - --filesystem=xdg-documents
+  - --filesystem=xdg-download
 
 modules:
   - name: allinonetoolkitv2-local
@@ -26,14 +28,14 @@ modules:
       # Binary
       - install -Dm755 src-tauri/target/release/allinonetoolkitv2 /app/bin/allinonetoolkitv2
       # Metadata
-      - install -Dm644 flatpak/com.tcs.allinonetoolkitv2.desktop /app/share/applications/com.tcs.allinonetoolkitv2.desktop
-      - install -Dm644 flatpak/com.tcs.allinonetoolkitv2.metainfo.xml /app/share/metainfo/com.tcs.allinonetoolkitv2.metainfo.xml
+      - install -Dm644 com.tcs.allinonetoolkitv2.desktop /app/share/applications/com.tcs.allinonetoolkitv2.local.desktop
+      - install -Dm644 com.tcs.allinonetoolkitv2.metainfo.xml /app/share/metainfo/com.tcs.allinonetoolkitv2.local.metainfo.xml
       # Icons
       - |
         for size in 128x128 256x256; do
-          install -Dm644 src-tauri/icons/icon.png /app/share/icons/hicolor/$size/apps/com.tcs.allinonetoolkitv2.png
+          install -Dm644 src-tauri/icons/icon.png /app/share/icons/hicolor/$size/apps/com.tcs.allinonetoolkitv2.local.png
         done
-      - install -Dm644 src-tauri/icons/icon.png /app/share/icons/hicolor/scalable/apps/com.tcs.allinonetoolkitv2.svg
+      - install -Dm644 src-tauri/icons/icon.png /app/share/icons/hicolor/scalable/apps/com.tcs.allinonetoolkitv2.local.svg
 
     sources:
       - type: file

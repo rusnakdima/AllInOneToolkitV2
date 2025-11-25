@@ -26,8 +26,24 @@
 
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/rusnakdima/AllInOneToolkitV2/master/imgREADME/about.png</image>
-      <caption>The main window of All In One Toolkit</caption>
+      <image>https://dl.flathub.org/media/org.flathub.Flathub/screenshots/com.tcs.allinonetoolkitv2/about.png</image>
+      <caption>The about page in All In One Toolkit v2</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://dl.flathub.org/media/org.flathub.Flathub/screenshots/com.tcs.allinonetoolkitv2/catalogs.png</image>
+      <caption>The catalog page contains a list of the categories of various tools</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://dl.flathub.org/media/org.flathub.Flathub/screenshots/com.tcs.allinonetoolkitv2/converters-category.png</image>
+      <caption>Converters category with various conversion tools</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://dl.flathub.org/media/org.flathub.Flathub/screenshots/com.tcs.allinonetoolkitv2/json-to-table.png</image>
+      <caption>JSON to table converter tool in action</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://dl.flathub.org/media/org.flathub.Flathub/screenshots/com.tcs.allinonetoolkitv2/markdown-editor.png</image>
+      <caption>Markdown editor with live preview</caption>
     </screenshot>
   </screenshots>
 
