@@ -13,7 +13,6 @@ finish-args:
   - --device=dri
   - --share=ipc
   - --share=network
-  # Access to common user directories
   - --filesystem=xdg-documents
   - --filesystem=xdg-download
 
