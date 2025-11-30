@@ -64,27 +64,30 @@ jobs:
           flatpak install --user --noninteractive flathub org.freedesktop.Sdk.Extension.node22//24.08
           flatpak install --user --noninteractive flathub org.freedesktop.Sdk.Extension.rust-stable//24.08
 
-      # - name: Build Tauri application
-      #   run: |
-      #     bun run tauri:build:fast
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-      #     TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
-
-      - name: Build Flatpak using manifest
+      - name: Build Tauri application
         run: |
-          flatpak-builder --force-clean --repo=repo --install-deps-from=flathub build-dir flatpak/com.tcs.allinonetoolkitv2.yml
+          bun run tauri:build:fast
+
+      - name: Build Flatpak
+        run: |
+          flatpak-builder \
+            --disable-cache \
+            --force-clean \
+            --user \
+            --install-deps-from=flathub \
+            --repo=repo \
+            build \
+            flatpak/com.tcs.allinonetoolkitv2.yml
 
       - name: Create Flatpak bundle
         run: |
-          flatpak build-bundle repo allinonetoolkitv2.flatpak com.tcs.allinonetoolkitv2
+          flatpak build-bundle repo com.tcs.allinonetoolkitv2.flatpak com.tcs.allinonetoolkitv2
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: allinonetoolkitv2.flatpak
+          files: com.tcs.allinonetoolkitv2.flatpak
           name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
