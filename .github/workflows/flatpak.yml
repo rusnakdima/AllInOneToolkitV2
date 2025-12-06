@@ -78,6 +78,10 @@ jobs:
             --repo=repo \
             build \
             flatpak/com.tcs.allinonetoolkitv2.yml
+          if [ $? -ne 0 ]; then
+            echo "Flatpak build failed"
+            exit 1
+          fi
 
       - name: Create Flatpak bundle
         run: |
