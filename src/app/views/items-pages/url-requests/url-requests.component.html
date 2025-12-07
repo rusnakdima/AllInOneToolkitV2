@@ -1,147 +1,556 @@
-<div class="sticky flex flex-row w-full" style="height: calc(100vh - 72px)">
+@if (windowInnerWidth <= 768 && isShowSidebar) {
   <div
-    class="flex flex-col gap-y-5 p-3"
-    [ngClass]="windowInnerWidth <= 400 ? 'absolute z-10' : ''"
-    style="height: calc(100vh - 72px)"
-    [style.width]="isShowSidebar ? widthLeftSidebar + 'px' : '65px'"
+    class="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+    (click)="isShowSidebar = false"
+  ></div>
+}
+
+<div class="flex h-screen relative">
+  <div
+    class="bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-lg transition-transform duration-300 ease-in-out z-30
+           md:relative md:translate-x-0
+           {{
+      windowInnerWidth <= 768
+        ? isShowSidebar
+          ? 'absolute left-0 top-0 h-full w-80'
+          : '-translate-x-full absolute'
+        : isShowSidebar
+          ? 'w-80'
+          : 'w-16'
+    }}"
   >
-    <div class="flex flex-row justify-between !rounded-none styleBorderSolidLite border-b">
-      @if (isShowSidebar) {
-        <button (click)="createCollection()">
-          <mat-icon fontIcon="add" matTooltip="Create new collection" />
-        </button>
-      }
+    <div class="flex flex-col h-full">
+      <div
+        class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900"
+      >
+        @if (isShowSidebar) {
+          <h2 class="text-lg font-semibold text-gray-800 dark:text-white">Collections</h2>
+        }
+        <div class="flex flex-row gap-x-1">
+          @if (isShowSidebar) {
+            <button
+              class="p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              (click)="createCollection()"
+              matTooltip="Create new collection"
+            >
+              <mat-icon
+                fontIcon="add"
+                class="!w-6 !h-6 !text-2xl text-gray-600 dark:text-gray-300"
+              />
+            </button>
+          }
+          @if (windowInnerWidth <= 768) {
+            <button
+              class="ml-2 p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              (click)="isShowSidebar = false"
+            >
+              <mat-icon
+                fontIcon="close"
+                class="!w-6 !h-6 !text-2xl text-gray-600 dark:text-gray-300"
+              />
+            </button>
+          } @else if (isShowSidebar) {
+            <button
+              class="ml-2 p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              (click)="isShowSidebar = false"
+            >
+              <mat-icon
+                fontIcon="chevron_left"
+                class="!w-6 !h-6 !text-2xl text-gray-600 dark:text-gray-300"
+              />
+            </button>
+          } @else {
+            <button
+              class="p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              (click)="isShowSidebar = true"
+            >
+              <mat-icon
+                fontIcon="chevron_right"
+                class="!w-6 !h-6 !text-2xl text-gray-600 dark:text-gray-300"
+              />
+            </button>
+          }
+        </div>
+      </div>
 
       @if (isShowSidebar) {
-        <button (click)="isShowSidebar = false">
-          <mat-icon fontIcon="chevron_left" matTooltip="Close Menu" />
-        </button>
-      } @else {
-        <button (click)="isShowSidebar = true">
-          <mat-icon fontIcon="chevron_right" matTooltip="Open Menu" />
-        </button>
-      }
-    </div>
-
-    @if (isShowSidebar) {
-      <div class="overflow-y-auto" style="height: calc(100vh - 150px)">
-        <div
-          class="flex flex-col gap-y-3"
-          cdkDropList
-          (cdkDropListDropped)="dropCollections($event)"
-        >
-          @for (coll of listCollections; track coll; let i = $index) {
-            <mat-expansion-panel [togglePosition]="'before'" cdkDrag>
-              <mat-expansion-panel-header>
-                <div
-                  class="relative flex flex-row justify-between items-center gap-x-3 w-full h-auto overflow-x-auto"
-                >
-                  @if (coll.editTitle) {
-                    <input
-                      class="styleField !text-base !w-full"
-                      type="text"
-                      [(ngModel)]="prevTitleCollection"
-                      (keyup)="setTitle($event, 'collection', coll)"
-                    />
-
-                    <div class="absolute flex flex-row justify-center items-center gap-x-1 right-0">
-                      <button (click)="confirmRenameCollection($event, coll)">
-                        <mat-icon fontIcon="checkmark" matTooltip="Save" />
-                      </button>
-                      <button (click)="cancelRenameCollection($event, coll)">
-                        <mat-icon fontIcon="close" matTooltip="Cancel" />
-                      </button>
-                    </div>
-                  } @else {
-                    <div class="flex flex-row justify-between items-center gap-x-3 group w-full">
-                      <span>{{ coll.title }}</span>
-                      <div
-                        class="flex flex-row justify-center items-center gap-x-2 opacity-0 group-hover:opacity-100"
-                      >
-                        <button (click)="renameCollection(coll)">
+        <div class="flex-1 overflow-y-auto p-2">
+          <div
+            class="flex flex-col gap-y-2"
+            cdkDropList
+            (cdkDropListDropped)="dropCollections($event)"
+          >
+            @for (coll of listCollections; track coll; let i = $index) {
+              <mat-accordion class="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-sm" cdkDrag>
+                <mat-expansion-panel class="rounded-lg bg-transparent shadow-none">
+                  <mat-expansion-panel-header class="px-3 py-2 min-h-0">
+                    <div class="flex items-center justify-between w-full group">
+                      @if (coll.editTitle) {
+                        <input
+                          class="flex-1 bg-transparent styleBorderSolidLite !border-blue-500 outline-none text-gray-900 dark:text-white !w-1 !h-8"
+                          type="text"
+                          (click)="$event.stopPropagation()"
+                          [(ngModel)]="prevTitleCollection"
+                          (keyup)="setTitle($event, 'collection', coll)"
+                          placeholder="Collection title"
+                        />
+                      } @else {
+                        <span
+                          class="text-sm font-medium text-gray-800 dark:text-gray-100 truncate"
+                          [title]="coll.title"
+                          >{{ coll.title }}</span
+                        >
+                      }
+                      @if (coll.editTitle) {
+                        <mat-icon
+                          fontIcon="check"
+                          class="!w-5 !h-7 !text-xl text-gray-600 dark:text-gray-300 hover:text-blue-200 dark:hover:text-blue-600"
+                          (click)="confirmRenameCollection($event, coll)"
+                        />
+                        <mat-icon
+                          fontIcon="cancel"
+                          class="!w-5 !h-7 !text-xl text-gray-600 dark:text-gray-300 hover:text-blue-200 dark:hover:text-blue-600"
+                          (click)="cancelRenameCollection($event, coll)"
+                        />
+                      } @else {
+                        <div
+                          class="flex items-center gap-1 mr-2 opacity-0 group-hover:opacity-100"
+                          cdkDragHandle
+                        >
                           <mat-icon
-                            class="!text-xl"
-                            fontIcon="create"
-                            matTooltip="Rename collection"
+                            (click)="$event.stopPropagation(); renameCollection(coll)"
+                            fontIcon="edit"
+                            class="!w-5 !h-7 !text-xl text-gray-600 dark:text-gray-300 hover:text-blue-200 dark:hover:text-blue-600"
                           />
-                        </button>
-                        <button (click)="deleteCollection(i)">
                           <mat-icon
-                            class="!text-xl"
+                            (click)="deleteCollection(i)"
                             fontIcon="delete"
-                            matTooltip="Delete collection"
+                            class="!w-5 !h-7 !text-xl text-gray-600 dark:text-gray-300 hover:text-red-200 dark:hover:text-red-600"
                           />
-                        </button>
-                      </div>
+                        </div>
+                      }
                     </div>
-                  }
-                </div>
-              </mat-expansion-panel-header>
+                  </mat-expansion-panel-header>
 
-              <div class="flex flex-col gap-y-5 p-2">
-                <div class="flex flex-row !rounded-none styleBorderSolidLite border-b">
-                  <button (click)="createRequest(coll)">
-                    <mat-icon fontIcon="add" matTooltip="Create request" />
-                  </button>
-                </div>
-
-                <div
-                  class="flex flex-col gap-y-2 w-full"
-                  cdkDropList
-                  (cdkDropListDropped)="dropRequests($event, i)"
-                >
-                  @for (req of coll.requests; track req; let j = $index) {
-                    <div
-                      class="flex flex-row justify-between items-center gap-x-3 px-1 rounded-xl hover:bg-slate-300 dark:hover:bg-gray-700 w-full overflow-x-auto cursor-pointer"
-                      (click)="getInfo(coll, req)"
-                      cdkDrag
+                  <div class="px-2 pb-2">
+                    <button
+                      class="flex flex-row items-center justify-center gap-x-1 w-full mb-2 p-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg !h-6 text-sm font-medium transition-colors"
+                      (click)="createRequest(coll)"
                     >
-                      <div class="grid grid-cols-12 items-center gap-x-2 w-full">
-                        <span class="col-span-3" [ngClass]="colorTypeRequest[req.typeReq]">{{
-                          req.typeReq
-                        }}</span>
+                      <mat-icon fontIcon="add" class="!w-5 !h-7 !text-xl" />
+                      <span>Add Request</span>
+                    </button>
 
-                        @if (req.editTitle) {
-                          <div class="flex flex-row col-span-9 justify-between items-center w-full">
-                            <input
-                              class="styleField !text-base !w-full"
-                              type="text"
-                              [(ngModel)]="prevTitleRequest"
-                              (keyup)="setTitle($event, 'request', req)"
-                            />
-
-                            <div
-                              class="absolute flex flex-row justify-center items-center gap-x-1 right-4"
+                    <div
+                      class="space-y-1"
+                      cdkDropList
+                      (cdkDropListDropped)="dropRequests($event, i)"
+                    >
+                      @for (req of coll.requests; track req; let j = $index) {
+                        <div
+                          class="flex items-center justify-between px-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer transition-colors group"
+                          (click)="getInfo(coll, req)"
+                          cdkDrag
+                        >
+                          <div class="flex flex-row items-center gap-2 flex-1 min-w-0">
+                            <span
+                              class="flex-1 text-base font-bold px-2 py-1 rounded-full {{
+                                colorTypeRequest[req.typeReq]
+                              }}"
                             >
-                              <button (click)="confirmRenameRequest($event, req)">
-                                <mat-icon fontIcon="checkmark" matTooltip="Save request" />
-                              </button>
-                              <button (click)="cancelRenameRequest($event, req)">
-                                <mat-icon fontIcon="close" matTooltip="Rename request" />
-                              </button>
+                              {{ req.typeReq }}
+                            </span>
+                            <div class="flex flex-1 flex-col justify-start">
+                              @if (req.editTitle) {
+                                <input
+                                  class="flex-1 bg-transparent styleBorderSolidLite !border-blue-500 outline-none text-sm text-gray-900 dark:text-white !w-32"
+                                  type="text"
+                                  [(ngModel)]="prevTitleRequest"
+                                  (keyup)="setTitle($event, 'request', req)"
+                                />
+                              } @else {
+                                <span
+                                  class="text-sm truncate text-gray-700 dark:text-gray-300"
+                                  [title]="req.title"
+                                  >{{ req.title }}</span
+                                >
+                              }
                             </div>
                           </div>
-                        } @else {
-                          <div
-                            class="flex flex-row col-span-9 justify-between items-center w-full group"
-                          >
-                            <span>{{ req.title }}</span>
+                          @if (req.editTitle) {
+                            <div class="flex items-center gap-1 opacity-100">
+                              <mat-icon
+                                fontIcon="check"
+                                class="!w-4 !h-5 !text-base text-gray-600 dark:text-gray-300 hover:text-blue-200 dark:hover:text-blue-600"
+                                (click)="confirmRenameRequest($event, req)"
+                              />
+                              <mat-icon
+                                fontIcon="cancel"
+                                class="!w-4 !h-5 !text-base text-gray-600 dark:text-gray-300 hover:text-blue-200 dark:hover:text-blue-600"
+                                (click)="cancelRenameRequest($event, req)"
+                              />
+                            </div>
+                          } @else {
+                            <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100">
+                              <button class="p-1" (click)="renameRequest(req)">
+                                <mat-icon fontIcon="edit" class="!w-4 !h-5 !text-base" />
+                              </button>
+                              <button class="p-1" (click)="deleteRequest(coll, j)">
+                                <mat-icon fontIcon="delete" class="!w-4 !h-5 !text-base" />
+                              </button>
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
 
-                            <div class="flex flex-row gap-x-2 opacity-0 group-hover:opacity-100">
-                              <button (click)="renameRequest(req)">
-                                <mat-icon
-                                  class="!text-xl"
-                                  fontIcon="create"
-                                  matTooltip="Rename request"
-                                />
-                              </button>
-                              <button (click)="deleteRequest(coll, j)">
-                                <mat-icon
-                                  class="!text-xl"
-                                  fontIcon="delete"
-                                  matTooltip="Delete collection"
-                                />
-                              </button>
+                    @if (coll.requests.length === 0) {
+                      <div class="text-center text-gray-500 dark:text-gray-400 py-4 text-sm">
+                        No requests yet
+                      </div>
+                    }
+                  </div>
+                </mat-expansion-panel>
+              </mat-accordion>
+            }
+
+            @if (listCollections.length === 0) {
+              <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                <mat-icon fontIcon="folder" class="!w-9 !h-10 text-4xl mb-2" />
+                <p>No collections found</p>
+                <p class="text-sm">Create your first collection to get started</p>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div
+    class="flex-1 flex flex-col overflow-hidden {{
+      windowInnerWidth <= 768 ? 'ml-0' : isShowSidebar ? '' : 'ml-0'
+    }}"
+  >
+    @if (windowInnerWidth <= 768) {
+      <div
+        class="p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center"
+      >
+        <button class="p-2 mr-2" (click)="isShowSidebar = true">
+          <mat-icon fontIcon="menu" class="!w-5 !h-6 !text-2xl text-gray-600 dark:text-gray-300" />
+        </button>
+        <span class="font-medium">{{
+          infoRequest ? infoCollection?.title + " / " + infoRequest.title : "API Requests"
+        }}</span>
+      </div>
+    }
+
+    <div class="flex-1 overflow-y-auto">
+      @if (infoCollection && infoRequest) {
+        <div class="p-4 space-y-6">
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4"
+          >
+            <div class="flex flex-col lg:flex-row items-start lg:items-center gap-3 mb-4 w-full">
+              <mat-form-field class="w-full lg:w-32">
+                <mat-select
+                  class="!bg-transparent"
+                  [(value)]="infoRequest.typeReq"
+                  (valueChange)="infoRequest.typeReq = $event"
+                >
+                  @for (type of listTypesRequest; track type) {
+                    <mat-option [ngClass]="type.color" [value]="type.title">{{
+                      type.title
+                    }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+              <div class="flex flex-col md:flex-row items-start md:items-center gap-3 w-full">
+                <input
+                  class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none w-full"
+                  type="text"
+                  placeholder="Enter URL address"
+                  [(ngModel)]="infoRequest.url"
+                  (change)="parseUrl()"
+                  (keyup)="setUrl($event)"
+                />
+                <div class="flex flex-1 flex-row justify-end gap-x-3 w-full">
+                  <button
+                    class="flex flex-row items-center gap-x-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-base transition-colors"
+                    (click)="sendRequest()"
+                  >
+                    <mat-icon fontIcon="send" class="!w-4 !h-6 !text-base" />
+                    Send
+                  </button>
+                  <button
+                    class="flex flex-row items-center gap-x-1 px-4 py-2 rounded-lg bg-green-600 text-base text-white transition-colors"
+                    (click)="saveData()"
+                  >
+                    <mat-icon fontIcon="save" class="!w-4 !h-6 !text-base" />
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            @if (windowInnerWidth > 768) {
+              <div
+                class="flex flex-row items-center gap-2 text-sm text-gray-600 dark:text-gray-400"
+              >
+                <span>{{ infoCollection.title }}</span>
+                <mat-icon fontIcon="chevron_right" class="!w-5 !h-7 !text-xl" />
+                <span>{{ infoRequest.title }}</span>
+              </div>
+            }
+          </div>
+
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
+          >
+            <mat-tab-group
+              class="custom-tabs"
+              [(selectedIndex)]="selectedTabIndex"
+              mat-stretch-tabs="false"
+              color="primary"
+            >
+              <mat-tab label="Params">
+                <div class="p-4">
+                  @if (typeEditorData.params === "table") {
+                    <div class="flex justify-end mb-2">
+                      <button
+                        class="text-blue-600 dark:text-blue-400 hover:underline text-sm"
+                        (click)="typeEditorData.params = 'json'"
+                      >
+                        Switch to JSON
+                      </button>
+                    </div>
+                    <ng-container
+                      *ngTemplateOutlet="tableTemplate; context: { type: 'params' }"
+                    ></ng-container>
+                  } @else {
+                    <div class="flex justify-end mb-2">
+                      <button
+                        class="text-blue-600 dark:text-blue-400 hover:underline text-sm"
+                        (click)="typeEditorData.params = 'table'"
+                      >
+                        Switch to Table
+                      </button>
+                    </div>
+                    <textarea
+                      class="w-full min-h-32 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm outline-none resize-y"
+                      placeholder="{}"
+                      [value]="getRawParams()"
+                      (change)="parseParam($event)"
+                    >
+                    </textarea>
+                  }
+                </div>
+              </mat-tab>
+              <mat-tab label="Headers">
+                <div class="p-4">
+                  @if (typeEditorData.headers === "table") {
+                    <div class="flex justify-end mb-2">
+                      <button
+                        class="text-blue-600 dark:text-blue-400 hover:underline text-sm"
+                        (click)="typeEditorData.headers = 'json'"
+                      >
+                        Switch to JSON
+                      </button>
+                    </div>
+                    <ng-container
+                      *ngTemplateOutlet="tableTemplate; context: { type: 'headers' }"
+                    ></ng-container>
+                  } @else {
+                    <div class="flex justify-end mb-2">
+                      <button
+                        class="text-blue-600 dark:text-blue-400 hover:underline text-sm"
+                        (click)="typeEditorData.headers = 'table'"
+                      >
+                        Switch to Table
+                      </button>
+                    </div>
+                    <textarea
+                      class="w-full min-h-32 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm outline-none resize-y"
+                      placeholder="{}"
+                      [value]="getRawHeaders()"
+                      (change)="parseHeader($event)"
+                    >
+                    </textarea>
+                  }
+                </div>
+              </mat-tab>
+              <mat-tab label="Body">
+                <div class="p-4">
+                  @if (typeEditorData.body === "table") {
+                    <div class="flex justify-end mb-2">
+                      <button
+                        class="text-blue-600 dark:text-blue-400 hover:underline text-sm"
+                        (click)="typeEditorData.body = 'json'"
+                      >
+                        Switch to JSON
+                      </button>
+                    </div>
+                    <ng-container
+                      *ngTemplateOutlet="tableTemplate; context: { type: 'body' }"
+                    ></ng-container>
+                  } @else {
+                    <div class="flex justify-end mb-2">
+                      <button
+                        class="text-blue-600 dark:text-blue-400 hover:underline text-sm"
+                        (click)="typeEditorData.body = 'table'"
+                      >
+                        Switch to Table
+                      </button>
+                    </div>
+                    <textarea
+                      class="w-full min-h-32 p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm outline-none resize-y"
+                      placeholder="{}"
+                      [value]="getRawBody()"
+                      (change)="parseBody($event)"
+                    >
+                    </textarea>
+                  }
+                </div>
+              </mat-tab>
+              <mat-tab label="Response">
+                <div class="p-4 space-y-4">
+                  @if (response) {
+                    <div
+                      class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden"
+                    >
+                      <div
+                        class="bg-gray-50 dark:bg-gray-700 px-4 py-2 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between cursor-pointer"
+                        (click)="toggleResponseCollapsed()"
+                      >
+                        <div class="flex items-center gap-3">
+                          <mat-icon
+                            [fontIcon]="
+                              isResponseCollapsed ? 'keyboard_arrow_right' : 'keyboard_arrow_down'
+                            "
+                            class="!w-4 !h-6 !text-lg text-gray-600 dark:text-gray-300 transition-transform duration-200"
+                          ></mat-icon>
+                          <div>
+                            <h4 class="font-semibold text-gray-800 dark:text-gray-200">
+                              @if (isViewingLatestResponse()) {
+                                Latest Response
+                              } @else {
+                                Historical Response
+                              }
+                            </h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                              @if (getCurrentResponseMetadata()) {
+                                {{
+                                  getCurrentResponseMetadata()?.timestamp
+                                    | date: "medium"
+                                    | titlecase
+                                }}
+                              } @else {
+                                Just now
+                              }
+                            </p>
+                          </div>
+                        </div>
+                        @if (!isViewingLatestResponse()) {
+                          <button
+                            class="px-3 py-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded"
+                            (click)="viewLatestResponse($event)"
+                          >
+                            View Latest
+                          </button>
+                        }
+                      </div>
+                      <div class="p-4" *ngIf="!isResponseCollapsed">
+                        @if (isJsonAsString(response)) {
+                          <app-json-parser [parseData$]="parseData$"></app-json-parser>
+                        } @else if (isXML(response)) {
+                          <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                            <pre class="text-sm text-gray-800 dark:text-gray-200">{{
+                              response
+                            }}</pre>
+                          </div>
+                        } @else if (isHTML(response)) {
+                          <div
+                            class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg overflow-auto max-h-96"
+                          >
+                            <div [innerHTML]="response"></div>
+                          </div>
+                        } @else {
+                          <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                            <code
+                              class="whitespace-pre-wrap text-sm text-gray-800 dark:text-gray-200"
+                              >{{ response }}</code
+                            >
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  } @else {
+                    <div class="text-center py-12 text-gray-500 dark:text-gray-400">
+                      <mat-icon fontIcon="api" class="!w-16 !h-16 !text-6xl mb-4 opacity-50" />
+                      <h3 class="text-lg font-medium mb-2">No Response Yet</h3>
+                      <p>Send a request to see the response here</p>
+                    </div>
+                  }
+
+                  @if (getResponseHistory().length > 0) {
+                    <div
+                      class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden"
+                    >
+                      <div
+                        class="bg-gray-50 dark:bg-gray-700 px-4 py-2 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between"
+                      >
+                        <div>
+                          <h4 class="font-semibold text-gray-800 dark:text-gray-200">
+                            Response History
+                          </h4>
+                          <p class="text-sm text-gray-600 dark:text-gray-400">
+                            {{ getResponseHistory().length }} responses stored
+                          </p>
+                        </div>
+                        <button
+                          class="flex flex-row items-center gap-1 px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-sm rounded"
+                          (click)="clearResponseHistory()"
+                        >
+                          <mat-icon fontIcon="delete" class="!w-5 !h-6 !text-xl"></mat-icon>
+                          Clear
+                        </button>
+                      </div>
+                      <div class="max-h-96 overflow-y-auto">
+                        @for (responseItem of getResponseHistory(); track responseItem.id) {
+                          <div
+                            class="border-b border-gray-200 dark:border-gray-600 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                            (click)="loadResponseFromHistory(responseItem)"
+                          >
+                            <div class="px-4 py-3 flex items-center justify-between">
+                              <div class="flex items-center gap-3">
+                                <div
+                                  class="w-3 h-3 rounded-full {{
+                                    responseItem.status === 'success'
+                                      ? 'bg-green-500'
+                                      : 'bg-red-500'
+                                  }}"
+                                ></div>
+                                <div>
+                                  <p class="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                    Response
+                                    {{
+                                      getResponseHistory().length -
+                                        getResponseHistory().indexOf(responseItem)
+                                    }}
+                                  </p>
+                                  <p class="text-xs text-gray-600 dark:text-gray-400">
+                                    {{ responseItem.timestamp | date: "short" }}
+                                  </p>
+                                </div>
+                              </div>
+                              <div class="text-right">
+                                <p class="text-xs text-gray-500 dark:text-gray-400 uppercase">
+                                  {{ responseItem.status }}
+                                </p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                  {{ responseItem.data.length }} chars
+                                </p>
+                              </div>
                             </div>
                           </div>
                         }
@@ -149,236 +558,140 @@
                     </div>
                   }
                 </div>
-              </div>
-
-              @if (coll.requests.length == 0) {
-                <div class="flex flex-col h-full text-center">
-                  <span>No requests found</span>
-                  <div class="flex flex-row items-center">
-                    <span>Click the</span>
-                    <mat-icon class="styleLinkRedir !w-[25px] !h-[25px] !text-2xl" fontIcon="add" />
-                    <span>button to create a request</span>
-                  </div>
-                </div>
-              }
-            </mat-expansion-panel>
-          }
-
-          @if (listCollections.length == 0) {
-            <div class="flex flex-col h-full text-center">
-              <span>No collections found</span>
-              <div class="flex flex-row items-center">
-                <span>Click the</span>
-                <mat-icon class="styleLinkRedir !w-[25px] !h-[25px] !text-2xl" fontIcon="add" />
-                <span>button to create a collection</span>
-              </div>
-            </div>
-          }
+              </mat-tab>
+            </mat-tab-group>
+          </div>
         </div>
-      </div>
-    }
+      } @else {
+        <div class="flex items-center justify-center h-full text-gray-500 dark:text-gray-400">
+          <div class="text-center">
+            <mat-icon fontIcon="web" class="!w-16 !h-16 !text-6xl mb-4 opacity-50" />
+            <h3 class="text-lg font-medium mb-2">Select a Request</h3>
+            <p>Choose a request from the sidebar to view and edit it</p>
+          </div>
+        </div>
+      }
+    </div>
   </div>
 
-  <hr
-    class="fixed flex flex-col !rounded-none styleBorderSolidLite border-r-2 min-h-full cursor-ew-resize"
-    [style.left]="isShowSidebar ? widthLeftSidebar + 'px' : '53px'"
-    (mousedown)="onMouseDown($event)"
-  />
-
-  <div
-    class="flex flex-col gap-y-5 p-3 h-full"
-    [ngClass]="windowInnerWidth <= 400 ? 'ml-[54px]' : ''"
-    style="height: calc(100vh - 72px)"
-    [style.width]="isShowSidebar ? widthRightSidebar + 'px' : '100%'"
-  >
-    @if (infoCollection && infoRequest) {
-      <div class="flex flex-row justify-between items-center">
-        <div class="flex flex-row gap-x-3">
-          <span class="textMuted">{{ infoCollection.title }}</span>
-          <span class="textMuted">/</span>
-          <span>{{ infoRequest.title }}</span>
-        </div>
-
-        <button class="styleFloatBut" (click)="saveData()">
-          <mat-icon fontIcon="save" matTooltip="Save changes" />
-          <span>Save</span>
-        </button>
-      </div>
-
-      <div class="flex flex-row items-center gap-x-3 w-full">
-        <div class="flex flex-row gap-x-2 styleElem !w-full">
-          <mat-form-field class="!w-[130px]">
-            <mat-select (valueChange)="infoRequest.typeReq = $event" [value]="infoRequest.typeReq">
-              @for (type of listTypesRequest; track type) {
-                <mat-option [ngClass]="type.color" [value]="type.title">{{
-                  type.title
-                }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-
-          <input
-            class="styleField !w-full"
-            type="text"
-            placeholder="Enter url address"
-            [(ngModel)]="infoRequest.url"
-            (change)="parseUrl()"
-            (keyup)="setUrl($event)"
-          />
-        </div>
-
-        <button class="styleButInfo" (click)="sendRequest()">Send</button>
-      </div>
-
-      <div class="flex flex-col">
-        <mat-tab-group
-          [selectedIndex]="selectedTabIndex"
-          (selectedIndexChange)="selectedTabIndex = $event"
+  <ng-template #tableTemplate let-type="type">
+    <div class="p-4">
+      <div class="styleBorderSolidLite border overflow-x-auto">
+        <div
+          class="flex items-center gap-3 px-3 py-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600"
         >
-          <mat-tab label="Params">
-            <ng-container *ngTemplateOutlet="context; context: { type: 'params' }"></ng-container>
-          </mat-tab>
+          <div class="ml-4 w-12 flex justify-center">
+            <mat-checkbox (change)="selAll($event, type)" />
+          </div>
+          <div class="flex-1 font-medium text-gray-700 dark:text-gray-300 text-sm">Key</div>
+          <div class="flex-1 font-medium text-gray-700 dark:text-gray-300 text-sm">Value</div>
+          <div class="w-16 font-medium text-gray-700 dark:text-gray-300 text-sm">Actions</div>
+        </div>
 
-          <mat-tab label="Headers">
-            <div class="flex flex-col gap-y-1">
-              @if (typeEditorData.headers == "table") {
-                <div class="flex flex-row justify-end items-center">
-                  <span class="styleLinkRedir" (click)="typeEditorData.headers = 'json'"
-                    >Json editor</span
-                  >
-                </div>
-                <ng-container
-                  *ngTemplateOutlet="context; context: { type: 'headers' }"
-                ></ng-container>
-              } @else if (typeEditorData.headers == "json") {
-                <div class="flex flex-row justify-end items-center">
-                  <span class="styleLinkRedir" (click)="typeEditorData.headers = 'table'"
-                    >Table editor</span
-                  >
-                </div>
-                <textarea
-                  class="styleTextarea"
-                  rows="15"
-                  [value]="getRawHeaders()"
-                  (change)="parseHeader($event)"
-                ></textarea>
-              }
-            </div>
-          </mat-tab>
-
-          <mat-tab label="Body">
-            <div class="flex flex-col gap-y-1">
-              @if (typeEditorData.body == "table") {
-                <div class="flex flex-row justify-end items-center">
-                  <span class="styleLinkRedir" (click)="typeEditorData.body = 'json'"
-                    >Json Editor</span
-                  >
-                </div>
-                <ng-container *ngTemplateOutlet="context; context: { type: 'body' }"></ng-container>
-              } @else if (typeEditorData.body == "json") {
-                <div class="flex flex-row justify-end items-center">
-                  <span class="styleLinkRedir" (click)="typeEditorData.body = 'table'"
-                    >Table Editor</span
-                  >
-                </div>
-                <textarea
-                  class="styleTextarea"
-                  rows="15"
-                  [value]="getRawBody()"
-                  (change)="parseBody($event)"
-                ></textarea>
-              }
-            </div>
-          </mat-tab>
-
-          <mat-tab label="Response">
-            @if (response) {
-              @if (isJsonAsString(response)) {
-                <div class="flex flex-col p-5 styleBorderSolidLite border">
-                  <app-json-parser [parseData$]="parseData$" />
-                </div>
-              } @else if (isXML(response)) {
-                <div class="flex flex-col p-5 styleBorderSolidLite border">
-                  <div>{{ response }}</div>
-                </div>
-              } @else if (isHTML(response)) {
-                <div class="flex flex-col p-5 styleBorderSolidLite border">
-                  <div [innerHTML]="response"></div>
-                </div>
-              } @else {
-                <div class="flex flex-col p-5 styleBorderSolidLite border">
-                  <pre>
-                    <code class="!text-wrap">{{ response }}</code>
-                  </pre>
-                </div>
-              }
-            } @else {
-              <div class="flex flex-col items-center p-5 styleBorderSolidLite border">
-                <span>Run the query to display the results.</span>
+        <div cdkDropList (cdkDropListDropped)="dropTableRecords($event, type)" class="min-h-0">
+          @for (item of getList(type); track $index) {
+            <div
+              class="flex items-center gap-3 px-3 py-2 border-b border-gray-200 dark:border-gray-600 {{
+                item.key !== '' ? 'hover:bg-gray-50 dark:hover:bg-gray-700' : ''
+              }}"
+              cdkDrag
+            >
+              <div class="w-12 flex justify-center">
+                @if (item.key !== "") {
+                  <div class="flex items-center gap-2">
+                    <button
+                      class="cursor-move p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded text-gray-600 dark:text-gray-400"
+                      cdkDragHandle
+                    >
+                      <mat-icon fontIcon="drag_indicator" class="!w-4 !h-5 !text-base"></mat-icon>
+                    </button>
+                    <mat-checkbox
+                      [checked]="item.isActive"
+                      (change)="item.isActive = $event.checked"
+                    />
+                  </div>
+                }
               </div>
-            }
-          </mat-tab>
-        </mat-tab-group>
-      </div>
-    }
-  </div>
-</div>
 
-<ng-template #context let-type="type">
-  <div class="flex flex-col p-3 overflow-x-auto">
-    <table class="table w-full" id="table">
-      <thead>
-        <tr>
-          <td class="styleTD !w-[50px]">
-            <input class="styleCheckbox" type="checkbox" (change)="selAll($event, type)" />
-          </td>
-          <th class="styleTD">Key</th>
-          <th class="styleTD">Value</th>
-          <th class="styleTD">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (item of getList(type); track $index) {
-          <tr>
-            <td class="styleTD h-[35px]">
-              @if (item.key != "") {
-                <input class="styleCheckbox" type="checkbox" [checked]="item.isActive" />
-              }
-            </td>
-            <td class="styleTD w-1/2 cursor-text" (click)="editObj($index, 'key', item)">
-              @if (editingRow == $index && editingCol == "key") {
-                <input
-                  class="styleField w-full"
-                  type="text"
-                  [value]="item.key"
-                  (keyup)="inputChange($event, $index, type, 'key')"
-                />
-              } @else {
-                <span class="w-full cursor-text">{{ item.key }}</span>
-              }
-            </td>
-            <td class="styleTD w-1/2 cursor-text" (click)="editObj($index, 'value', item)">
-              @if (editingRow == $index && editingCol == "value") {
-                <textarea
-                  class="styleField w-full"
-                  rows="5"
-                  [value]="getRawValue(type, item.value)"
-                  (keyup)="inputChange($event, $index, type, 'value')"
-                ></textarea>
-              } @else {
-                <span class="w-full cursor-text">{{ getRawValue(type, item.value) }}</span>
-              }
-            </td>
-            <td class="styleTD">
-              @if (item.key != "") {
-                <button (click)="deleteRec(getList(type), $index)">
-                  <mat-icon class="!text-xl" fontIcon="delete" matTooltip="Delete collection" />
-                </button>
-              }
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  </div>
-</ng-template>
+              <div class="flex-1 cursor-pointer" (click)="editObj($index, 'key', item)">
+                @if (editingRow === $index && editingCol === "key") {
+                  <input
+                    class="w-full p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none"
+                    type="text"
+                    [value]="item.key"
+                    (keyup)="inputChange($event, $index, type, 'key')"
+                    (blur)="editingCol = ''; editingRow = -1"
+                  />
+                } @else {
+                  @if (item.key !== "") {
+                    <span>{{ item.key }}</span>
+                  } @else {
+                    <span class="text-gray-400 italic">Click to add key</span>
+                  }
+                }
+              </div>
+
+              <div class="flex-1 cursor-pointer" (click)="editObj($index, 'value', item)">
+                @if (editingRow === $index && editingCol === "value") {
+                  @if (type === "body") {
+                    <textarea
+                      class="w-full p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none resize-y"
+                      rows="3"
+                      [value]="getRawValue(type, item.value)"
+                      (keyup)="inputChange($event, $index, type, 'value')"
+                      (blur)="editingCol = ''; editingRow = -1"
+                    >
+                    </textarea>
+                  } @else {
+                    <input
+                      class="w-full p-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white outline-none"
+                      type="text"
+                      [value]="getRawValue(type, item.value)"
+                      (keyup)="inputChange($event, $index, type, 'value')"
+                      (keyup)="inputChange($event, $index, type, 'value')"
+                      (blur)="editingCol = ''; editingRow = -1"
+                    />
+                  }
+                } @else {
+                  <span
+                    [class]="
+                      isValuePresent(item, type)
+                        ? 'cursor-pointer truncate'
+                        : 'cursor-pointer text-gray-400 italic'
+                    "
+                  >
+                    @if (isValuePresent(item, type)) {
+                      {{ getRawValue(type, item.value) }}
+                    } @else {
+                      Click to add value
+                    }
+                  </span>
+                }
+              </div>
+
+              <div class="w-16 flex justify-center">
+                @if (item.key !== "") {
+                  <button
+                    class="p-1 hover:bg-red-100 dark:hover:bg-red-900 rounded text-red-600 dark:text-red-400"
+                    (click)="deleteRec(getList(type), $index)"
+                  >
+                    <mat-icon fontIcon="delete" class="!w-5 !h-6 !text-xl" />
+                  </button>
+                }
+              </div>
+            </div>
+
+            <div
+              *cdkDragPlaceholder
+              class="bg-blue-100 dark:bg-blue-900 border border-blue-300 dark:border-blue-700 rounded p-2 m-1 opacity-50"
+            ></div>
+          }
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  @if (windowInnerWidth <= 768 && isShowSidebar) {
+    <div class="fixed inset-0 bg-black bg-opacity-50 z-10" (click)="isShowSidebar = false"></div>
+  }
+</div>

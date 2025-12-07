@@ -13,6 +13,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { MatSelectModule } from "@angular/material/select";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatIconModule } from "@angular/material/icon";
+import { MatCheckboxModule, MatCheckboxChange } from "@angular/material/checkbox";
 
 /* helpers */
 import { Common } from "@helpers/common";
@@ -20,7 +21,15 @@ import { Common } from "@helpers/common";
 /* models */
 import { Response, ResponseStatus } from "@models/response";
 import { Collection } from "@models/collection";
-import { BodyData, BodyValue, RecObj, Request, TypeRequest } from "@models/request";
+import { UndoItem } from "@models/undo_item";
+import {
+  BodyData,
+  BodyValue,
+  RecObj,
+  Request,
+  RequestResponse,
+  TypeRequest,
+} from "@models/request";
 
 /* services */
 import { UrlRequestsService } from "@services/url-requests.service";
@@ -41,6 +50,7 @@ import { JsonParserComponent } from "@components/json-parser/json-parser.compone
     MatSelectModule,
     MatTabsModule,
     MatIconModule,
+    MatCheckboxModule,
     DragDropModule,
     CdkDropList,
     JsonParserComponent,
@@ -68,10 +78,12 @@ export class UrlRequestsComponent implements OnInit {
     [TypeRequest.PUT]: "text-blue-500",
     [TypeRequest.DEL]: "text-red-500",
   };
-  typeEditorData: { headers: "table" | "json"; body: "table" | "json" } = {
-    headers: "table",
-    body: "table",
-  };
+  typeEditorData: { headers: "table" | "json"; body: "table" | "json"; params: "table" | "json" } =
+    {
+      headers: "table",
+      body: "table",
+      params: "table",
+    };
 
   prevTitleCollection: string = "";
   prevTitleRequest: string = "";
@@ -83,8 +95,12 @@ export class UrlRequestsComponent implements OnInit {
   editingCol: string = "";
   editingRow: number = -1;
 
+  undoStack: UndoItem[] = [];
+
   selectedTabIndex: number = 0;
   response: string = "";
+  currentResponseId: string = "";
+  isResponseCollapsed: boolean = false;
   windowInnerWidth: number = 0;
 
   isShowSidebar: boolean = false;
@@ -102,6 +118,13 @@ export class UrlRequestsComponent implements OnInit {
         this.editingCol = "";
         this.editingRow = -1;
         this.editingObj = null;
+      }
+    });
+
+    document.addEventListener("keydown", (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === "z") {
+        event.preventDefault();
+        this.undo();
       }
     });
 
@@ -232,7 +255,14 @@ export class UrlRequestsComponent implements OnInit {
   }
 
   confirmRenameCollection(event: any, coll: Collection) {
+    event.stopPropagation();
     event.preventDefault();
+    this.undoStack.push({
+      type: "collectionTitle",
+      oldValue: coll.title,
+      newValue: this.prevTitleCollection,
+      collectionId: coll.id,
+    });
     coll.editTitle = false;
     coll.title = this.prevTitleCollection;
     this.prevTitleCollection = "";
@@ -241,6 +271,7 @@ export class UrlRequestsComponent implements OnInit {
   }
 
   cancelRenameCollection(event: any, coll: Collection) {
+    event.stopPropagation();
     event.preventDefault();
     coll.editTitle = false;
     this.prevTitleCollection = "";
@@ -275,6 +306,7 @@ export class UrlRequestsComponent implements OnInit {
         { key: "", value: "", isActive: false },
       ],
       body: [{ key: "", value: { type: "String", value: "" }, isActive: false }],
+      responses: [],
     };
     coll.requests.push(request);
 
@@ -291,6 +323,12 @@ export class UrlRequestsComponent implements OnInit {
 
   confirmRenameRequest(event: any, req: Request) {
     event.preventDefault();
+    this.undoStack.push({
+      type: "requestTitle",
+      oldValue: req.title,
+      newValue: this.prevTitleRequest,
+      requestId: req.id,
+    });
     req.editTitle = false;
     req.title = this.prevTitleRequest;
     this.prevTitleRequest = "";
@@ -319,6 +357,22 @@ export class UrlRequestsComponent implements OnInit {
         value: "",
         isActive: false,
       });
+    }
+  }
+
+  dropTableRecords(event: CdkDragDrop<any>, type: string) {
+    if (this.infoRequest) {
+      const prevIndex = event.previousIndex;
+      const currentIndex = event.currentIndex;
+
+      const list = this.infoRequest[type as keyof typeof this.infoRequest] as any[];
+
+      if (prevIndex < list.length - 1 && currentIndex < list.length - 1) {
+        const prevElement = list[prevIndex];
+        list.splice(prevIndex, 1);
+        list.splice(currentIndex, 0, prevElement);
+        this.saveData();
+      }
     }
   }
 
@@ -360,16 +414,10 @@ export class UrlRequestsComponent implements OnInit {
     this.editingObj = data;
   }
 
-  selAll(event: any, typeObj: "params" | "headers" | "body") {
+  selAll(event: MatCheckboxChange, typeObj: "params" | "headers" | "body") {
     if (this.infoRequest) {
-      this.infoRequest[typeObj].forEach((rec) => (rec.isActive = event.target.checked));
+      this.infoRequest[typeObj].forEach((rec) => (rec.isActive = event.checked));
     }
-  }
-
-  getInfo(coll: Collection, req: Request) {
-    this.infoCollection = coll;
-    this.infoRequest = req;
-    this.response = "";
   }
 
   inputChange(
@@ -379,11 +427,21 @@ export class UrlRequestsComponent implements OnInit {
     field: "key" | "value"
   ) {
     if (this.editingObj) {
+      const oldVal = this.editingObj[field];
       if (field == "value" && typeObj == "body") {
         this.editingObj[field] = this.parseBodyValue(event.target.value);
       } else {
         this.editingObj[field] = event.target.value;
       }
+
+      this.undoStack.push({
+        type: typeObj.slice(0, -1) as "param" | "header" | "body",
+        oldValue: oldVal,
+        newValue: this.editingObj[field],
+        index: row,
+        field,
+        requestId: this.infoRequest!.id,
+      });
 
       if (this.infoRequest) {
         if (this.infoRequest[typeObj].findIndex((rec) => rec.key == "") == -1) {
@@ -403,29 +461,24 @@ export class UrlRequestsComponent implements OnInit {
         this.infoRequest.url = "http://" + this.infoRequest.url;
       }
       const url = new URL(this.infoRequest.url);
-      if (url.search != "" && url.search.indexOf("?") == 0) {
-        const params = url.search.slice(url.search.indexOf("?") + 1).split("&");
-        params.forEach((param: string) => {
-          const [key, value] = param.split("=");
-          if (this.infoRequest) {
-            if (this.infoRequest.params.findIndex((param: RecObj) => param.key == key) == -1) {
-              this.infoRequest.params.push({
-                key,
-                value,
-                isActive: true,
-              });
-            }
-          }
+      if (url.search !== "") {
+        this.infoRequest.params = [];
+        url.searchParams.forEach((value, key) => {
+          this.infoRequest!.params.push({
+            key,
+            value,
+            isActive: true,
+          });
         });
+        this.createObj("params");
+        this.undoStack.push({
+          type: "url",
+          oldValue: this.infoRequest.url,
+          newValue: url.origin + url.pathname + url.hash,
+          requestId: this.infoRequest.id,
+        });
+        this.infoRequest.url = url.origin + url.pathname + url.hash;
       }
-    }
-
-    if (this.infoRequest?.params.findIndex((rec) => rec.key == "") != -1) {
-      this.infoRequest?.params.splice(
-        this.infoRequest?.params.findIndex((rec) => rec.key == ""),
-        1
-      );
-      this.createObj("params");
     }
   }
 
@@ -449,6 +502,17 @@ export class UrlRequestsComponent implements OnInit {
       return JSON.stringify(tempBody);
     }
     return "";
+  }
+
+  getRawParams(): string {
+    if (this.infoRequest) {
+      let tempParams: { [key: string]: any } = {};
+      this.infoRequest.params.forEach((param) => {
+        tempParams[param.key] = param.value;
+      });
+      return JSON.stringify(tempParams, null, 2);
+    }
+    return "{}";
   }
 
   getRawValue(type: "params" | "headers" | "body", data: any | BodyValue): string {
@@ -524,6 +588,30 @@ export class UrlRequestsComponent implements OnInit {
     }
   }
 
+  parseParam(event: any) {
+    let rawData = JSON.parse(event.target.value);
+    if (this.infoRequest) {
+      this.infoRequest.params = [];
+      if (rawData) {
+        const keys = Object.keys(rawData);
+        keys.forEach((key) => {
+          if (this.infoRequest) {
+            this.infoRequest.params.push({
+              key,
+              value: rawData[key],
+              isActive: true,
+            });
+          }
+        });
+        this.infoRequest.params.push({
+          key: "",
+          value: "",
+          isActive: false,
+        });
+      }
+    }
+  }
+
   parseBodyValue(data: any): BodyValue {
     let tempObj: BodyValue = { type: "String", value: "" };
     if (Common.isJsonAsString(data)) {
@@ -570,6 +658,28 @@ export class UrlRequestsComponent implements OnInit {
     return tempObj;
   }
 
+  addResponseToHistory(responseData: string, status: "success" | "error") {
+    if (this.infoRequest) {
+      if (!this.infoRequest.responses) {
+        this.infoRequest.responses = [];
+      }
+
+      const responseItem: RequestResponse = {
+        id: UUID(),
+        timestamp: new Date(),
+        data: responseData,
+        status: status,
+      };
+
+      if (this.infoRequest.responses.length >= 10) {
+        this.infoRequest.responses.shift();
+      }
+
+      this.infoRequest.responses.push(responseItem);
+      this.saveData();
+    }
+  }
+
   sendRequest() {
     if (this.infoRequest) {
       this.urlRequestsService
@@ -579,15 +689,105 @@ export class UrlRequestsComponent implements OnInit {
           this.notifyService.showNotify(response.status, response.message);
           if (response.status == ResponseStatus.SUCCESS) {
             this.response = response.data;
+            this.addResponseToHistory(response.data, "success");
             setTimeout(() => {
               this.parseData$.next(this.response);
             }, 500);
           }
         })
         .catch((err: Response<string>) => {
-          this.notifyService.showError(err.message ?? err.toString());
+          const errorMsg = err.message ?? err.toString();
+          this.response = errorMsg;
+          this.addResponseToHistory(errorMsg, "error");
+          this.notifyService.showError(errorMsg);
+          this.selectedTabIndex = 3;
         });
     }
+  }
+
+  getLatestResponse(): string {
+    if (this.infoRequest && this.infoRequest.responses && this.infoRequest.responses.length > 0) {
+      const latestResponse = this.infoRequest.responses[0];
+      this.response = latestResponse.data;
+      this.currentResponseId = latestResponse.id;
+      return this.response;
+    }
+    this.currentResponseId = "";
+    return this.response;
+  }
+
+  getResponseHistory(): RequestResponse[] {
+    if (this.infoRequest && this.infoRequest.responses) {
+      return this.infoRequest.responses.sort(
+        (a, b) => b.timestamp.getTime() - a.timestamp.getTime()
+      );
+    }
+    return [];
+  }
+
+  loadResponseFromHistory(response: RequestResponse) {
+    this.response = response.data;
+    this.currentResponseId = response.id;
+    this.isResponseCollapsed = false;
+    setTimeout(() => {
+      this.parseData$.next(this.response);
+    }, 500);
+  }
+
+  clearResponseHistory() {
+    if (this.infoRequest) {
+      this.infoRequest.responses = [];
+      this.saveData();
+      this.notifyService.showNotify(ResponseStatus.SUCCESS, "Response history cleared");
+    }
+  }
+
+  getCurrentResponseMetadata() {
+    if (this.infoRequest && this.infoRequest.responses) {
+      const responseMeta = this.infoRequest.responses.find((r) => r.id === this.currentResponseId);
+      if (responseMeta) {
+        return responseMeta;
+      }
+    }
+
+    if (this.infoRequest && this.infoRequest.responses && this.infoRequest.responses.length > 0) {
+      return this.infoRequest.responses[0];
+    }
+    return null;
+  }
+
+  isViewingLatestResponse(): boolean {
+    if (this.infoRequest && this.infoRequest.responses && this.infoRequest.responses.length > 0) {
+      const latestResponse = this.infoRequest.responses[0];
+      return this.currentResponseId === latestResponse.id || !this.currentResponseId;
+    }
+    return true;
+  }
+
+  toggleResponseCollapsed() {
+    this.isResponseCollapsed = !this.isResponseCollapsed;
+
+    if (!this.isResponseCollapsed && this.response) {
+      setTimeout(() => {
+        this.parseData$.next(this.response);
+      }, 100);
+    }
+  }
+
+  viewLatestResponse(event: any) {
+    event.stopPropagation();
+    this.getLatestResponse();
+    this.isResponseCollapsed = false;
+    setTimeout(() => {
+      this.parseData$.next(this.response);
+    }, 100);
+  }
+
+  getInfo(coll: Collection, req: Request) {
+    this.infoCollection = coll;
+    this.infoRequest = req;
+
+    this.getLatestResponse();
   }
 
   saveData() {
@@ -599,5 +799,45 @@ export class UrlRequestsComponent implements OnInit {
       .catch((err: Response<string>) => {
         this.notifyService.showError(err.message ?? err.toString());
       });
+  }
+
+  isValuePresent(item: RecObj | BodyData, type: string): boolean {
+    if (item.key === "") return false;
+    if (type === "body") {
+      return (item as BodyData).value.value !== "";
+    } else {
+      return (item as RecObj).value !== "";
+    }
+  }
+
+  private undo() {
+    if (this.undoStack.length > 0) {
+      const item = this.undoStack.pop()!;
+      switch (item.type) {
+        case "url":
+          const req = this.listCollections
+            .flatMap((c) => c.requests)
+            .find((r) => r.id === item.requestId);
+          if (req) req.url = item.oldValue;
+          break;
+        case "param":
+        case "header":
+        case "body":
+          if (this.infoRequest && item.index !== undefined && item.field) {
+            (this.infoRequest as any)[item.type + "s"][item.index][item.field] = item.oldValue;
+          }
+          break;
+        case "requestTitle":
+          const rreq = this.listCollections
+            .flatMap((c) => c.requests)
+            .find((r) => r.id === item.requestId);
+          if (rreq) rreq.title = item.oldValue;
+          break;
+        case "collectionTitle":
+          const coll = this.listCollections.find((c) => c.id === item.collectionId);
+          if (coll) coll.title = item.oldValue;
+          break;
+      }
+    }
   }
 }
