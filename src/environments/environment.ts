@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  version: "0.5.0",
+  version: "0.5.1",
   gitRepoName: "AllInOneToolkitV2",
   nameProduct: "All In One Toolkit v2",
   yearCreate: 2024,
