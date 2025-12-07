@@ -22,6 +22,13 @@ export interface BodyData {
   isActive: boolean;
 }
 
+export interface RequestResponse {
+  id: string;
+  timestamp: Date;
+  data: string;
+  status: "success" | "error";
+}
+
 export interface Request {
   id: string;
   title: string;
@@ -31,4 +38,5 @@ export interface Request {
   params: Array<RecObj>;
   headers: Array<RecObj>;
   body: Array<BodyData>;
+  responses?: Array<RequestResponse>;
 }
