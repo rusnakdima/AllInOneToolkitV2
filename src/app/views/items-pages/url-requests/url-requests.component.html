@@ -81,7 +81,11 @@
             (cdkDropListDropped)="dropCollections($event)"
           >
             @for (coll of listCollections; track coll; let i = $index) {
-              <mat-accordion class="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-sm" cdkDrag>
+              <mat-accordion
+                class="bg-gray-100 dark:bg-gray-700 rounded-lg shadow-sm"
+                cdkDrag
+                cdkDragHandle
+              >
                 <mat-expansion-panel class="rounded-lg bg-transparent shadow-none">
                   <mat-expansion-panel-header class="px-3 py-2 min-h-0">
                     <div class="flex items-center justify-between w-full group">
@@ -113,10 +117,7 @@
                           (click)="cancelRenameCollection($event, coll)"
                         />
                       } @else {
-                        <div
-                          class="flex items-center gap-1 mr-2 opacity-0 group-hover:opacity-100"
-                          cdkDragHandle
-                        >
+                        <div class="flex items-center gap-1 mr-2 opacity-0 group-hover:opacity-100">
                           <mat-icon
                             (click)="$event.stopPropagation(); renameCollection(coll)"
                             fontIcon="edit"
@@ -148,13 +149,14 @@
                     >
                       @for (req of coll.requests; track req; let j = $index) {
                         <div
-                          class="flex items-center justify-between px-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer transition-colors group"
+                          class="flex items-center px-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer transition-colors group"
                           (click)="getInfo(coll, req)"
                           cdkDrag
+                          cdkDragHandle
                         >
-                          <div class="flex flex-row items-center gap-2 flex-1 min-w-0">
+                          <div class="flex flex-1 flex-row items-center gap-2 min-w-0">
                             <span
-                              class="flex-1 text-base font-bold px-2 py-1 rounded-full {{
+                              class="w-16 text-base font-bold px-2 py-1 rounded-full {{
                                 colorTypeRequest[req.typeReq]
                               }}"
                             >
@@ -178,7 +180,7 @@
                             </div>
                           </div>
                           @if (req.editTitle) {
-                            <div class="flex items-center gap-1 opacity-100">
+                            <div class="flex flex-row gap-x-1">
                               <mat-icon
                                 fontIcon="check"
                                 class="!w-4 !h-5 !text-base text-gray-600 dark:text-gray-300 hover:text-blue-200 dark:hover:text-blue-600"
@@ -191,13 +193,17 @@
                               />
                             </div>
                           } @else {
-                            <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100">
-                              <button class="p-1" (click)="renameRequest(req)">
-                                <mat-icon fontIcon="edit" class="!w-4 !h-5 !text-base" />
-                              </button>
-                              <button class="p-1" (click)="deleteRequest(coll, j)">
-                                <mat-icon fontIcon="delete" class="!w-4 !h-5 !text-base" />
-                              </button>
+                            <div class="flex flex-row gap-x-1 opacity-0 group-hover:opacity-100">
+                              <mat-icon
+                                fontIcon="edit"
+                                class="!w-4 !h-5 !text-base"
+                                (click)="renameRequest(req)"
+                              />
+                              <mat-icon
+                                fontIcon="delete"
+                                class="!w-4 !h-5 !text-base"
+                                (click)="deleteRequest(coll, j)"
+                              />
                             </div>
                           }
                         </div>
