@@ -66,6 +66,15 @@
   </provides>
 
   <releases>
+    <release version="0.5.0" date="2025-12-07">
+      <description>
+        <p>Added the Flatpak builder app on the local device</p>
+        <p>The design of the URL Request page has been changed</p>
+        <p>Added logic for saving the history, moving records in the table, on the URL Request page</p>
+        <p>The design of the mobile version of the URL Request page has been fixed</p>
+        <p>Fixed application builds for different platforms from under Github Action.</p>
+      </description>
+    </release>
     <release version="0.4.4" date="2025-09-14">
       <description>
         <p>Updated icons in the product</p>
