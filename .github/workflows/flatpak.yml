@@ -85,7 +85,7 @@ jobs:
 
       - name: Create Flatpak bundle
         run: |
-          flatpak build-bundle repo com.tcs.allinonetoolkitv2.flatpak com.tcs.allinonetoolkitv2
+          flatpak build-bundle repo allinonetoolkitv2.flatpak com.tcs.allinonetoolkitv2
 
       - name: Upload to Release
         uses: softprops/action-gh-release@v2
