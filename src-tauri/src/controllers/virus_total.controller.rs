@@ -18,6 +18,6 @@ impl VirusTotalController {
 
   #[allow(non_snake_case)]
   pub async fn virusTotal(&self, url: String) -> Result<ResponseModel, ResponseModel> {
-    return self.virusTotalService.reqSite(url).await;
+    self.virusTotalService.reqSite(url).await
   }
 }

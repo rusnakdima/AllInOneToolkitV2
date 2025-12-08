@@ -24,7 +24,7 @@ impl UrlRequestsController {
     &self,
     infoRequest: RequestData,
   ) -> Result<ResponseModel, ResponseModel> {
-    return self.urlRequestsService.sendRequest(infoRequest).await;
+    self.urlRequestsService.sendRequest(infoRequest).await
   }
 
   #[allow(non_snake_case)]
@@ -33,11 +33,11 @@ impl UrlRequestsController {
     appHandle: tauri::AppHandle,
     listCollections: Vec<CollectionData>,
   ) -> Result<ResponseModel, ResponseModel> {
-    return self.urlRequestsService.saveData(appHandle, listCollections);
+    self.urlRequestsService.saveData(appHandle, listCollections)
   }
 
   #[allow(non_snake_case)]
   pub fn getData(&self, appHandle: tauri::AppHandle) -> Result<ResponseModel, ResponseModel> {
-    return self.urlRequestsService.getData(appHandle);
+    self.urlRequestsService.getData(appHandle)
   }
 }

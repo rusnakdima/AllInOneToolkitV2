@@ -11,9 +11,7 @@ pub fn chooseFile(
   appHandle: tauri::AppHandle,
   typeFile: Vec<&str>,
 ) -> Result<ResponseModel, ResponseModel> {
-  let manageFileController = state.manageFileController.clone();
-  let result = manageFileController.chooseFile(appHandle, typeFile);
-  result
+  state.manageFileController.chooseFile(appHandle, typeFile)
 }
 
 #[allow(non_snake_case)]
@@ -22,9 +20,7 @@ pub fn getDataFileByPath(
   state: State<'_, AppState>,
   filePath: String,
 ) -> Result<ResponseModel, ResponseModel> {
-  let manageFileController = state.manageFileController.clone();
-  let result = manageFileController.getDataFileByPath(filePath);
-  result
+  state.manageFileController.getDataFileByPath(filePath)
 }
 
 #[allow(non_snake_case)]
@@ -36,9 +32,9 @@ pub fn writeDataToFile(
   content: String,
   extension: String,
 ) -> Result<ResponseModel, ResponseModel> {
-  let manageFileController = state.manageFileController.clone();
-  let result = manageFileController.writeDataToFile(appHandle, nameFile, content, extension);
-  result
+  state
+    .manageFileController
+    .writeDataToFile(appHandle, nameFile, content, extension)
 }
 
 #[allow(non_snake_case)]
@@ -47,9 +43,7 @@ pub fn openFolderWithFile(
   state: State<'_, AppState>,
   path: String,
 ) -> Result<ResponseModel, ResponseModel> {
-  let manageFileController = state.manageFileController.clone();
-  let result = manageFileController.openFolderWithFile(path);
-  result
+  state.manageFileController.openFolderWithFile(path)
 }
 
 #[allow(non_snake_case)]
@@ -58,7 +52,5 @@ pub fn openFileInApp(
   state: State<'_, AppState>,
   path: String,
 ) -> Result<ResponseModel, ResponseModel> {
-  let manageFileController = state.manageFileController.clone();
-  let result = manageFileController.openFileInApp(path);
-  result
+  state.manageFileController.openFileInApp(path)
 }

@@ -22,6 +22,6 @@ impl UnicodeController {
     typeCoding: String,
     content: String,
   ) -> Result<ResponseModel, ResponseModel> {
-    return self.unicodeService.getInfoSymbol(typeCoding, content);
+    self.unicodeService.getInfoSymbol(typeCoding, content)
   }
 }

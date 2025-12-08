@@ -19,7 +19,7 @@ impl ManageXlsController {
 
   #[allow(non_snake_case)]
   pub fn getDataFileByPathXls(&self, filePath: String) -> Result<ResponseModel, ResponseModel> {
-    return self.manageXlsService.getDataFileByPathXls(filePath);
+    self.manageXlsService.getDataFileByPathXls(filePath)
   }
 
   #[allow(non_snake_case)]
@@ -29,8 +29,8 @@ impl ManageXlsController {
     nameFile: String,
     content: Vec<Vec<String>>,
   ) -> Result<ResponseModel, ResponseModel> {
-    return self
+    self
       .manageXlsService
-      .writeDataToFileXls(appHandle, nameFile, content);
+      .writeDataToFileXls(appHandle, nameFile, content)
   }
 }

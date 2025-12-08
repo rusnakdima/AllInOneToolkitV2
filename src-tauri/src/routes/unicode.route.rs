@@ -11,7 +11,5 @@ pub fn getInfoSymbol(
   typeCoding: String,
   content: String,
 ) -> Result<ResponseModel, ResponseModel> {
-  let unicodeController = state.unicodeController.clone();
-  let result = unicodeController.getInfoSymbol(typeCoding, content);
-  result
+  state.unicodeController.getInfoSymbol(typeCoding, content)
 }

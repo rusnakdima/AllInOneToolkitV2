@@ -10,7 +10,5 @@ pub fn numberIsPrime(
   state: State<'_, AppState>,
   numberStr: String,
 ) -> Result<ResponseModel, ResponseModel> {
-  let mathController = state.mathController.clone();
-  let result = mathController.numberIsPrime(numberStr);
-  result
+  state.mathController.numberIsPrime(numberStr)
 }

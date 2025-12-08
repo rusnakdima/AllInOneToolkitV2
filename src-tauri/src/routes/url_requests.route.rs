@@ -13,9 +13,7 @@ pub async fn sendRequest(
   state: State<'_, AppState>,
   infoRequest: RequestData,
 ) -> Result<ResponseModel, ResponseModel> {
-  let urlRequestsController = state.urlRequestsController.clone();
-  let result = urlRequestsController.sendRequest(infoRequest).await;
-  result
+  state.urlRequestsController.sendRequest(infoRequest).await
 }
 
 #[allow(non_snake_case)]
@@ -25,9 +23,9 @@ pub fn saveData(
   appHandle: tauri::AppHandle,
   listCollections: Vec<CollectionData>,
 ) -> Result<ResponseModel, ResponseModel> {
-  let urlRequestsController = state.urlRequestsController.clone();
-  let result = urlRequestsController.saveData(appHandle, listCollections);
-  result
+  state
+    .urlRequestsController
+    .saveData(appHandle, listCollections)
 }
 
 #[allow(non_snake_case)]
@@ -36,7 +34,5 @@ pub fn getData(
   state: State<'_, AppState>,
   appHandle: tauri::AppHandle,
 ) -> Result<ResponseModel, ResponseModel> {
-  let urlRequestsController = state.urlRequestsController.clone();
-  let result = urlRequestsController.getData(appHandle);
-  result
+  state.urlRequestsController.getData(appHandle)
 }

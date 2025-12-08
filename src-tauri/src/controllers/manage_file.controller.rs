@@ -23,12 +23,12 @@ impl ManageFileController {
     appHandle: tauri::AppHandle,
     typeFile: Vec<&str>,
   ) -> Result<ResponseModel, ResponseModel> {
-    return self.manageFileService.openDialogWindow(appHandle, typeFile);
+    self.manageFileService.openDialogWindow(appHandle, typeFile)
   }
 
   #[allow(non_snake_case)]
   pub fn getDataFileByPath(&self, filePath: String) -> Result<ResponseModel, ResponseModel> {
-    return self.manageFileService.getDataFileByPath(filePath);
+    self.manageFileService.getDataFileByPath(filePath)
   }
 
   #[allow(non_snake_case)]
@@ -39,18 +39,18 @@ impl ManageFileController {
     content: String,
     extension: String,
   ) -> Result<ResponseModel, ResponseModel> {
-    return self
+    self
       .manageFileService
-      .writeDataToFile(appHandle, nameFile, content, extension);
+      .writeDataToFile(appHandle, nameFile, content, extension)
   }
 
   #[allow(non_snake_case)]
   pub fn openFolderWithFile(&self, path: String) -> Result<ResponseModel, ResponseModel> {
-    return self.manageFileService.openFolderWithFile(path);
+    self.manageFileService.openFolderWithFile(path)
   }
 
   #[allow(non_snake_case)]
   pub fn openFileInApp(&self, path: String) -> Result<ResponseModel, ResponseModel> {
-    return self.manageFileService.openFile(path);
+    self.manageFileService.openFile(path)
   }
 }

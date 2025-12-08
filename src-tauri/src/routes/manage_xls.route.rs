@@ -10,9 +10,7 @@ pub fn getDataFileByPathXls(
   state: State<'_, AppState>,
   filePath: String,
 ) -> Result<ResponseModel, ResponseModel> {
-  let manageXlsController = state.manageXlsController.clone();
-  let result = manageXlsController.getDataFileByPathXls(filePath);
-  result
+  state.manageXlsController.getDataFileByPathXls(filePath)
 }
 
 #[allow(non_snake_case)]
@@ -23,7 +21,7 @@ pub fn writeDataToFileXls(
   nameFile: String,
   content: Vec<Vec<String>>,
 ) -> Result<ResponseModel, ResponseModel> {
-  let manageXlsController = state.manageXlsController.clone();
-  let result = manageXlsController.writeDataToFileXls(appHandle, nameFile, content);
-  result
+  state
+    .manageXlsController
+    .writeDataToFileXls(appHandle, nameFile, content)
 }

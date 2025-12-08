@@ -17,10 +17,7 @@ impl MathController {
   }
 
   #[allow(non_snake_case)]
-  pub fn numberIsPrime(
-    &self,
-    numberStr: String,
-  ) -> Result<ResponseModel, ResponseModel> {
-    return self.mathService.numberIsPrime(numberStr);
+  pub fn numberIsPrime(&self, numberStr: String) -> Result<ResponseModel, ResponseModel> {
+    self.mathService.numberIsPrime(numberStr)
   }
 }
