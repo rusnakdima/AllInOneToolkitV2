@@ -42,9 +42,7 @@
         "files": {}
       },
       "rpm": {
-        "epoch": 0,
-        "files": {},
-        "release": "1"
+        "files": {}
       }
     },
     "iOS": {
