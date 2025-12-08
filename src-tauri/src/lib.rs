@@ -14,7 +14,7 @@ use helpers::config::ConfigHelper;
 
 /* routes */
 use routes::{
-  about_route::{downloadUpdate, getBinaryNameFile},
+  about_route::{downloadUpdate, getBinaryNameFile, openFile},
   manage_file_route::{
     chooseFile, getDataFileByPath, openFileInApp, openFolderWithFile, writeDataToFile,
   },
@@ -69,6 +69,7 @@ pub fn run() {
     .invoke_handler(tauri::generate_handler![
       getBinaryNameFile,
       downloadUpdate,
+      openFile,
       chooseFile,
       getDataFileByPath,
       writeDataToFile,

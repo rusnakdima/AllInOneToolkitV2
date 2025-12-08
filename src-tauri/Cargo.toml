@@ -28,6 +28,7 @@ dotenvy = "0.15.7"
 encoding_rs = "0.8.35"
 indexmap = {version = "1.5.2", features = ["std"] }
 opener = "0.7.2"
+tokio = { version = "1", features = ["io-util"] }
 roxmltree = "0.20.0"
 rust_xlsxwriter = "0.79.0"
 serde = {version = "1", features = ["derive"] }
