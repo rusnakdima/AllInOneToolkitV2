@@ -66,6 +66,14 @@
   </provides>
 
   <releases>
+    <release version="0.6.0" date="2025-12-09">
+      <description>
+        <p>Changed the code style in the backend</p>
+        <p>Changed the logic on the About page for downloading app updates</p>
+        <p>Renamed page files from component to view</p>
+        <p>Renamed the installer's flatpak file in the collector for Github Action</p>
+      </description>
+    </release>
     <release version="0.5.1" date="2025-12-07">
       <description>
         <p>Fixed builds for Github Actions</p>
