@@ -1,9 +1,9 @@
 /* sys lib */
-import { Injectable } from '@angular/core';
+import { Injectable } from "@angular/core";
 
 /* models */
-import { Catalog } from '@models/catalog';
-import { Link } from '@models/link';
+import { Catalog } from "@models/catalog";
+import { Link } from "@models/link";
 
 /* consts */
 const catalogs: Array<Catalog> = [
@@ -84,6 +84,13 @@ const links: Array<Link> = [
     title: "Array Visualizer",
     url: "array_visualizer",
     icon: ["https://cdn-icons-png.flaticon.com/512/4799/4799899.png"],
+  },
+  {
+    id: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+    catalog: "ffa49591-fe05-43b5-a0fc-53ec90a7d3a7",
+    title: "Pie Chart",
+    url: "pie_chart",
+    icon: ["https://cdn-icons-png.flaticon.com/512/893/893220.png"],
   },
   {
     id: "29b9fb4e-73c5-45d7-98a6-26c40cadb3a5",
@@ -285,21 +292,21 @@ const links: Array<Link> = [
 ];
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class LinksService {
-  constructor() { }
+  constructor() {}
 
   getCatalogs(): Array<Catalog> {
     return catalogs;
   }
 
   getLinksByCatalog(catalogId: string): Array<Link> {
-    return links.filter(link => link.catalog === catalogId);
+    return links.filter((link) => link.catalog === catalogId);
   }
 
   getIconLink(linkId: string): string {
-    return links.find(link => link.id === linkId)?.url ?? '';
+    return links.find((link) => link.id === linkId)?.url ?? "";
   }
 
   getAllLinks(): Array<Link> {

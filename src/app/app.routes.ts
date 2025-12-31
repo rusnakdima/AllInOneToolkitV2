@@ -19,6 +19,7 @@ import { Sha256EncDecView } from "@views/items-pages/sha256-enc-dec/sha256-enc-d
 /* Visualisers */
 import { VisualDataOnChartView } from "@views/items-pages/visual-data-on-chart/visual-data-on-chart.view";
 import { ArrayVisualizerView } from "@views/items-pages/array-visualizer/array-visualizer.view";
+import { PieChartView } from "@views/items-pages/pie-chart/pie-chart.view";
 import { CsvToTableView } from "@views/items-pages/csv-to-table/csv-to-table.view";
 import { JsonToTableView } from "@views/items-pages/json-to-table/json-to-table.view";
 import { XmlToTableView } from "@views/items-pages/xml-to-table/xml-to-table.view";
@@ -90,6 +91,12 @@ const routesLinks: Routes = [
     component: ArrayVisualizerView,
     title: "Array Visualizer",
     data: { breadcrumbs: "Array Visualizer" },
+  },
+  {
+    path: "pie_chart",
+    component: PieChartView,
+    title: "Pie Chart",
+    data: { breadcrumbs: "Pie Chart" },
   },
   {
     path: "csv_to_table",
